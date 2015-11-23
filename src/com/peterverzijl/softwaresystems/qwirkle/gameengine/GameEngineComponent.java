@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle;
+package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -9,6 +9,7 @@ import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
+import com.peterverzijl.softwaresystems.qwirkle.Game;
 import com.peterverzijl.softwaresystems.qwirkle.ui.Screen;
 
 /**
@@ -108,7 +109,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 		screen.render(game);
 
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
-			pixels[i] = screen.pixels[i];
+			pixels[i] = screen.mPixels[i];
 		}
 
 		Graphics g = bs.getDrawGraphics();

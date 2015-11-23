@@ -30,13 +30,13 @@ public class Game {
 			players.add(p);
 		}
 		
-		// Print the firs player his blocks
+		// Print all players their blocks
 		for (int j = 0; j < players.size(); j++) {
 			System.out.print("Player " + j + "'s hand: ");
 			for (int i = 0; i < players.get(0).getmHand().size(); i++)
 			{
 				Block b = players.get(j).getmHand().get(i);
-				System.out.print(BlockPrinter.getChar(b));
+				System.out.print(b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ");
 			}
 			System.out.println();			
 		}

@@ -17,9 +17,9 @@ public class Screen extends Bitmap {
 	private Bitmap testBitmap;
 
 	/**
-	 * Create a new screen with a certain width and height
-	 * @param width Width in pixels of the screen
-	 * @param height Height in pixels of the screen
+	 * Create a new screen with a certain mWidth and mHeight
+	 * @param mWidth Width in mPixels of the screen
+	 * @param mHeight Height in mPixels of the screen
 	 */
 	public Screen(int width, int height) {
 		super(width, height);
@@ -27,7 +27,7 @@ public class Screen extends Bitmap {
 		Random random = new Random();
 		testBitmap = new Bitmap(64, 64);
 		for (int i = 0; i < 64 * 64; i++)
-			testBitmap.pixels[i] = random.nextInt() * random.nextInt(2);
+			testBitmap.mPixels[i] = random.nextInt() * random.nextInt(2);
 	}
 	
 	/**
@@ -37,6 +37,7 @@ public class Screen extends Bitmap {
 	public void render(Game game) {
 		int xo = (int) (Math.sin(System.currentTimeMillis() % 2000.0 / 2000.0 * Math.PI * 2) * 100);
 		int yo = (int) (Math.cos(System.currentTimeMillis() % 2000.0 / 2000.0 * Math.PI * 2) * 50);
-		draw(testBitmap, (width - testBitmap.width) / 2 + xo, (height - testBitmap.height) / 2 + yo);
+		testBitmap.load("./dat/Test.png");
+		draw(testBitmap, (mWidth - testBitmap.mWidth) / 2 + xo, (mHeight - testBitmap.mHeight) / 2 + yo);
 	}
 }
