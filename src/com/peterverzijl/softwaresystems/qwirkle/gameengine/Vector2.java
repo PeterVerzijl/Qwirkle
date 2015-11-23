@@ -41,6 +41,7 @@ public class Vector2 {
 	 * @return The magniude of the vector.
 	 */
 	public float magnitude() {
+		
 		// TODO(Peter): Calculate the magnitude of the vector.
 		return 0;
 	}
@@ -59,7 +60,14 @@ public class Vector2 {
 	 * Normalizes the vector.
 	 */
 	public void normalize() {
-		// TODO(Peter): Normalize the this vector.
+		float ax = Math.abs(x);
+		float ay = Math.abs(y);
+		// Ratio
+		float ratio = 1 / Math.max(ax, ay);
+		ratio = ratio * (1.29289f - (ax + ay) * ratio * 0.29289f);
+		// Multiply by ratio
+		x = x * ratio;
+		x = y * ratio;
 	}	
 	
 	/**
@@ -67,8 +75,18 @@ public class Vector2 {
 	 * @return The normalized copy.
 	 */
 	public Vector2 normalized() {
-		// TODO(Peter): Return a normalized copy of the this vector.
-		return null;
+		Vector2 result = this.clone();
+		result.normalize();
+		return result;
+	}
+	
+	/**
+	 * Returns a copy of the current vector.
+	 * @return A copy of the current vector.
+	 */
+	@Override
+	public Vector2 clone() {
+		return new Vector2(x, y);
 	}
 	
 	/**
