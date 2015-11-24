@@ -60,6 +60,7 @@ public class Vector2 {
 	 * Normalizes the vector.
 	 */
 	public void normalize() {
+		// TODO(Peter): Something is super wrong here...
 		float ax = Math.abs(x);
 		float ay = Math.abs(y);
 		// Ratio
@@ -67,7 +68,7 @@ public class Vector2 {
 		ratio = ratio * (1.29289f - (ax + ay) * ratio * 0.29289f);
 		// Multiply by ratio
 		x = x * ratio;
-		x = y * ratio;
+		y = y * ratio;
 	}	
 	
 	/**
@@ -119,5 +120,9 @@ public class Vector2 {
 	 */
 	public void setY(float y) {
 		this.y = y;
+	}
+	
+	public String toString() {
+		return "(" + getX() + ", " + getY() + " )";
 	}
 }

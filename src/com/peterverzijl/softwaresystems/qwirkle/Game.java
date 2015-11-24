@@ -1,7 +1,10 @@
 package com.peterverzijl.softwaresystems.qwirkle;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Input;
 
 /**
  * Master class for the game, this handles the setting up and running of the game
@@ -49,6 +52,6 @@ public class Game {
 	 * Function gets called every frame
 	 */
 	public void tick() {
+		System.out.println(Input.mousePosition.normalized().toString());
 	}
-	
 }

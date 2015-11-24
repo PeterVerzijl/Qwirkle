@@ -29,6 +29,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 
 	private Game game;
 	private Screen screen;
+	private static Input input;
 	private BufferedImage img;
 	private int[] pixels;
 
@@ -40,6 +41,11 @@ public class GameEngineComponent extends Canvas implements Runnable {
 
 		game = new Game();
 		screen = new Screen(WIDTH, HEIGHT);
+		input = new Input();
+		
+		addKeyListener(input);
+		addMouseListener(input);
+		addMouseMotionListener(input);
 
 		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
@@ -74,7 +80,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 		double lag = 0.0;
 		while (running) {
 			if (System.currentTimeMillis() - last > 1000.0) {
-				System.out.println(frameCount + " fps");
+				// System.out.println(frameCount + " fps");
 				last = System.currentTimeMillis();
 				frameCount = 0;
 			}
@@ -123,6 +129,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	 */
 	public void tick() {
 		game.tick();
+		input.tick();
 	}
 
 	/**
