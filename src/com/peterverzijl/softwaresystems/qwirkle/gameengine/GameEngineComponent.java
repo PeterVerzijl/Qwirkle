@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -32,6 +34,11 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	private static Input input;
 	private BufferedImage img;
 	private int[] pixels;
+	
+	/**
+	 * A list of all objects in the game
+	 */
+	static List<Object> objects = new ArrayList<Object>();
 
 	public GameEngineComponent() {
 		Dimension size = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);
