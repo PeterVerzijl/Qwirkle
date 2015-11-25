@@ -2,6 +2,9 @@ package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +38,7 @@ public class ObjectAndComponentTest {
 		GameEngineComponent.objects.clear();
 		assertTrue(GameEngineComponent.objects.size() == 0);
 		
-		Object go = Object.Instantiate(testObject);
+		EngineObject go = EngineObject.Instantiate(testObject);
 		assertNotNull(go);
 		GameObject found = (GameObject)GameObject.findObjectOfType(GameObject.class);
 		assertEquals(found, go);
@@ -59,7 +62,7 @@ public class ObjectAndComponentTest {
 		GameEngineComponent.objects.clear();
 		assertTrue(GameEngineComponent.objects.size() == 0);
 		
-		Object.Instantiate(testObject);
+		EngineObject.Instantiate(testObject);
 		assertTrue(GameEngineComponent.objects.size() == 1);
 		GameObject found = (GameObject)GameObject.findObjectOfType(GameObject.class);
 		assertNotNull(found);
@@ -72,12 +75,21 @@ public class ObjectAndComponentTest {
 		GameEngineComponent.objects.clear();
 		assertTrue(GameEngineComponent.objects.size() == 0);
 		
-		GameObject go1 = (GameObject)Object.Instantiate(testObject);
-		GameObject go2 = (GameObject)Object.Instantiate(testObject);
+		GameObject go1 = (GameObject)EngineObject.Instantiate(testObject);
+		GameObject go2 = (GameObject)EngineObject.Instantiate(testObject);
 		assertNotNull(go1);
 		assertNotNull(go2);
 		
-		GameObject[] gos = (GameObject[])GameObject.findObjectsOfType(GameObject.class);		
-		assertTrue(gos.length == GameEngineComponent.objects.size());
+		List<GameObject> gos = GameObject.findObjectsOfType(GameObject.class);		
+		assertTrue(gos.size() == GameEngineComponent.objects.size());
 	}
+	
+	@Test
+	public void testObjectRefID() {
+		GameObject go = (GameObject)EngineObject.Instantiate(testObject);
+		assertEquals(System.identityHashCode(go), go.getInstaceId());
+		assertThat(go.toString(), CoreMatchers.containsString(Integer.toString(go.getInstaceId())));
+	}
+	
+	
 }

@@ -38,7 +38,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	/**
 	 * A list of all objects in the game
 	 */
-	static List<Object> objects = new ArrayList<Object>();
+	static List<EngineObject> objects = new ArrayList<EngineObject>();
 
 	public GameEngineComponent() {
 		Dimension size = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);

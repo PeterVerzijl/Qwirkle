@@ -3,12 +3,13 @@ package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Component extends Object {
+public abstract class Component extends EngineObject {
 	
 	public GameObject gameObject;
 	public String tag = gameObject.tag;
 	
 	public Component(GameObject go) {
+		super("New Component");
 		gameObject = go;
 	}
 		

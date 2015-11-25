@@ -3,7 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameObject extends Object {
+public class GameObject extends EngineObject {
 	
 	/**
 	 * The tag identifier that this gameObject belongs to.
