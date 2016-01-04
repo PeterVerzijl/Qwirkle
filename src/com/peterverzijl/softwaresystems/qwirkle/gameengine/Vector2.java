@@ -10,17 +10,17 @@ public class Vector2 {
 	private float x;
 	private float y;
 	
-	public static final Vector2 zero = new Vector2(0, 0);
-	public static final Vector2 unity = new Vector2(1, 1);
-	public static final Vector2 right = new Vector2(1, 0);
-	public static final Vector2 up = new Vector2(0, 1);
+	public static final Vector2 ZERO = new Vector2(0, 0);
+	public static final Vector2 UNITY = new Vector2(1, 1);
+	public static final Vector2 RIGHT = new Vector2(1, 0);
+	public static final Vector2 UP = new Vector2(0, 1);
 	
 	/**
 	 * The constructor for a floating point two dimensional vector.
 	 * @param x The x coordinate.
 	 * @param y The y coordinate.
 	 */
-	public Vector2(float x , float y) {
+	public Vector2(float x, float y) {
 		this.setX(x);
 		this.setY(y);
 	}
@@ -41,13 +41,11 @@ public class Vector2 {
 	 * @return The magniude of the vector.
 	 */
 	public float magnitude() {
-		
-		// TODO(Peter): Calculate the magnitude of the vector.
-		return 0;
+		return (float) Math.sqrt(x * x + y * y);
 	}
 	
 	/**
-	 * Sets the vector to a given length
+	 * Sets the vector to a given length.
 	 * @param length The length of the vector
 	 */
 	public void setMagnitude(float length) {
@@ -60,15 +58,10 @@ public class Vector2 {
 	 * Normalizes the vector.
 	 */
 	public void normalize() {
-		// TODO(Peter): Something is super wrong here...
-		float ax = Math.abs(x);
-		float ay = Math.abs(y);
-		// Ratio
-		float ratio = 1 / Math.max(ax, ay);
-		ratio = ratio * (1.29289f - (ax + ay) * ratio * 0.29289f);
 		// Multiply by ratio
-		x = x * ratio;
-		y = y * ratio;
+		float magnitude = magnitude();
+		x = x / magnitude;
+		y = y / magnitude;
 	}	
 	
 	/**
@@ -122,7 +115,29 @@ public class Vector2 {
 		this.y = y;
 	}
 	
+	/**
+	 * Prints the vector in the following format (x, y).
+	 */
 	public String toString() {
 		return "(" + getX() + ", " + getY() + " )";
+	}
+	
+	/**
+	 * Adds one vector to the calling vector.
+	 * @param vector The vector to add.
+	 */
+	public void add(Vector2 vector) {
+		x += vector.getX();
+		y += vector.getY();
+	}
+
+	/**
+	 * Adds the two given components to the vector.
+	 * @param x Amount of x to add.
+	 * @param y Amount of y to add.
+	 */
+	public void add(float x, float y) {
+		this.x += x;
+		this.y += y;
 	}
 }

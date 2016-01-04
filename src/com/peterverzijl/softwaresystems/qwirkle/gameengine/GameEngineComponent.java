@@ -12,10 +12,12 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import com.peterverzijl.softwaresystems.qwirkle.Game;
+import com.peterverzijl.softwaresystems.qwirkle.rendering.RenderComponent;
 import com.peterverzijl.softwaresystems.qwirkle.ui.Screen;
 
 /**
- * The game engine component that can be added to the Canvas, it does rendering, game loop management and input gathering.
+ * The game engine component that can be added to the Canvas, 
+ * it does rendering, game loop management and input gathering.
  * @author Peter Verzijl
  *
  */
@@ -24,7 +26,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 
 	private static final int WIDTH = 160;
 	private static final int HEIGHT = 120;
-	private static final int SCALE = 4;
+	private static final int SCALE = 5;
 
 	private boolean running;
 	private Thread thread;
@@ -36,9 +38,10 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	private int[] pixels;
 	
 	/**
-	 * A list of all objects in the game
+	 * A list of all objects in the game.
 	 */
-	static List<EngineObject> objects = new ArrayList<EngineObject>();
+	public static List<EngineObject> objects = new ArrayList<EngineObject>();
+	public static List<RenderComponent> renderers = new ArrayList<RenderComponent>();
 
 	public GameEngineComponent() {
 		Dimension size = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);
@@ -48,7 +51,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 
 		game = new Game();
 		screen = new Screen(WIDTH, HEIGHT);
-		input = new Input();
+		input = new Input(SCALE);
 		
 		addKeyListener(input);
 		addMouseListener(input);
@@ -59,24 +62,26 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	}
 
 	public synchronized void start() {
-		if (running)
+		if (running) {
 			return;
-		running = true;
-		thread = new Thread(this);
-		thread.start();
+		}
 		
 		// Call start on the game
 		game.start();
+		
+		running = true;
+		thread = new Thread(this);
+		thread.start();
 	}
 	
 	/**
-	 * Frames per second the game runs in
+	 * Frames per second the game runs in.
 	 */
 	public static final int FPS = 60;
 	public static final int MS_PER_FRAME = (int) (1000.0f / FPS);
 
 	/**
-	 * The main thread and function that does the game loop
+	 * The main thread and function that does the game loop.
 	 */
 	@Override
 	public void run() {
@@ -110,7 +115,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	}
 	
 	/**
-	 * Renders the game to the canvas via a buffer strategy
+	 * Renders the game to the canvas via a buffer strategy.
 	 */
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
@@ -132,7 +137,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	}
 	
 	/**
-	 * Ticks the game logic
+	 * Ticks the game logic.
 	 */
 	public void tick() {
 		game.tick();
@@ -140,23 +145,23 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	}
 
 	/**
-	 * Stops the game and exits from the game loop
+	 * Stops the game and exits from the game loop.
 	 */
 	public synchronized void stop() {
-		if (!running)
+		if (!running) {
 			return;
+		}
 		running = false;
 		// Join the created threads
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Main point for java to hook into us
+	 * Main point for java to hook into us.
 	 * @param args
 	 */
 	public static void main(String[] args) {

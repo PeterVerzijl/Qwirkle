@@ -3,7 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle.ui;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 
 /**
- * An effective area on a bitmap that is displayed on the screen.
+ * Marks a rectangle of pixels on a bitmap which could contain more then one sprite.
  * @author Peter Verzijl
  * @version 1.0a
  */
@@ -22,5 +22,19 @@ public class Sprite {
 		mRect = rect;
 	}
 	
+	/**
+	 * Returns all the pixels of the bitmap area.
+	 * @return All the pixels of the bitmap area.
+	 */
+	public int[] getPixels() {
+		return mSource.getRegionPixels(mRect);
+	}
 	
+	/**
+	 * Returns the sprite rectangle.
+	 * @return Returns the sprite rectangle.
+	 */
+	public Rect getRect() {
+		return mRect;
+	}
 }

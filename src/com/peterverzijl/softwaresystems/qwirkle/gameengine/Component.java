@@ -6,11 +6,10 @@ import java.util.List;
 public abstract class Component extends EngineObject {
 	
 	public GameObject gameObject;
-	public String tag = gameObject.tag;
+	public String tag;
 	
-	public Component(GameObject go) {
+	public Component() {
 		super("New Component");
-		gameObject = go;
 	}
 		
 	/**
@@ -19,6 +18,7 @@ public abstract class Component extends EngineObject {
 	 * @param T The type of component to get.
 	 * @return The component.
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponent(Class<T>  type) {
 		for (Component c : gameObject.components) {
 			if (c.getClass().isInstance(type)) {
@@ -33,6 +33,7 @@ public abstract class Component extends EngineObject {
 	 * @param T The type of component to get.
 	 * @return The component.
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T[] getComponents(Class<T> type) {
 		List<T> list = new ArrayList<T>();
 		for (Component c : gameObject.components) {
@@ -42,12 +43,14 @@ public abstract class Component extends EngineObject {
 		}
 		return (T[])list.toArray();
 	}
+	
 	/**
 	 * Returns a component of type T when searching in its children. 
 	 * Returns the first component found.
 	 * @param T The type of component to get.
 	 * @return The component.
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponentInChildren(Class<T> type) {
 		for (GameObject child : gameObject.children) {
 			for (Component c : child.components) {
@@ -58,12 +61,14 @@ public abstract class Component extends EngineObject {
 		}
 		return null;
 	}
+	
 	/**
 	 * Returns all components of type T when searching in all its children. 
 	 * Returns the first component found.
 	 * @param T The type of component to get.
 	 * @return The component.
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T[] getComponentsInChildren(Class<T> type) {
 		List<T> list = new ArrayList<T>();
 		for (GameObject child : gameObject.children) {
@@ -75,12 +80,14 @@ public abstract class Component extends EngineObject {
 		}
 		return (T[])list.toArray();
 	}
+	
 	/**
 	 * Returns a component of type T when searching in the parent. 
 	 * Returns the first component found.
 	 * @param T The type of component to get.
 	 * @return The component.
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponentInParent(Class<T> type) {
 		for (Component c : gameObject.parent.components) {
 			if (c.getClass().isInstance(type)) {
@@ -90,6 +97,13 @@ public abstract class Component extends EngineObject {
 		return null;
 	}
 	
+	/**
+	 * Returns all components of type T when searching in all its parents. 
+	 * Returns all components found.
+	 * @param T The type of component to get.
+	 * @return A list of all found components.
+	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> T[] getComponentsInParent(Class<T> type) {
 		List<T> list = new ArrayList<T>();
 		for (Component c : gameObject.parent.components) {

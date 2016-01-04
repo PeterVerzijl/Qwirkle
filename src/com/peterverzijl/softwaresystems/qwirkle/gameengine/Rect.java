@@ -103,7 +103,7 @@ public class Rect {
 	}
 
 	/**
-	 * Sets the mWidth of the rectangle
+	 * Sets the mWidth of the rectangle.
 	 * @param mWidth
 	 */
 	public void setWidth(float width) {
@@ -111,7 +111,7 @@ public class Rect {
 	}
 	
 	/**
-	 * Gets the mHeight of the rectangle
+	 * Gets the mHeight of the rectangle.
 	 * @return The mHeight
 	 */
 	public float getHeight() {
