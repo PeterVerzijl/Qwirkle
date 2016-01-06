@@ -159,21 +159,4 @@ public class GameEngineComponent extends Canvas implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Main point for java to hook into us.
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		GameEngineComponent game = new GameEngineComponent();
-		JFrame frame = new JFrame("Game Engine");
-		frame.add(game);
-		frame.pack();
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-
-		game.start();
-	}
 }
