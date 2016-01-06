@@ -7,10 +7,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -87,8 +89,21 @@ public class ChatWindow extends JFrame {
 		// Finally set visible
 		this.setSize(470, 300);
 		this.setVisible(true);
+		
+		// Add window close listener
+		this.addWindowListener(new WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(new JFrame(), 
+		            "Are you sure to close this window?", "Really Closing?", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+		            MainWindow.chatWindow = null;
+		        }
+		    }
+		});
 	}
-	
+		
 	class SendButtonAction extends AbstractAction {
 		
 		@Override

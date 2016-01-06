@@ -2,21 +2,29 @@ package com.peterverzijl.softwaresystems.qwirkle.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
 
+/**
+ * The start window that is shown when starting the game.
+ * @author Peter Verzijl
+ * @version 1.0a
+ */
 public class MainWindow {
 	
-	private static JMenuBar mMenuBar;
+	public static ChatWindow chatWindow;
+	public static JFrame gameWindow;
 	
 	/**
 	 * Main point for java to hook into us.
@@ -39,7 +47,7 @@ public class MainWindow {
 		}
 		
 		// Define the menu
-		mMenuBar = new JMenuBar();
+		JMenuBar mMenuBar = new JMenuBar();
 		
 		// Chat menu
 		JMenu chatMenu = new JMenu("Chat");
@@ -96,6 +104,10 @@ public class MainWindow {
 	}
 }
 
+/*
+ * All the actions that can be performed by pressing buttons.
+ */
+
 @SuppressWarnings("serial")
 class CreateChatAction extends AbstractAction {
 	
@@ -107,8 +119,10 @@ class CreateChatAction extends AbstractAction {
 		// Create chat window
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				ChatWindow chatWindow = 
-						new ChatWindow("Qwirkle Chat");
+				if (MainWindow.chatWindow == null) {
+					MainWindow.chatWindow = 
+							new ChatWindow("Qwirkle Chat");
+				}
 			}
 		});
 	}
@@ -122,14 +136,32 @@ class CreateGameView extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		GameEngineComponent game = new GameEngineComponent();
-		JFrame frame = new JFrame("Game Engine");
-		frame.add(game);
-		frame.pack();
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-
-		game.start();		
+		if (MainWindow.gameWindow == null) {
+			GameEngineComponent game = new GameEngineComponent();
+			JFrame frame = new JFrame("Game Engine");
+			frame.add(game);
+			frame.pack();
+			frame.setResizable(false);
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
+			
+			// Add window close listener
+			frame.addWindowListener(new WindowAdapter() {
+			    @Override
+			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+			        if (JOptionPane.showConfirmDialog(new JFrame(), 
+			            "Are you sure to close this window?", "Really Closing?", 
+			            JOptionPane.YES_NO_OPTION,
+			            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+			            MainWindow.gameWindow = null;
+			        }
+			    }
+			});
+			
+			// Set global game window
+			MainWindow.gameWindow = frame;
+	
+			game.start();	
+		}
 	}
 }
