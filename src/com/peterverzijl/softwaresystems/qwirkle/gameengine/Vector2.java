@@ -10,10 +10,10 @@ public class Vector2 {
 	private float x;
 	private float y;
 	
-	public static final Vector2 ZERO = new Vector2(0, 0);
-	public static final Vector2 UNITY = new Vector2(1, 1);
-	public static final Vector2 RIGHT = new Vector2(1, 0);
-	public static final Vector2 UP = new Vector2(0, 1);
+	public static final Vector2 ZERO() 	{ return new Vector2(0, 0); }
+	public static final Vector2 UNITY() { return new Vector2(1, 1); }
+	public static final Vector2 RIGHT() { return new Vector2(1, 0); }
+	public static final Vector2 UP()	{ return new Vector2(0, 1); }
 	
 	/**
 	 * The constructor for a floating point two dimensional vector.
@@ -31,11 +31,19 @@ public class Vector2 {
 	 */
 	public Vector2(Vector2 vector) {
 		assert vector != null : "Error: You cannot create a Vector2 that is null!";
-		
 		this.setX(vector.getX());
 		this.setY(vector.getY());
 	}
 	
+	/**
+	 * Creates a copy of the given vector.
+	 * @param vector The vector to create a copy of.
+	 */
+	public Vector2(Vector3 vector) {
+		this.setX(vector.getX());
+		this.setY(vector.getY());
+	}
+
 	/**
 	 * Returns the magnitude or length of the vector.
 	 * @return The magniude of the vector.
@@ -120,7 +128,7 @@ public class Vector2 {
 	 */
 	@Override
 	public String toString() {
-		return "(" + getX() + ", " + getY() + " )";
+		return "(" + getX() + ", " + getY() + ")";
 	}
 	
 	/**
@@ -222,7 +230,7 @@ public class Vector2 {
 	 * @param vector The vector to check if equal.
 	 * @return Weighter the two vectors are equal.
 	 */
-	public boolean equals(Vector3 vector) {
+	public boolean equals(Vector2 vector) {
 		boolean result = false;
 		if (x == vector.getX() &&
 			y == vector.getY()) {
