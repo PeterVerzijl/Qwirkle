@@ -1,39 +1,55 @@
 package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 
+import com.peterverzijl.softwaresystems.qwirkle.math.Mathf;
+
 /**
  * A two dimensional vector point in space. Contains an x and a y floating point value.
  * @author Peter Verzijl
  * @version 1.0a
  */
-public class Vector2 {
+public class Vector3 {
 	
 	private float x;
 	private float y;
+	private float z;
 	
-	public static final Vector2 ZERO = new Vector2(0, 0);
-	public static final Vector2 UNITY = new Vector2(1, 1);
-	public static final Vector2 RIGHT = new Vector2(1, 0);
-	public static final Vector2 UP = new Vector2(0, 1);
+	public static Vector3 ZERO() 	{ return new Vector3(0.0f, 0.0f, 0.0f); }
+	public static Vector3 UNITY() 	{ return new Vector3(1.0f, 1.0f, 1.0f); }
+	public static Vector3 RIGHT() 	{ return new Vector3(1.0f, 0.0f, 0.0f); }
+	public static Vector3 UP() 		{ return new Vector3(0.0f, 1.0f, 0.0f); }
+	public static Vector3 FORWARD() { return new Vector3(0.0f, 0.0f, 1.0f); }
 	
 	/**
 	 * The constructor for a floating point two dimensional vector.
 	 * @param x The x coordinate.
 	 * @param y The y coordinate.
 	 */
-	public Vector2(float x, float y) {
+	public Vector3(float x, float y, float z) {
 		this.setX(x);
 		this.setY(y);
+		this.setZ(z);
 	}
 	
 	/**
 	 * Creates a copy of the given vector.
 	 * @param vector The vector to create a copy of.
 	 */
-	public Vector2(Vector2 vector) {
+	public Vector3(Vector3 vector) {
+		assert vector != null : "Error: You cannot create a Vector3 that is null!";
+		this.x = vector.getX();
+		this.y = vector.getY();
+		this.z = vector.getZ();
+	}
+	
+	/**
+	 * Creates a copy of the given Vector2.
+	 * @param vector The Vector2 to create a copy of.
+	 */
+	public Vector3(Vector2 vector) {
 		assert vector != null : "Error: You cannot create a Vector2 that is null!";
-		
-		this.setX(vector.getX());
-		this.setY(vector.getY());
+		this.x = vector.getX();
+		this.y = vector.getY();
+		this.z = 0;
 	}
 	
 	/**
@@ -41,7 +57,7 @@ public class Vector2 {
 	 * @return The magniude of the vector.
 	 */
 	public float magnitude() {
-		return (float) Math.sqrt(x * x + y * y);
+		return (float) Math.sqrt(x * x + y * y + z * z);
 	}
 	
 	/**
@@ -62,14 +78,15 @@ public class Vector2 {
 		float magnitude = magnitude();
 		x = x / magnitude;
 		y = y / magnitude;
+		z = z / magnitude;
 	}	
 	
 	/**
 	 * Returns a normalized copy of the vector.
 	 * @return The normalized copy.
 	 */
-	public Vector2 normalized() {
-		Vector2 result = this.clone();
+	public Vector3 normalized() {
+		Vector3 result = this.clone();
 		result.normalize();
 		return result;
 	}
@@ -79,8 +96,8 @@ public class Vector2 {
 	 * @return A copy of the current vector.
 	 */
 	@Override
-	public Vector2 clone() {
-		return new Vector2(x, y);
+	public Vector3 clone() {
+		return new Vector3(x, y, z);
 	}
 	
 	/**
@@ -116,11 +133,27 @@ public class Vector2 {
 	}
 	
 	/**
+	 * Returns the y coordinate of the vector.
+	 * @return The y coordinate
+	 */
+	public float getZ() {
+		return z;
+	}
+	
+	/**
+	 * Sets the y coordinate of the vector.
+	 * @param y
+	 */
+	public void setZ(float z) {
+		this.z = z;
+	}
+	
+	/**
 	 * Prints the vector in the following format (x, y).
 	 */
 	@Override
 	public String toString() {
-		return "(" + getX() + ", " + getY() + " )";
+		return "(" + getX() + ", " + getY() + ", " + getZ() + ")";
 	}
 	
 	/**
@@ -128,9 +161,10 @@ public class Vector2 {
 	 * @param vector The vector to add.
 	 * @return this.
 	 */
-	public Vector2 add(Vector2 vector) {
+	public Vector3 add(Vector3 vector) {
 		x += vector.getX();
 		y += vector.getY();
+		z += vector.getZ();
 		return this;
 	}
 
@@ -140,9 +174,10 @@ public class Vector2 {
 	 * @param y Amount of y to add.
 	 * @return this.
 	 */
-	public Vector2 add(float x, float y) {
+	public Vector3 add(float x, float y, float z) {
 		this.x += x;
 		this.y += y;
+		this.z += z;
 		return this;
 	}
 	
@@ -151,21 +186,24 @@ public class Vector2 {
 	 * @param vector The vector to subtract.
 	 * @return this.
 	 */
-	public Vector2 subtract(Vector2 vector) {
+	public Vector3 subtract(Vector3 vector) {
 		x -= vector.getX();
 		y -= vector.getY();
+		z -= vector.getZ();
 		return this;
 	}
-	
+
 	/**
 	 * Subtracts the two given components to the vector.
 	 * @param x Amount of x to subtract.
 	 * @param y Amount of y to subtract.
+	 * @param z Amount of z to subtract.
 	 * @return this.
 	 */
-	public Vector2 subtract(float x, float y) {
+	public Vector3 subtract(float x, float y, float z) {
 		this.x -= x;
 		this.y -= y;
+		this.z -= z;
 		return this;
 	}
 	
@@ -175,21 +213,39 @@ public class Vector2 {
 	 * @param Returns the resulting vector.
 	 * @return this.
 	 */
-	public Vector2 multiply(float scalar) {
+	public Vector3 multiply(float scalar) {
 		this.x *= scalar;
 		this.y *= scalar;
+		this.z *= scalar;
 		return this;
 	}
 	
 	/**
-	 * Returns the dot product of two vectors.
-	 * Following the formula: a � b = ax � bx + ay � by
+	 * Returns the dot product of the two vectors.
+	 * Following the formula: a · b = ax × bx + ay × by + az × bz
 	 * @param v1 The first Vector3
 	 * @param v2 The second Vector3
-	 * @return The resulting lenth of the dot product.
+	 * @return The resulting length of the dot product.
 	 */
-	public static float dot(Vector2 v1, Vector2 v2) {
-		return v1.x * v2.x + v1.y * v2.y;
+	public static float dot(Vector3 v1, Vector3 v2) {
+		return v1.x * v2.x + v1.y * v2.y  + v1.z * v2.z;
+	}
+	
+	/**
+	 * Calculates and returns the cross product of the two vectors.
+	 * Following the formula: 
+	 * 	cx = aybz − azby
+	 * 	cy = azbx − axbz
+	 * 	cz = axby − aybx
+	 * @param v1 The first vector.
+	 * @param v2 The second vector.
+	 * @return The resulting Vector3 of the cross product.
+	 */
+	public static Vector3 cross(Vector3 v1, Vector3 v2) {
+		float x = v1.y * v2.z - v1.z * v2.y;
+		float y = v1.z * v2.x - v1.x * v2.z;
+		float z = v1.x * v2.y - v1.y * v2.x;
+		return new Vector3(x, y, z);
 	}
 	
 	/**
@@ -200,10 +256,11 @@ public class Vector2 {
 	 * @param t The fraction between the two vectors.
 	 * @return The linearly interpolated vector between v1 and v2 at fraction t.
 	 */
-	public static Vector2 lerp(Vector2 v1, Vector2 v2, float t) {
-		float x = (1-t)*v1.getX() + t*v2.getX();
-		float y = (1-t)*v1.getY() + t*v2.getY();
-		return new Vector2(x, y);
+	public static Vector3 lerp(Vector3 v1, Vector3 v2, float t) {
+		float x = (1.0f - t) * v1.getX() + t * v2.getX();
+		float y = (1.0f - t) * v1.getY() + t * v2.getY();
+		float z = (1.0f - t) * v1.getZ() + t * v2.getZ();
+		return new Vector3(x, y, z);
 	}
 	
 	/**
@@ -213,8 +270,22 @@ public class Vector2 {
 	 * @param t The fraction between 1 and 0.
 	 * @return The resulting spherically interpolated vector.
 	 */
-	public static Vector2 slerp(Vector2 v1, Vector2 v2, float t) {
-		return Vector3.slerp(v1.toVector3(), v2.toVector3(), t).toVector2();
+	public static Vector3 slerp(Vector3 v1, Vector3 v2, float t) {
+		// Make a copy of the references
+		Vector3 a = v1.clone();
+		Vector3 b = v2.clone();
+		
+		// Get the cosine of the angle between v1 and v2
+		float dot = Vector3.dot(a, b);
+		// Clap the range
+		dot = Mathf.clamp(dot, -1.0f, 1.0f);
+		// Acos(dot) returns the angle between the two vectors
+		float theta = (float) (Math.acos(dot) * t);
+		Vector3 relativeVector = b.subtract(a.multiply(dot));
+		relativeVector.normalize();
+		return ((a.multiply((float) Math.cos(theta))).
+				add(relativeVector.multiply(
+						(float) Math.sin(theta))));
 	}
 	
 	/**
@@ -225,7 +296,8 @@ public class Vector2 {
 	public boolean equals(Vector3 vector) {
 		boolean result = false;
 		if (x == vector.getX() &&
-			y == vector.getY()) {
+			y == vector.getY() &&
+			z == vector.getZ()) {
 			result = true;
 		}
 		return result;
@@ -235,7 +307,7 @@ public class Vector2 {
 	 * Converts the Vector3 to a Vector2
 	 * @return The new Vector2.
 	 */
-	public Vector3 toVector3() {
-		return new Vector3(x, y, 0);
+	public Vector2 toVector2() {
+		return new Vector2(x, y);
 	}
 }
