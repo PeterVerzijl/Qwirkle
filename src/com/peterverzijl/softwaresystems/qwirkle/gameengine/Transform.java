@@ -22,7 +22,7 @@ public class Transform extends Component {
 	 * @param newPosition the position to set the transform to.
 	 */
 	public void setPosition(Vector2 newPosition) {
-		mPosition = newPosition;
+		mPosition.set(newPosition);
 	}
 	
 	/**
@@ -41,4 +41,10 @@ public class Transform extends Component {
 	public void setPosition(float x, float y) {
 		setPosition(new Vector2(x, y));	
 	}
+
+	@Override
+	public void Start() { }
+
+	@Override
+	public void Update() { }
 }

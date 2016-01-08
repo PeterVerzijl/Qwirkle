@@ -65,6 +65,16 @@ public class Vector3 {
 	}
 	
 	/**
+	 * Sets the position of the vector by another vector.
+	 * @param vector The vector to copy the compontents from.
+	 */
+	public void set(Vector3 vector) {
+		this.x = vector.getX();
+		this.y = vector.getY();
+		this.z = vector.getZ();
+	}
+	
+	/**
 	 * Returns the magnitude or length of the vector.
 	 * @return The magniude of the vector.
 	 */

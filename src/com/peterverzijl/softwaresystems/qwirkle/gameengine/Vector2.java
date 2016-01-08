@@ -53,6 +53,15 @@ public class Vector2 {
 		this.x = x;
 		this.y = y;
 	}
+	
+	/**
+	 * Sets the position of the old vector to the new one.
+	 * @param newPosition The new position.
+	 */
+	public void set(Vector2 newPosition) {
+		this.x = newPosition.getX();
+		this.y = newPosition.getY();
+	}
 
 	/**
 	 * Returns the magnitude or length of the vector.
