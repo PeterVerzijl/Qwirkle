@@ -53,6 +53,18 @@ public class Vector3 {
 	}
 	
 	/**
+	 * Sets the position of the vector.
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void set(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	/**
 	 * Returns the magnitude or length of the vector.
 	 * @return The magniude of the vector.
 	 */

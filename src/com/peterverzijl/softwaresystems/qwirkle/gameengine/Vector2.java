@@ -43,6 +43,16 @@ public class Vector2 {
 		this.setX(vector.getX());
 		this.setY(vector.getY());
 	}
+	
+	/**
+	 * Sets the position of the vector.
+	 * @param x
+	 * @param y
+	 */
+	public void set(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
 
 	/**
 	 * Returns the magnitude or length of the vector.
