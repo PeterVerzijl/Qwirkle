@@ -1,5 +1,7 @@
 package com.peterverzijl.softwaresystems.qwirkle;
 
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
+
 /**
  * A node with child nodes that could be placed in the 
  * north, east, south and west positions.
@@ -28,8 +30,12 @@ public class Node {
 	/**
 	 * 
 	 */
-	public int mPosition_X; 
-	public int mPosition_Y; 
+	private Vector2 mPosition; 
+	
+	/**
+	 * 
+	 */
+	protected Vector2 mTempPosition;
 	
 	/**
 	 * Node constructor
@@ -37,8 +43,7 @@ public class Node {
 	public Node() {
 		// Initialize all nodes to zero.
 		mChildNodes = new Node[CHILD_NODES];
-		mPosition_X = GameConstants.UNSET_NODE;
-		mPosition_Y = GameConstants.UNSET_NODE;
+		mPosition = new Vector2(GameConstants.UNSET_NODE,GameConstants.UNSET_NODE);
 	}
 	
 	/**
@@ -137,4 +142,21 @@ public class Node {
 	public Node[] getChildNodes() {
 		return mChildNodes;
 	}
+	
+	public void setPosition(int aX, int aY){
+		mPosition.set(aX, aX);
+	}
+	
+	public void setTempPosition(int aX, int aY){
+		mTempPosition.set(aX, aX);
+	}
+	
+	public void finalizeMove(){
+		mPosition.set(mTempPosition.getX(), mTempPosition.getY());
+	}
+	
+	public Vector2 getPosition(){
+		return mPosition;
+	}
+	
 }
