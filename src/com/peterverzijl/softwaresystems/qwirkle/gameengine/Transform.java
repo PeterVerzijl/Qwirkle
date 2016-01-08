@@ -7,7 +7,7 @@ public class Transform extends Component {
 	// public Vector2 right;
 	// public float angle;
 	
-	private Vector2 mPosition = Vector2.ZERO;
+	private Vector2 mPosition = Vector2.ZERO();
 	
 	/**
 	 * Returns the current position of the transform.
@@ -38,7 +38,7 @@ public class Transform extends Component {
 	 * @param x The x offset from the top left corner.
 	 * @param y The y offset from the top left corner.
 	 */
-	public void setPosition(int x, int y) {
+	public void setPosition(float x, float y) {
 		setPosition(new Vector2(x, y));	
 	}
 }
