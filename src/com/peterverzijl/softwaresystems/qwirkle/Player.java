@@ -126,13 +126,16 @@ public abstract class Player {
 
 	public void setMove() {
 		List<Block> set = determineMove();
-		while(set==(null)){
-			set =determineMove();
-		}
-		if (checkHand(set)) {
+	//	while(set == null){
+		//	System.out.println("Ik ben null");
+			//set = determineMove();
+		//	System.out.println("Nog steeds1");
+//		}
+		if (!checkHand(set)) {
 			for (int i = 0; i < set.size(); i++) {
 			//	set.get(i).finalizeMove();
 			}
 		}
+		System.out.println("De zet is gezet");
 	}
 }

@@ -20,35 +20,51 @@ public class HumanPlayer extends Player {
 		Player player = new HumanPlayer(1);
 		player.initHand(new BlockBag(), 6);
 		System.out.println("Start tekst");
-		// while (true) {
 		player.setMove();
-		// }
 
 	}
 
 	public List<Block> determineMove() {
 		List<Block> set = new ArrayList<Block>();
+		List<Block> possibleMoves = this.getmHand();
 		Scanner scanner = new Scanner(System.in);
 		int hand;
 		int move;
-		// String input=scanner.nextLine();
-		while (scanner.hasNext()) {
+		boolean success = false;
+		while (!success) {
 			try {
 				hand = scanner.nextInt();
 				move = scanner.nextInt();
-				System.out.printf("Hand: %d Move:%d \n", hand, move);
-				set.add(this.getmHand().get(hand));
-				break;
+				scanner.nextLine();
+				if (hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
+					System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c \n", hand, move,possibleMoves.get(hand).getColor().toString().charAt(0),BlockPrinter.getChar(possibleMoves.get(hand)));
+					set.add(possibleMoves.get(hand));
+					// TODO DENNIS MOGELIJKE ZETTEN ZICHTBAAR MAKEN
+					// set.get(set.size()-1).mTempPosition.set(frontier[move].posX,
+					// frontier[move].posY);
+					possibleMoves.remove(hand);
+					// TODO DENNIS DIT OMZETTEN NAAR EEN TOSTRINGFUNCTIE
+					for (Block b : possibleMoves) {
+						System.out.println(b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ");
+					}
+				}
 			} catch (java.util.InputMismatchException e) {
-				// scanner.
-				scanner.close();
-				System.err.println("Input was not a number. Try again");
-				return null;
+				String input = scanner.next();
+				if (input.toLowerCase().equals("end")) {
+					System.out.println("Zet was done");
+					success = true;
+					scanner.close();
+				} else if (input.toLowerCase().equals("redo")) {
+					set.clear();
+					possibleMoves = this.getmHand();
+					System.out.println("Je zet is gereset");
+				} else {
+					System.err.println("Input was not a valid number or command. Try again");
+					hand = GameConstants.INALID_MOVE;
+					move = GameConstants.INALID_MOVE;
+				}
 			}
 		}
-
-		scanner.close();
-		System.out.println(set.size()+"Deze?");
 		return set;
 	}
 }
