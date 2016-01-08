@@ -23,7 +23,7 @@ public class Game {
 	
 	private BlockBag mBag;
 	
-	private List<Player> mPlayers = new ArrayList<Player>();
+	private List<HumanPlayer> mPlayers = new ArrayList<HumanPlayer>();
 	
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
@@ -43,7 +43,7 @@ public class Game {
 		// Create a bunch of mPlayers
 		int playerCount = 4;
 		for (int i = 0; i < playerCount; i++) {
-			Player p = new Player();
+			HumanPlayer p = new HumanPlayer(i);
 			p.initHand(mBag, 6);
 			mPlayers.add(p);
 		}
@@ -80,7 +80,7 @@ public class Game {
 		}
 		
 		// Show hand on screen
-		Player wePlayer = mPlayers.get(0);
+		HumanPlayer wePlayer = mPlayers.get(0);
 		List<Block> weHand = wePlayer.getmHand();
 		float blockPadding = 75;
 		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();

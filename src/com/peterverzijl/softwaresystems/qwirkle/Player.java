@@ -8,7 +8,7 @@ import java.util.List;
  * @author Peter Verzijl
  *
  */
-public class Player {
+public class Player{
 	
 	/**
 	 * The id of the player.
@@ -27,10 +27,7 @@ public class Player {
 	/**
 	 * The constructor for the player
 	 */
-	public Player() {
-		mID = playerCount;
-		playerCount++;
-		
+	public Player(int mId) {
 		// Initialize player
 		mHand.clear();
 	}
