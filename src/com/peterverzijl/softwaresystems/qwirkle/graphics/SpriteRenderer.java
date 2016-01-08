@@ -27,5 +27,11 @@ public class SpriteRenderer extends RenderComponent {
 	@Override
 	public Sprite getSprite() {
 		return mSprite;
-	}	
+	}
+
+	@Override
+	public void Start() { }
+
+	@Override
+	public void Update() { }	
 }
