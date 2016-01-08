@@ -12,3 +12,8 @@ This digital version supports the following features:
 * Support for computer players (AI)
 
 For the graphics we currently use our own method whilst using the canvas buffer to write to. Later on we might implement OpenGL to do the rendering for us with LWGE.
+
+## Coding conventions
+- Camel casing: variableName
+- Member varaibles m[varName]
+- Arguments a[varName]
