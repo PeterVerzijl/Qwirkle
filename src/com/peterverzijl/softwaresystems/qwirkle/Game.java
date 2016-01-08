@@ -9,12 +9,14 @@ import com.peterverzijl.softwaresystems.qwirkle.Block.Shape;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Input;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Time;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
-import com.peterverzijl.softwaresystems.qwirkle.rendering.Renderer;
-import com.peterverzijl.softwaresystems.qwirkle.rendering.SpriteRenderer;
-import com.peterverzijl.softwaresystems.qwirkle.ui.Bitmap;
-import com.peterverzijl.softwaresystems.qwirkle.ui.Camera;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector3;
+import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
+import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
+import com.peterverzijl.softwaresystems.qwirkle.graphics.Renderer;
+import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
 import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
 
 /**
@@ -39,6 +41,8 @@ public class Game {
 	
 	public void start() {
 		
+		mMainCamera = new Camera();
+		
 		System.out.println("The game has started, aw yeah!");
 		System.out.println("Shuffeling mBag of blocks...");
 		mBag = new BlockBag();
@@ -61,9 +65,7 @@ public class Game {
 			}
 			System.out.println();			
 		}
-		
-		mMainCamera = new Camera();
-		
+				
 		// Load the tile map
 		if (mTilemap == null) {
 			mTilemap = Bitmap.load("qwirkle-tiles.png");
@@ -84,37 +86,33 @@ public class Game {
 			}
 		}
 		
-		currentBlock = new GameObject("Current Block");
-		currentBlock.addComponent(Transform.class);
-		Sprite block = Renderer.getSpriteFromBlock(new Block(Shape.CIRCLE, Color.BLUE));
-		SpriteRenderer renderer = currentBlock.addComponent(SpriteRenderer.class);
-		renderer.setSprite(block);
-		
+		// Show hand on screen
+		Player wePlayer = mPlayers.get(0);
+		List<Block> weHand = wePlayer.getmHand();
+		float blockPadding = 75;
+		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();
+		int blockCount = 0;
+		for (Block b : weHand) {
+			Sprite sprite = BlockSpriteMap.getSprite(b);
+			GameObject guiBlock = new GameObject("GUI Block");
+			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
+			Transform t = guiBlock.addComponent(Transform.class);
+			r.setSprite(sprite);
+			t.setPosition(blockPadding/2 + xOffset * blockCount++, Camera.getHeight() - 8);
+			System.out.println("hand block " + t.getPosition());
+		}
 		
 		// Print amount of left over blocks after mPlayers have drawn
 		System.out.println(mBag.blocks.size() + 
 							" blocks left in the mBag.");		
 	}
-
+	
+	Transform cameraTransform;
+	
 	/**
 	 * Function gets called every frame.
 	 */
 	public void tick() {
-		float speed = 0.1f;
 		
-		Vector2 camPos = mMainCamera.transform.getPosition();
-		if (Input.getKey(KeyEvent.VK_UP)) {
-			camPos.add(0, speed);
-		} else if (Input.getKey(KeyEvent.VK_DOWN)) {
-			camPos.add(0, -speed);
-		}
-		if (Input.getKey(KeyEvent.VK_RIGHT)) {
-			camPos.add(-speed, 0);
-		} else if (Input.getKey(KeyEvent.VK_LEFT)) {
-			camPos.add(speed, 0);
-		}
-		
-		Transform transform = currentBlock.getComponent(Transform.class);
-		transform.setPosition(Input.mousePosition);		
 	}
 }

@@ -1,6 +1,7 @@
 package com.peterverzijl.softwaresystems.qwirkle.ui;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
+import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 
 /**
  * Marks a rectangle of pixels on a bitmap which could contain more then one sprite.
