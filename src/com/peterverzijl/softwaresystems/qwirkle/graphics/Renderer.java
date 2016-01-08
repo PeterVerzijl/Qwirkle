@@ -41,7 +41,7 @@ public class Renderer {
 		// if any other thread tries to modify while looping, we will get that modification next frame.
 		RenderComponent[] renderers = GameEngineComponent.renderers.toArray(new RenderComponent[GameEngineComponent.renderers.size()]);
 		for (RenderComponent renderer : renderers) {
-			Transform t = renderer.gameObject.getComponent(Transform.class);
+			Transform t = renderer.getGameObject().getComponent(Transform.class);
 			Sprite sprite = renderer.getSprite();
 			if (sprite != null && t != null) {
 				renderSprite(sprite, t.getPosition().toVector3());

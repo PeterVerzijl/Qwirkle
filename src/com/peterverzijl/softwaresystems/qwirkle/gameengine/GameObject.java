@@ -3,6 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class GameObject extends EngineObject {
 	
 	/**
@@ -28,7 +29,7 @@ public class GameObject extends EngineObject {
 	 */
 	public <T extends Component> T addComponent(Class<T> type) {
 		T newComponent = Instantiate(type);
-		newComponent.gameObject = this;
+		newComponent.setGameObject(this);
 		newComponent.tag = this.tag;
 		components.add(newComponent);
 		return newComponent;

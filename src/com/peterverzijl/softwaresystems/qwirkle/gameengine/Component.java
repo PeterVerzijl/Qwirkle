@@ -3,14 +3,47 @@ package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A generic component class that can be added to a  
+ * @author Peter Verzijl
+ * @version 1.0a
+ */
 public abstract class Component extends EngineObject {
 	
-	public GameObject gameObject;
 	public String tag;
+	
+	protected GameObject mGameObject;
 	
 	public Component() {
 		super("New Component");
 	}
+	
+	/**
+	 * Sets the game object of the component.
+	 * @param aGameObject The game object this component belongs to.
+	 */
+	public void setGameObject(GameObject aGameObject) {
+		mGameObject = aGameObject;
+		Start();
+	}	
+	
+	/**
+	 * Returns the mGameObject that this component belongs to.
+	 * @return The belonging GameObject.
+	 */
+	public GameObject getGameObject() {
+		return mGameObject;
+	}
+	
+	/**
+	 * Called on setting the game object of the component.
+	 */
+	public abstract void Start();
+	
+	/**
+	 * Called every frame.
+	 */
+	public abstract void Update();
 		
 	/**
 	 * Returns a component of type T.
@@ -20,13 +53,14 @@ public abstract class Component extends EngineObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponent(Class<T>  type) {
-		for (Component c : gameObject.components) {
+		for (Component c : mGameObject.components) {
 			if (c.getClass().isInstance(type)) {
 				return (T) c;
 			}
 		}
 		return null;
 	}
+	
 	/**
 	 * Returns an array of all components of type T.
 	 * Returns the first component found.
@@ -36,7 +70,7 @@ public abstract class Component extends EngineObject {
 	@SuppressWarnings("unchecked")
 	public <T extends Component> T[] getComponents(Class<T> type) {
 		List<T> list = new ArrayList<T>();
-		for (Component c : gameObject.components) {
+		for (Component c : mGameObject.components) {
 			if (c.getClass().isInstance(type)) {
 				list.add((T) c);
 			}
@@ -52,7 +86,7 @@ public abstract class Component extends EngineObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponentInChildren(Class<T> type) {
-		for (GameObject child : gameObject.children) {
+		for (GameObject child : mGameObject.children) {
 			for (Component c : child.components) {
 				if (c.getClass().isInstance(type)) {
 					return (T) c;
@@ -71,7 +105,7 @@ public abstract class Component extends EngineObject {
 	@SuppressWarnings("unchecked")
 	public <T extends Component> T[] getComponentsInChildren(Class<T> type) {
 		List<T> list = new ArrayList<T>();
-		for (GameObject child : gameObject.children) {
+		for (GameObject child : mGameObject.children) {
 			for (Component c : child.components) {
 				if (c.getClass().isInstance(type)) {
 					list.add((T) c);
@@ -89,7 +123,7 @@ public abstract class Component extends EngineObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponentInParent(Class<T> type) {
-		for (Component c : gameObject.parent.components) {
+		for (Component c : mGameObject.parent.components) {
 			if (c.getClass().isInstance(type)) {
 				return (T) c;
 			}
@@ -106,7 +140,7 @@ public abstract class Component extends EngineObject {
 	@SuppressWarnings("unchecked")
 	public <T extends Component> T[] getComponentsInParent(Class<T> type) {
 		List<T> list = new ArrayList<T>();
-		for (Component c : gameObject.parent.components) {
+		for (Component c : mGameObject.parent.components) {
 			if (c.getClass().isInstance(type)) {
 				list.add((T) c);
 			}

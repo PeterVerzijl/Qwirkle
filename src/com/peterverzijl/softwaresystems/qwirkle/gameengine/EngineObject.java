@@ -82,7 +82,8 @@ public class EngineObject {
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				Throwable t = e.getTargetException();
+				t.printStackTrace();
 			}
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
