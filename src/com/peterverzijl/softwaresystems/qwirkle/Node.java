@@ -24,13 +24,21 @@ public class Node {
 	 * Are initialized to null.
 	 */
 	private Node[] mChildNodes;
-		
+	
+	/**
+	 * 
+	 */
+	public int mPosition_X; 
+	public int mPosition_Y; 
+	
 	/**
 	 * Node constructor
 	 */
 	public Node() {
 		// Initialize all nodes to zero.
 		mChildNodes = new Node[CHILD_NODES];
+		mPosition_X = GameConstants.UNSET_NODE;
+		mPosition_Y = GameConstants.UNSET_NODE;
 	}
 	
 	/**
