@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.gameengine;
+package com.peterverzijl.softwaresystems.qwirkle.tests;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,10 @@ import java.util.List;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.EngineObject;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 
 public class ObjectAndComponentTest {
 	

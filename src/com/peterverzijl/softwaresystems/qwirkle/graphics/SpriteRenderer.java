@@ -1,6 +1,5 @@
-package com.peterverzijl.softwaresystems.qwirkle.rendering;
+package com.peterverzijl.softwaresystems.qwirkle.graphics;
 
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Component;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
 import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
 

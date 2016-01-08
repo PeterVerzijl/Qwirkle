@@ -1,7 +1,6 @@
-package com.peterverzijl.softwaresystems.qwirkle.ui;
+package com.peterverzijl.softwaresystems.qwirkle.graphics;
 
 import com.peterverzijl.softwaresystems.qwirkle.Game;
-import com.peterverzijl.softwaresystems.qwirkle.rendering.Renderer;
 
 /**
  * Screen class is a bitmap screen buffer that gets drawn with canvas.

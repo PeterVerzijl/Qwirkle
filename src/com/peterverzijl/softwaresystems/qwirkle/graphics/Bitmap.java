@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.ui;
+package com.peterverzijl.softwaresystems.qwirkle.graphics;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
