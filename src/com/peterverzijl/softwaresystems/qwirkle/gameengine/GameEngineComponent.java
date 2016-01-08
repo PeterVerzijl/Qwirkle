@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 
 import com.peterverzijl.softwaresystems.qwirkle.Game;
 import com.peterverzijl.softwaresystems.qwirkle.collision.Collider;
+import com.peterverzijl.softwaresystems.qwirkle.collision.PhysicsEngine;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.RenderComponent;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Screen;
@@ -24,6 +25,7 @@ import com.peterverzijl.softwaresystems.qwirkle.graphics.Screen;
  *
  */
 public class GameEngineComponent extends Canvas implements Runnable {
+	
 	private static final long serialVersionUID = 1L;
 
 	public static final int WIDTH = 160;
@@ -127,7 +129,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	 * Updates all the colliders
 	 */
 	public void updatePhysics() {
-		PhysicsEngine.update(colliders);
+		PhysicsEngine.update();
 	}
 	
 	/**

@@ -1,21 +1,14 @@
 package com.peterverzijl.softwaresystems.qwirkle;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.peterverzijl.softwaresystems.qwirkle.Block.Color;
-import com.peterverzijl.softwaresystems.qwirkle.Block.Shape;
+import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Input;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Time;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector3;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
-import com.peterverzijl.softwaresystems.qwirkle.graphics.Renderer;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
 import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
 
@@ -96,8 +89,9 @@ public class Game {
 			Sprite sprite = BlockSpriteMap.getSprite(b);
 			GameObject guiBlock = new GameObject("GUI Block");
 			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
-			Transform t = guiBlock.addComponent(Transform.class);
 			r.setSprite(sprite);
+			Transform t = guiBlock.addComponent(Transform.class);
+			RectangleCollider c = guiBlock.addComponent(RectangleCollider.class);
 			t.setPosition(blockPadding/2 + xOffset * blockCount++, Camera.getHeight() - 8);
 			System.out.println("hand block " + t.getPosition());
 		}
