@@ -9,9 +9,11 @@ import java.awt.event.MouseMotionListener;
 
 public class Input implements MouseListener, MouseMotionListener, KeyListener {
 	
+	private static Transform mCameraTransform;
+	
 	private float mScreenScaling;
 	
-	public static Vector2 mousePosition = Vector2.ZERO;
+	private static Vector2 mMousePosition = Vector2.ZERO();
 	
 	private static HashMap<Integer, Boolean> keysDown = new HashMap<Integer, Boolean>();
 	private static HashMap<Integer, Boolean> keysUp = new HashMap<Integer, Boolean>();
@@ -35,7 +37,9 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener {
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		mousePosition = new Vector2(e.getX() / mScreenScaling, e.getY() / mScreenScaling);
+		float x = (e.getX() / mScreenScaling);
+		float y = (e.getY() / mScreenScaling);	
+		mMousePosition.set(x, y);
 	}
 	
 	@Override
@@ -65,6 +69,16 @@ public class Input implements MouseListener, MouseMotionListener, KeyListener {
 		mouseButton.put(button, false);
 	}
 	
+	
+	public static Vector2 getMousePosition() {
+		Vector2 position = new Vector2(mMousePosition);
+		if (mCameraTransform == null) {
+			mCameraTransform = GameEngineComponent.getCamera().transform;
+		} else {
+			position.subtract(mCameraTransform.getPosition());
+		}
+		return position;
+	}
 	/**
 	 * If the mouse button is currently down.
 	 * @param button The button to check.
