@@ -3,6 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -15,6 +16,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
+import com.peterverzijl.softwaresystems.qwirkle.server.Server;
 
 /**
  * The start window that is shown when starting the game.
@@ -64,7 +66,7 @@ public class MainWindow {
 		serverMenu.setMnemonic(KeyEvent.VK_S);
 		serverMenu.getAccessibleContext().setAccessibleName("Create or connect to a server.");
 		// Create server
-		JMenuItem createServerItem = new JMenuItem("Create server");
+		JMenuItem createServerItem = new JMenuItem(new CreateServerAction());
 		createServerItem.setMnemonic(KeyEvent.VK_C);
 		createServerItem.getAccessibleContext().setAccessibleDescription("Creates a server.");
 		serverMenu.add(createServerItem);
@@ -92,14 +94,12 @@ public class MainWindow {
 		
 		// Show view				
 		SwingUtilities.invokeLater(new Runnable() {
-			
 			public void run() {
 				JFrame frame = new JFrame("Qwirkle Manager");
 				frame.setJMenuBar(mMenuBar);
 				frame.setSize(300, 300);
 				frame.setVisible(true);
 			}
-			
 		});
 	}
 }
@@ -128,12 +128,17 @@ class CreateChatAction extends AbstractAction {
 	}
 }
 
+/**
+ * Creates a new game view.
+ * @author Peter Verzijl
+ * @version 1.0a
+ */
 @SuppressWarnings("serial")
 class CreateGameView extends AbstractAction {
 	public CreateGameView() {
 		super("Show game");
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (MainWindow.gameWindow == null) {
@@ -148,20 +153,58 @@ class CreateGameView extends AbstractAction {
 			// Add window close listener
 			frame.addWindowListener(new WindowAdapter() {
 			    @Override
-			    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+			    public void windowClosing(WindowEvent windowEvent) {
 			        if (JOptionPane.showConfirmDialog(new JFrame(), 
 			            "Are you sure to close this window?", "Really Closing?", 
 			            JOptionPane.YES_NO_OPTION,
 			            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 			            MainWindow.gameWindow = null;
+			            game.stop();
 			        }
 			    }
 			});
-			
 			// Set global game window
 			MainWindow.gameWindow = frame;
-	
 			game.start();	
 		}
 	}
+} 
+
+/**
+ * Creates a server view with a server object.
+ * @author Peter Verzijl
+ * @version 1.0a
+ */
+@SuppressWarnings("serial")
+class CreateServerAction extends AbstractAction {
+	
+	public CreateServerAction() {
+		super("Create server");
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		Server server = new Server();
+		(new Thread(server)).start();
+		
+		JFrame frame = new JFrame("Game Server");
+		frame.setSize(400, 200);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		// Add window close listener
+		frame.addWindowListener(new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent windowEvent) {
+		        if (JOptionPane.showConfirmDialog(new JFrame(), 
+		            "Are you sure to close this window?", "Really Closing?", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+		            server.shutdown();
+		        }
+		    }
+		});
+	}
+	
 }
