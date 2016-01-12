@@ -34,7 +34,7 @@ public class Game {
 	private Camera mMainCamera;
 
 	private int mCurrentPlayer = 0;
-	
+
 	public GameObject currentBlock;
 
 	public void start() {
@@ -61,11 +61,7 @@ public class Game {
 		// Print all mPlayers their blocks
 		for (int j = 0; j < mPlayers.size(); j++) {
 			System.out.print("Player " + j + "'s hand: ");
-			for (int i = 0; i < mPlayers.get(0).getmHand().size(); i++) {
-				Block b = mPlayers.get(j).getmHand().get(i);
-				System.out.print(b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ");
-			}
-			System.out.println();
+			System.out.println(Player.handToString(mPlayers.get(j).getmHand()));
 		}
 
 		// Load the tile map

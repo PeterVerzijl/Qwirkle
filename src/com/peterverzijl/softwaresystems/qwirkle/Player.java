@@ -64,11 +64,10 @@ public abstract class Player {
 	 *            The block to remove
 	 */
 	public void removeBlock(Block block) {
-		if(mHand.contains(block)){
-		mHand.remove(block);
-		}
-		else{
-			// TODO(Peter): else throw an error?	
+		if (mHand.contains(block)) {
+			mHand.remove(block);
+		} else {
+			// TODO(Peter): else throw an error?
 		}
 	}
 
@@ -136,5 +135,14 @@ public abstract class Player {
 			}
 		}
 		System.out.println("De zet is gezet");
+	}
+
+	public static String handToString(List<Block> aHand) {
+		String hand = "";
+		for (int i = 0; i < aHand.size(); i++) {
+			Block b = aHand.get(i);
+			hand += b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ";
+		}
+		return hand;
 	}
 }
