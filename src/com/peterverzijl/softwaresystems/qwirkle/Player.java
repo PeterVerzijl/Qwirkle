@@ -64,8 +64,12 @@ public abstract class Player {
 	 *            The block to remove
 	 */
 	public void removeBlock(Block block) {
-		// TODO(Peter): See if the block exists, else throw an error?
+		if(mHand.contains(block)){
 		mHand.remove(block);
+		}
+		else{
+			// TODO(Peter): else throw an error?	
+		}
 	}
 
 	/**
@@ -112,7 +116,7 @@ public abstract class Player {
 		return mHand;
 	}
 
-	public abstract List<Block> determineMove();
+	public abstract List<Block> determineMove(List<Block> aFrontier);
 
 	public boolean checkHand(List<Block> set) {
 		boolean inHand = true;
@@ -124,16 +128,11 @@ public abstract class Player {
 		return inHand;
 	}
 
-	public void setMove() {
-		List<Block> set = determineMove();
-	//	while(set == null){
-		//	System.out.println("Ik ben null");
-			//set = determineMove();
-		//	System.out.println("Nog steeds1");
-//		}
+	public void setMove(List<Block> aFrontier) {
+		List<Block> set = determineMove(aFrontier);
 		if (!checkHand(set)) {
 			for (int i = 0; i < set.size(); i++) {
-			//	set.get(i).finalizeMove();
+				// set.get(i).finalizeMove();
 			}
 		}
 		System.out.println("De zet is gezet");

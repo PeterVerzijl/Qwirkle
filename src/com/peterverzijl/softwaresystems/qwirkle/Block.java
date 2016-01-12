@@ -6,7 +6,6 @@ package com.peterverzijl.softwaresystems.qwirkle;
  *
  */
 public class Block extends Node {
-	
 	/**
 	 * The shape that is on the block.
 	 */

@@ -144,11 +144,11 @@ public class Node {
 	}
 	
 	public void setPosition(int aX, int aY){
-		mPosition.set(aX, aX);
+		mPosition.set(aX, aY);
 	}
 	
 	public void setTempPosition(int aX, int aY){
-		mTempPosition.set(aX, aX);
+		mTempPosition.set(aX, aY);
 	}
 	
 	public void finalizeMove(){
