@@ -19,7 +19,6 @@ public class HumanPlayer extends Player {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Index of Direction.NORTH: " + Direction.valueOf(Direction.NORTH.toString()));
 		
 		/**
 		 * DEZE INCLUDEN IN EEN TESTCLASSE
@@ -32,7 +31,7 @@ public class HumanPlayer extends Player {
 		
 		Player player = new HumanPlayer(1);
 		player.initHand(new BlockBag(), 6);
-		System.out.println("Start tekst");
+		//System.out.println("Start zet");
 		List<Block> frontierTest = new ArrayList<Block>();
 		frontierTest.add(new Block(null, null));
 		frontierTest.get(0).setPosition(0, 0);
@@ -60,9 +59,11 @@ public class HumanPlayer extends Player {
 		while (!success) {
 			try {
 				System.out.println(Player.handToString(possibleMoves));
+				System.out.println("Amount of free spaces: " + possiblePositions.size());
+				printNodeList(possiblePositions);
 				if (possiblePositions.size() > 0) {
 					for (int i = 0; i < possiblePositions.size(); i++) {
-						System.out.println("Move: " + i + " Position" + possiblePositions.get(i).getPosition());
+						//System.out.println("Move: " + i + " Position" + possiblePositions.get(i).getPosition());
 					}
 				}
 				hand = scanner.nextInt();
@@ -71,32 +72,29 @@ public class HumanPlayer extends Player {
 
 				if (hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
 					if (move < possiblePositions.size()) {
-						System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c op positie %s ", hand, move,
-								Player.handToString(possibleMoves));
+						System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c op positie %s \n", hand, move,
+								possibleMoves.get(hand).getColor().toString().charAt(0),BlockPrinter.getChar(possibleMoves.get(hand)),possiblePositions.get(move).getPosition());
 						
 						set.add(possibleMoves.get(hand));
 						Node currentNode = possiblePositions.get(move);
-						Node[] neighbors = currentNode.getChildNodes();
+						Node[] neighbors = currentNode.getNeighborNodes();
+						possiblePositions.remove(move);
+						possibleMoves.remove(hand);
 						for (int i = 0; i < neighbors.length; i++) {
+							System.out.println(Direction.values()[i]);
 							if (neighbors[i] == null) {
 								Block newEmpty = findDuplicateNode(possiblePositions, currentNode.getPosition(),
 										Direction.values()[i]);
+				//				System.out.println(newEmpty==null);
 								if (newEmpty == null) {
 									possiblePositions.add(createEmptyNode(Direction.values()[i], currentNode));
 								} else {
-									newEmpty.setChildNode(currentNode,
+									newEmpty.setNeighborNode(currentNode,
 											getDirection(currentNode.getPosition(), newEmpty.getPosition()));
 								}
 							}
 						}
-						possiblePositions.remove(move);
-						possibleMoves.remove(hand);
 
-						// TODO DENNIS DIT OMZETTEN NAAR EEN TOSTRINGFUNCTIE
-						for (Block b : possibleMoves) {
-							System.out
-									.println(b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ");
-						}
 					}
 				}
 			} catch (java.util.InputMismatchException e) {
@@ -129,7 +127,11 @@ public class HumanPlayer extends Player {
 		empty.setPosition(aDirection.getX() + (int) (aBlock.getPosition().getX()),
 				aDirection.getY() + (int) (aBlock.getPosition().getY()));
 		empty.setParent(aBlock);
-		empty.setChildNode(aBlock, Direction.getIndex(aDirection));
+		empty.setNeighborNode(aBlock, getDirection(aBlock.getPosition(),empty.getPosition()));
+		//TODO: DEZE iets netter omzetten
+		aBlock.setNeighborNode(empty, getDirection(empty.getPosition(), aBlock.getPosition()));
+		Direction d = Direction.values()[getDirection(empty.getPosition(), aBlock.getPosition())];
+		System.out.println("aBlock: " + d.toString()+ " empty: " + aDirection.toString());
 		return empty;
 	}
 
@@ -137,23 +139,35 @@ public class HumanPlayer extends Player {
 		Block duplicate = null;
 		Vector2 newNodePosition = new Vector2(aPosition.getX() + aDirection.getX(),
 				aPosition.getY() + aDirection.getY());
+		System.out.println("");
+	//	System.out.println("newNodePosition: "+newNodePosition);
 		for (Block p : aNodeList) {
-			if (p.getPosition() == newNodePosition) {
+			if (p.getPosition().getX() == newNodePosition.getX() && p.getPosition().getY() == newNodePosition.getY()) {
+				System.out.println("Deze zet bestond al");
 				duplicate = p;
 			}
 		}
 		return duplicate;
 	}
 
+	public static void printNodeList(List<Block> aNodeList){
+		System.out.println("Frontierlist:");
+		for (Block p : aNodeList) {
+			System.out.println(p.getPosition());
+		}
+	}
 	// TODO DENNIS add substraction to Vector
 	// @ensure possiblePositions.contains(aNode) &&
 	// anotherNode==findDuplicateNode()
 	// @ ensure xDiff==1 || xDiff==-1
 	public static int getDirection(Vector2 aNode, Vector2 anotherNode) {
 		int direction = -1;
-		int xDiff = (int) (anotherNode.getX() - aNode.getX());
-		int yDiff = (int) (anotherNode.getY() - aNode.getY());
+		int xDiff = (int) (aNode.getX() - anotherNode.getX());
+		int yDiff = (int) (aNode.getY() - anotherNode.getY());
 
+		System.out.println("XDiff: " + xDiff);
+		System.out.println("YDiff: " + yDiff);
+		
 		if (xDiff == 1) {
 			direction = 1;
 		}

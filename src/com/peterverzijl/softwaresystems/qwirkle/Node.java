@@ -3,7 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 
 /**
- * A node with child nodes that could be placed in the 
+ * A node with neighbor nodes that could be placed in the 
  * north, east, south and west positions.
  * @author Peter Verzijl
  * @version 1.0a
@@ -11,9 +11,9 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 public class Node {
 	
 	/**
-	 * The amount of child nodes, for Qwirkle this is always 4.
+	 * The amount of neighbor nodes, for Qwirkle this is always 4.
 	 */
-	public static final int CHILD_NODES = 4;
+	public static final int NEIGHBOR_NODES = 4;
 	
 	/**
 	 * The parent node.
@@ -21,11 +21,11 @@ public class Node {
 	private Node mParent;
 	
 	/**
-	 * The child nodes for this node.
+	 * The neighbor nodes for this node.
 	 * These exits in the four wind directions.
 	 * Are initialized to null.
 	 */
-	private Node[] mChildNodes;
+	private Node[] mNeighborNodes;
 	
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class Node {
 	 */
 	public Node() {
 		// Initialize all nodes to zero.
-		mChildNodes = new Node[CHILD_NODES];
+		mNeighborNodes = new Node[NEIGHBOR_NODES];
 		mPosition = new Vector2(GameConstants.UNSET_NODE,GameConstants.UNSET_NODE);
 	}
 	
@@ -57,62 +57,62 @@ public class Node {
 	/**
 	 * Sets the node of a given location index.
 	 * 0 north, 1 east, 2 south, 3 west
-	 * @param n The node to set as a child.
+	 * @param n The node to set as a neighbor.
 	 * @param i The index of the location to do so.
 	 */
-	public void setChildNode(Node n, int i) {
-		mChildNodes[i] = n;
+	public void setNeighborNode(Node n, int i) {
+		mNeighborNodes[i] = n;
 	}
 	
 	/**
 	 * Sets the node of a given cardinal direction.
-	 * @param n The node to set as a child.
+	 * @param n The node to set as a neighbor.
 	 * @param d The cardinal direction do so.
 	 */
-	public void setChildNode(Node n, Direction d) {
+	public void setNeighborNode(Node n, Direction d) {
 		switch (d) {
 			case NORTH: 
-				setChildNode(n, 0);
+				setNeighborNode(n, 0);
 			case EAST: 
-				setChildNode(n, 1);
+				setNeighborNode(n, 1);
 			case SOUTH: 
-				setChildNode(n, 2);
+				setNeighborNode(n, 2);
 			case WEST: 
-				setChildNode(n, 3);
+				setNeighborNode(n, 3);
 			default:
 				return;
 		}
 	}
 	
 	/**
-	 * Returns a child node by index. The indexes are defined as:
+	 * Returns a neighbor node by index. The indexes are defined as:
 	 * 0 north, 1 east, 2 south, 3 west
-	 * Child can be null.
+	 * Neighbor can be null.
 	 * @param i The index of the node.
 	 * @return The node at the given index.
 	 */
-	public Node getChildNode(int i) {
-		if (i > mChildNodes.length) {
+	public Node getNeighborNode(int i) {
+		if (i > mNeighborNodes.length) {
 			return null;
 		}
-		return mChildNodes[i];
+		return mNeighborNodes[i];
 	}
 	
 	/**
 	 * Returns a node by cardinal direction.
-	 * @param d The direction of the child node.
-	 * @return The child node at the given direction if it exists.
+	 * @param d The direction of the neighbor node.
+	 * @return The neighbor node at the given direction if it exists.
 	 */
-	public Node getChildNode(Direction d) {
+	public Node getNeighborNode(Direction d) {
 		switch (d) {
 			case NORTH: 
-				return getChildNode(0);
+				return getNeighborNode(0);
 			case EAST: 
-				return getChildNode(1);
+				return getNeighborNode(1);
 			case SOUTH: 
-				return getChildNode(2);
+				return getNeighborNode(2);
 			case WEST: 
-				return getChildNode(3);
+				return getNeighborNode(3);
 			default:
 				return null;
 		}
@@ -135,12 +135,12 @@ public class Node {
 	}
 	
 	/**
-	 * Returns an array of four child nodes. 
-	 * Beware that child nodes can be null.
-	 * @return An array of all child nodes. Can be null.
+	 * Returns an array of four neighbor nodes. 
+	 * Beware that neighbor nodes can be null.
+	 * @return An array of all neighbor nodes. Can be null.
 	 */
-	public Node[] getChildNodes() {
-		return mChildNodes;
+	public Node[] getNeighborNodes() {
+		return mNeighborNodes;
 	}
 	
 	public void setPosition(int aX, int aY){
