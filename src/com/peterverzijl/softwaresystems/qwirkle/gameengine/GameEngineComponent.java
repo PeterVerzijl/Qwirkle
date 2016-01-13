@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import com.peterverzijl.softwaresystems.qwirkle.Game;
+import com.peterverzijl.softwaresystems.qwirkle.collision.Collider;
 //import com.peterverzijl.softwaresystems.qwirkle.collision.Collider;
 //import com.peterverzijl.softwaresystems.qwirkle.collision.PhysicsEngine;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
@@ -50,7 +51,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	 */
 	public static List<EngineObject> objects = new ArrayList<EngineObject>();
 	public static List<RenderComponent> renderers = new ArrayList<RenderComponent>();
-	//public static List<Collider> colliders = new ArrayList<Collider>();
+	public static List<Collider> colliders = new ArrayList<Collider>();
 
 	public GameEngineComponent() {
 		Dimension size = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);
