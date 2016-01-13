@@ -30,6 +30,7 @@ public abstract class Player {
 	 */
 	public Player(int mId) {
 		// Initialize player
+		this.mID = mId;
 		mHand.clear();
 	}
 
@@ -129,12 +130,18 @@ public abstract class Player {
 
 	public void setMove(List<Block> aFrontier) {
 		List<Block> set = determineMove(aFrontier);
-	
-		if (!checkHand(set)) {
+
+		if (checkHand(set)) {
 			for (int i = 0; i < set.size(); i++) {
-				Game.setBlocks.add(set.get(i));
-				System.out.println(Game.setBlocks.get(i).getPosition());
-				// set.get(i).finalizeMove();
+				if (set.get(set.size() - 1) != null) {
+					Game.setBlocks.add(set.get(i));
+
+					System.out.println(Game.setBlocks.get(i).getPosition());
+					// addStone(set.size());
+				} else {
+					System.out.println("Now trading");
+				}
+				mHand.remove(set.get(i));
 			}
 		}
 		Game.boardToString(Game.setBlocks);

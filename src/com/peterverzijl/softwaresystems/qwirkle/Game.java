@@ -26,7 +26,7 @@ public class Game {
 	private BlockBag mBag;
 
 	private List<HumanPlayer> mPlayers = new ArrayList<HumanPlayer>();
-	private List<Block> mFrontier;
+	public static List<Block> mFrontier = new ArrayList<Block>();
 	public static List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
@@ -48,7 +48,8 @@ public class Game {
 		System.out.println("The game has started, aw yeah!");
 		System.out.println("Shuffeling mBag of blocks...");
 
-		mFrontier = new ArrayList<Block>();
+		// Make first move
+		// mFrontier = new ArrayList<Block>();
 		mFrontier.add(new Block(null, null));
 		mFrontier.get(0).setPosition(0, 0);
 
@@ -112,6 +113,23 @@ public class Game {
 
 	Transform cameraTransform;
 
+	public void renderBlocks() {
+		for (Block b : Game.setBlocks) {
+			Sprite sprite = BlockSpriteMap.getSprite(b);
+			GameObject guiBlock = new GameObject("GUI Block");
+			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
+			r.setSprite(sprite);
+			Transform t = guiBlock.addComponent(Transform.class);
+			// RectangleCollider c =
+			// guiBlock.addComponent(RectangleCollider.class);
+			float blockPadding = 75;
+			float xOffset = (Camera.getWidth() - blockPadding) / Game.setBlocks.size();
+			int blockCount = 0;
+			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
+			System.out.println("hand block " + t.getPosition());
+		}
+	}
+
 	public List<Block> getFrontier() {
 		return mFrontier;
 	}
@@ -131,6 +149,16 @@ public class Game {
 	 */
 	public void tick() {
 		mPlayers.get(mCurrentPlayer).determineMove(mFrontier);
+		mCurrentPlayer = (mCurrentPlayer + 1) % mPlayers.size();
+		renderBlocks();
+	}
+
+	public List<Block> addStone(int aAmount){
+		List<Block> newBlocks = new ArrayList<Block>();
+		for(int i = 0; i < aAmount;i++ ){
+			newBlocks.add(mBag.drawBlock());
+		}
+		return newBlocks;
 	}
 
 	// voor in het verslag Time Complexity: Since every node is visited at most
@@ -142,16 +170,6 @@ public class Game {
 		int y = 10;// borders[3] - borders[2];
 		String boardToString[][] = new String[x][y];
 
-		/**
-		 * 1) Take "cur" pointer, which will point to head of the fist level of
-		 * the list 2) Take "tail" pointer, which will point to end of the first
-		 * level of the list 3) Repeat the below procedure while "curr" is not
-		 * NULL. I) if current node has a child then a) append this new child
-		 * list to the "tail" tail->next = cur->child b) find the last node of
-		 * new child list and update "tail" tmp = cur->child; while (tmp->next
-		 * != NULL) tmp = tmp->next; tail = tmp; II) move to the next node. i.e.
-		 * cur = cur->next
-		 */
 		// Block currentBlock = aBlock;
 
 		/*
@@ -165,11 +183,15 @@ public class Game {
 		for (int i = 0; i < aBlockList.size(); i++) {
 			System.out.println(++t);
 			boardToString[(int) aBlockList.get(i).getPosition().getX() + 5][(int) aBlockList.get(i).getPosition().getY()
-					+ 5] = aBlockList.get(i).getShape().toString();
+					+ 5] = aBlockList.get(i).getColor().toString().charAt(0) + ""
+							+ BlockPrinter.getChar(aBlockList.get(i));
 		}
-		System.out.println("Hallo");
+
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < x; j++) {
+				if (boardToString[i][j] == null) {
+					boardToString[i][j] = "  ";
+				}
 				System.out.print(boardToString[i][j] + " ");
 			}
 			System.out.println("");
