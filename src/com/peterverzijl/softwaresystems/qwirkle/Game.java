@@ -35,7 +35,11 @@ public class Game {
 
 	private int mCurrentPlayer = 0;
 
+	private Node mStartNode;
+
 	public GameObject currentBlock;
+
+	public static int[] borders = { 0, 0, 0, 0 };
 
 	public void start() {
 
@@ -127,5 +131,27 @@ public class Game {
 	 */
 	public void tick() {
 		mPlayers.get(mCurrentPlayer).determineMove(mFrontier);
+	}
+
+	// @ensure (aBlock instanceof Block) ==true.
+	public static void boardToString(Block aBlock) {
+		int x = 10;//borders[1] - borders[0];
+		int y = 10;//borders[3] - borders[2];
+		String boardToString[][]= new String[x][y];
+		
+		Block currentBlock=aBlock;
+		int t=0;
+		while(aBlock.getParent()!=null){
+			System.out.println(++t);
+			boardToString[(int)aBlock.getPosition().getX()][(int)aBlock.getPosition().getY()]= aBlock.getShape().toString();
+			currentBlock=(Block) currentBlock.getParent();
+		}
+		for (int i = 0; i < x; i++) {
+			for (int j = 0; j < x; j++) {
+				System.out.print(boardToString[i][j]+" ");
+			}
+			System.out.println("");
+		}
+
 	}
 }

@@ -71,4 +71,9 @@ public class Block extends Node {
 		}
 		return result;
 	}
+	
+	public void setBlock(Block.Shape shape, Block.Color color){
+		mShape = shape;
+		mColor = color;
+	}
 }

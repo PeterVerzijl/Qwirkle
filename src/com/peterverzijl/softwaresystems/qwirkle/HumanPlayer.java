@@ -61,6 +61,7 @@ public class HumanPlayer extends Player {
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
 				printNodeList(possiblePositions);
+				
 				if (possiblePositions.size() > 0) {
 					for (int i = 0; i < possiblePositions.size(); i++) {
 						//System.out.println("Move: " + i + " Position" + possiblePositions.get(i).getPosition());
@@ -78,10 +79,12 @@ public class HumanPlayer extends Player {
 						set.add(possibleMoves.get(hand));
 						Node currentNode = possiblePositions.get(move);
 						Node[] neighbors = currentNode.getNeighborNodes();
+						((Block) currentNode).setBlock(set.get(set.size()-1).getShape(),set.get(set.size()-1).getColor());
+						
 						possiblePositions.remove(move);
 						possibleMoves.remove(hand);
 						for (int i = 0; i < neighbors.length; i++) {
-							System.out.println(Direction.values()[i]);
+						//	System.out.println(Direction.values()[i]);
 							if (neighbors[i] == null) {
 								Block newEmpty = findDuplicateNode(possiblePositions, currentNode.getPosition(),
 										Direction.values()[i]);
@@ -94,9 +97,10 @@ public class HumanPlayer extends Player {
 								}
 							}
 						}
-
 					}
 				}
+				System.out.println("De boardrepresentatie");
+				Game.boardToString(set.get(set.size()-1));
 			} catch (java.util.InputMismatchException e) {
 				String input = scanner.next();
 				if (input.toLowerCase().equals("end")) {
@@ -131,7 +135,7 @@ public class HumanPlayer extends Player {
 		//TODO: DEZE iets netter omzetten
 		aBlock.setNeighborNode(empty, getDirection(empty.getPosition(), aBlock.getPosition()));
 		Direction d = Direction.values()[getDirection(empty.getPosition(), aBlock.getPosition())];
-		System.out.println("aBlock: " + d.toString()+ " empty: " + aDirection.toString());
+		//System.out.println("aBlock: " + d.toString()+ " empty: " + aDirection.toString());
 		return empty;
 	}
 
@@ -139,11 +143,11 @@ public class HumanPlayer extends Player {
 		Block duplicate = null;
 		Vector2 newNodePosition = new Vector2(aPosition.getX() + aDirection.getX(),
 				aPosition.getY() + aDirection.getY());
-		System.out.println("");
+	//	System.out.println("");
 	//	System.out.println("newNodePosition: "+newNodePosition);
 		for (Block p : aNodeList) {
 			if (p.getPosition().getX() == newNodePosition.getX() && p.getPosition().getY() == newNodePosition.getY()) {
-				System.out.println("Deze zet bestond al");
+		//		System.out.println("Deze zet bestond al");
 				duplicate = p;
 			}
 		}
@@ -165,9 +169,6 @@ public class HumanPlayer extends Player {
 		int xDiff = (int) (aNode.getX() - anotherNode.getX());
 		int yDiff = (int) (aNode.getY() - anotherNode.getY());
 
-		System.out.println("XDiff: " + xDiff);
-		System.out.println("YDiff: " + yDiff);
-		
 		if (xDiff == 1) {
 			direction = 1;
 		}
