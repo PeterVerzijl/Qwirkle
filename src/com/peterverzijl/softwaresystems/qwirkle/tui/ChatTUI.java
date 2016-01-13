@@ -12,12 +12,10 @@ public class ChatTUI implements ChatView {
 	
 	private boolean mRunning = false;
 	private Client mClient;
-	private Thread mChatThread;
 	
-	public ChatTUI(String username, InetAddress serverAddress, int serverPort) throws IOException {
-		mClient = new Client(username, serverAddress, serverPort, this);
-		mChatThread = new Thread(mClient);
-		mChatThread.start();
+	public ChatTUI(Client client) throws IOException {
+		mClient = client;
+		mClient.setViewer(this);
 	}
 	
 	/**
@@ -39,17 +37,20 @@ public class ChatTUI implements ChatView {
         			System.out.println("Exiting the chat application.");
         			close();
         		} else {
-        			mClient.sendMessage(input);
+        			mClient.sendChatMessage(input);
         		}
     		}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
+			// TODO (Peter) : Chat TUI should recieve a client as parameter
+			/*
 			mChatThread.interrupt();
 			try {
 				mChatThread.join();
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
+			*/
 			close();
 		}
 	}

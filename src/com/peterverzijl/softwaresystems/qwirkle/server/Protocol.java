@@ -16,6 +16,7 @@ public class Protocol {
 		
 		/**
 		 * Opening statement to connect with the server
+		 * [syntax] <features> : <feature>*<feature>*...
 		 * [syntax] HALLO_<playerName>_<features>\n\n
 		 * features: chat, challenge, security, leader board
 		 */

@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import com.peterverzijl.softwaresystems.qwirkle.server.Client;
+
 public class MainTUI {
 	
 	static class ServerSettings {
@@ -14,8 +16,13 @@ public class MainTUI {
 	}
 	
 	private static boolean mRunning = false;	
+	
+	// private static Thread mServerThread;
 	private static ServerTUI mServerTUI;
 	private static ServerSettings server;
+	
+	private static Client mClient;
+	private static Thread mClientThread;
 	
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Qwirkle TUI!");
@@ -127,6 +134,25 @@ public class MainTUI {
 	 */
 	private static void connectServer(String input) {
 		server = getSettings(input);
+		// TODO (peter) : Make this less ugly
+		createClient();
+	}
+	
+	/**
+	 * Tries to create a client;
+	 * TODO (peter) : Make this less ugly.
+	 */
+	private static void createClient() {
+		if (mClient != null) {
+			return;
+		}
+		try {
+			mClient = new Client("Peter", server.address, server.port, null);
+			mClientThread = new Thread(mClient);
+			mClientThread.start();
+		} catch (IOException e) {
+			System.out.println("Failed to create a client. Due to: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -138,6 +164,7 @@ public class MainTUI {
 		server = getSettings(input);
 		try {
 			mServerTUI = new ServerTUI(server.address, server.port);
+			createClient();
 		} catch (IOException e) {
 			System.out.println("Oeps, it seems you did something wrong. " + e.getMessage());
 		}		
@@ -147,17 +174,15 @@ public class MainTUI {
 	 * Opens the chat TUI
 	 */
 	private static void openChat() {
-		String username = "Peter";
-		
 		// Are we even connected to a server?
-		if (server == null) {
+		if (server == null || mClient == null) {
 			System.out.println("Hey idiot, nobody is going to talk to someone who forgets to connect to a server!");
 			return;
 		}
 		
 		try {
 			System.out.println("Opening chat client...");
-			ChatTUI chat = new ChatTUI(username, server.address, server.port);
+			ChatTUI chat = new ChatTUI(mClient);
 			chat.run();
 		} catch(IOException e1) {
 			System.out.println("Error: could not connect to server at address " + 

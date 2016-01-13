@@ -3,6 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle.server;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -51,13 +52,90 @@ public class Server implements Runnable {
 	}
 	
 	/**
+	 * Processes all incoming messages.
+	 * @param message The message to process.
+	 * @param client The client handler that send the message.
+	 */
+	void sendMessage(String message, ClientHandler client) {
+		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
+		String command = parameters[0];
+		// Remove command from parameters
+		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
+		
+		switch(command) {
+			case Protocol.Client.ACCEPTINVITE:
+				// TODO (peter) : Implement challenging
+				break;
+			case Protocol.Client.CHANGESTONE:
+				
+				break;
+			case Protocol.Client.CHAT:
+				broadcast(Protocol.Server.CHAT + 
+						Protocol.Server.Settings.DELIMITER + 
+						client.getName() + ": " + parameters[0]);	// The first parameter is the text.
+				break;
+			case Protocol.Client.DECLINEINVITE:
+				// TODO (peter) : Implement challenging
+				break;
+			case Protocol.Client.ERROR:
+				// TODO (everyone) : No messages from the client supported in the protocol yet.
+				break;
+			case Protocol.Client.GETLEADERBOARD:
+				// TODO (peter) : Implement leader board
+				break;
+			case Protocol.Client.GETSTONESINBAG:
+				
+				break;
+			case Protocol.Client.HALLO:
+				String name = parameters[0];
+				if (!isNameUsed(name)) {
+					client.setName(name);
+					client.setFeatures(Arrays.copyOfRange(parameters, 1, parameters.length));
+				} else {
+					client.sendMessage(Protocol.Server.ERROR + 
+										Protocol.Server.Settings.DELIMITER + 4);
+				}
+				break;
+			case Protocol.Client.INVITE:
+				// TODO (everyone) : No messages from the client supported in the protocol yet.
+				break;
+			case Protocol.Client.MAKEMOVE:
+				
+				break;
+			case Protocol.Client.QUIT:
+				
+				break;
+			case Protocol.Client.REQUESTGAME:
+				
+				break;
+			default:
+				client.sendMessage(Protocol.Server.ERROR + Protocol.Server.Settings.DELIMITER + -1);
+				break;
+		}
+	}
+	
+	/**
+	 * Loops the client handlers to see if this name is used yet.
+	 * @param name The name to check.
+	 */
+	private boolean isNameUsed(String name) {
+		boolean result = false;
+		for (ClientHandler client : mClients) {
+			if (client.getName().equals(name)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Broadcast a message to all the clients.
 	 * @param message The message to broadcast.
 	 */
-	public void broadcast(String message) {
+	private void broadcast(String message) {
 		if (message != null) {
 			for (ClientHandler client : mClients) {
-				client.sendMessage(client.name + ": " + message);
+				client.sendMessage(message);
 			}
 		}
 	}
@@ -69,7 +147,7 @@ public class Server implements Runnable {
 	public void addHandler(ClientHandler client) {
 		if (client != null && !mClients.contains(client)) {
 			mClients.add(client);
-			mViewer.sendMessage("Client " + client.name + " connected.");
+			mViewer.sendMessage("Client " + client.getName() + " connected.");
 		}
 	}
 	
@@ -80,7 +158,7 @@ public class Server implements Runnable {
 	public void removeHanlder(ClientHandler client) {
 		if (client != null && mClients.contains(client)) {
 			mClients.remove(client);
-			mViewer.sendMessage("Client " + client.name + " disconnected.");
+			mViewer.sendMessage("Client " + client.getName() + " disconnected.");
 		}
 	}
 

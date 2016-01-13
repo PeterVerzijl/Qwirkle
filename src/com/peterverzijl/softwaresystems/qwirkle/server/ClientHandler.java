@@ -14,8 +14,9 @@ import java.net.Socket;
  */
 public class ClientHandler implements Runnable {
 
-	public String name;
-	
+	private String mUsername;
+	private String[] mFeatures;
+
 	private Server mServer;
 	private Socket mSocket;
 	private BufferedWriter out;
@@ -46,12 +47,6 @@ public class ClientHandler implements Runnable {
 			System.out.println("Error: could not create buffered writer from socket. Due to: " + e.getMessage());
 		}
 		
-		try {
-			name = in.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		mRunning  = true;
 		while (mRunning) {
 			processMessages();
@@ -63,7 +58,7 @@ public class ClientHandler implements Runnable {
 	 */
 	private void processMessages() {
 		try {
-			mServer.broadcast(in.readLine());
+			mServer.sendMessage(in.readLine(), this);
 		} catch (IOException e) {
 			System.out.println("Error: could not read message. Assuming client disconnected.");
 			shutdown();
@@ -100,4 +95,52 @@ public class ClientHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Sets the name of the client if that name is null.
+	 * @param name The name to set the client user name to.
+	 */
+	public void setName(String name) {
+		if (mUsername == null && name != null) {
+			mUsername = name;
+		}		
+	}
+	
+	/**
+	 * Returns the user name of the client.
+	 * @return Returns the username.
+	 */
+	public String getName() {
+		return mUsername;
+	}
+	
+	/**
+	 * Returns the supported features by the client.
+	 * @return A list of supported features.
+	 */
+	public String[] getFeatures() {
+		return mFeatures;
+	}
+	
+	/**
+	 * Sets the features of this client.
+	 * @param features
+	 */
+	public void setFeatures(String[] features) {
+		this.mFeatures = features;
+	}
+	
+	/**
+	 * Checks if the client supports a certain feature.
+	 * @param feature The feature to check for compatibility.
+	 * @return Weighter the feature is supported by this client.
+	 */
+	public boolean supportsFeature(String feature) {
+		boolean result = false;
+		for (String s : mFeatures) {
+			if (s.equals(feature)) {
+				result = true;
+			}
+		}
+		return result;
+	}
 }

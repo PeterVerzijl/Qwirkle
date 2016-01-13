@@ -151,7 +151,7 @@ public class ChatWindow extends JFrame implements ChatView {
 					mMessageField.setText("");
 				} else {
 					// Add message to client
-					mClient.sendMessage(message);
+					mClient.sendChatMessage(message);
 					mMessageField.setText("");
 				}
 				mMessageField.requestFocusInWindow();

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
 import com.peterverzijl.softwaresystems.qwirkle.gui.ChatWindow;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
@@ -56,9 +57,6 @@ public class Client extends Thread {
 			e.printStackTrace();
 		}
 		
-		// Send name
-		sendMessage(clientName);
-		
 		mRunning = true;
 		recieveMessage();
 	}
@@ -72,12 +70,12 @@ public class Client extends Thread {
 			message = in.readLine();
 			while(message != null && mRunning) {
 				if (message != null) {
-					mViewer.addMessage(message);
+					handleMessage(message);
 					message = in.readLine();
 				}
 			}
 		} catch (IOException e) {
-			// Close socket
+			// Safe to close the socket.
 		} finally {
 			try {
 				in.close();
@@ -87,16 +85,79 @@ public class Client extends Thread {
 		}
 	}
 	
+	/**
+	 * Handles the messages
+	 * @param message
+	 */
+	private void handleMessage(String message) {
+		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
+		String command = parameters[0];
+		// Remove command from parameters
+		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
+		switch(command) {
+			case Protocol.Server.ADDTOHAND:
+				
+				break;
+			case Protocol.Server.CHAT:
+				if(mViewer != null) {
+					// Remove the header thing
+					mViewer.addMessage(parameters[0]);
+				}
+				break;
+			case Protocol.Server.DECLINEINVITE:
+				
+				break;
+			case Protocol.Server.ERROR:
+				
+				break;
+			case Protocol.Server.GAME_END:
+				
+				break;
+			case Protocol.Server.HALLO:
+				
+				break;
+			case Protocol.Server.INVITE:
+				
+				break;
+			case Protocol.Server.LEADERBOARD:
+				
+				break;
+			case Protocol.Server.MOVE:
+				
+				break;
+			case Protocol.Server.OKWAITFOR:
+				
+				break;
+			case Protocol.Server.STARTGAME:
+				
+				break;
+			case Protocol.Server.STONESINBAG:
+				
+				break;
+		}
+	}
+	
 	/** 
 	 * send a message to a ClientHandler.
+	 * @param msg The message to send to the client handler.
 	 */
-	public void sendMessage(String msg) {
+	private void sendMessage(String msg) {
 		try {
 			out.write(msg + System.lineSeparator());
 			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Sends a chat message to the server.
+	 * @param message The chat message.
+	 */
+	public void sendChatMessage(String message) {
+		sendMessage(Protocol.Client.CHAT + 
+					Protocol.Server.Settings.DELIMITER + 
+					message);
 	}
 	
 	/** 
@@ -111,7 +172,7 @@ public class Client extends Thread {
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			mViewer.addMessage("Left chat.");
+			if(mViewer != null) mViewer.addMessage("Left chat.");
 		}
 	}
 	
@@ -120,5 +181,19 @@ public class Client extends Thread {
 	 */
 	public String getClientName() {
 		return clientName;
+	}
+
+	public void setViewer(ChatView view) {
+		mViewer = view;
+	}
+	
+	/**
+	 * Send to the server that we are ready to connect.
+	 * @param name The client name.
+	 */
+	public void sendHallo(String name) {
+		sendMessage(Protocol.Client.HALLO + 
+					Protocol.Server.Settings.DELIMITER + 
+					name);
 	}
 }
