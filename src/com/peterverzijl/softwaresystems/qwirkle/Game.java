@@ -27,7 +27,7 @@ public class Game {
 
 	private List<HumanPlayer> mPlayers = new ArrayList<HumanPlayer>();
 	private List<Block> mFrontier;
-
+	public static List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
 
@@ -133,25 +133,46 @@ public class Game {
 		mPlayers.get(mCurrentPlayer).determineMove(mFrontier);
 	}
 
+	// voor in het verslag Time Complexity: Since every node is visited at most
+	// twice, the time complexity is O(n) where n is the number of nodes in
+	// given linked list.
 	// @ensure (aBlock instanceof Block) ==true.
-	public static void boardToString(Block aBlock) {
-		int x = 10;//borders[1] - borders[0];
-		int y = 10;//borders[3] - borders[2];
-		String boardToString[][]= new String[x][y];
-		
-		Block currentBlock=aBlock;
-		int t=0;
-		while(aBlock.getParent()!=null){
+	public static void boardToString(List<Block> aBlockList) {
+		int x = 10;// borders[1] - borders[0];
+		int y = 10;// borders[3] - borders[2];
+		String boardToString[][] = new String[x][y];
+
+		/**
+		 * 1) Take "cur" pointer, which will point to head of the fist level of
+		 * the list 2) Take "tail" pointer, which will point to end of the first
+		 * level of the list 3) Repeat the below procedure while "curr" is not
+		 * NULL. I) if current node has a child then a) append this new child
+		 * list to the "tail" tail->next = cur->child b) find the last node of
+		 * new child list and update "tail" tmp = cur->child; while (tmp->next
+		 * != NULL) tmp = tmp->next; tail = tmp; II) move to the next node. i.e.
+		 * cur = cur->next
+		 */
+		// Block currentBlock = aBlock;
+
+		/*
+		 * int t = 0; do { System.out.println(++t); boardToString[(int)
+		 * aBlock.getPosition().getX()][(int) aBlock.getPosition().getY()] =
+		 * aBlock.getShape() .toString(); currentBlock = (Block)
+		 * currentBlock.getParent(); } while (currentBlock != null);
+		 */
+
+		int t = 0;
+		for (int i = 0; i < aBlockList.size(); i++) {
 			System.out.println(++t);
-			boardToString[(int)aBlock.getPosition().getX()][(int)aBlock.getPosition().getY()]= aBlock.getShape().toString();
-			currentBlock=(Block) currentBlock.getParent();
+			boardToString[(int) aBlockList.get(i).getPosition().getX() + 5][(int) aBlockList.get(i).getPosition().getY()
+					+ 5] = aBlockList.get(i).getShape().toString();
 		}
+		System.out.println("Hallo");
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < x; j++) {
-				System.out.print(boardToString[i][j]+" ");
+				System.out.print(boardToString[i][j] + " ");
 			}
 			System.out.println("");
 		}
-
 	}
 }

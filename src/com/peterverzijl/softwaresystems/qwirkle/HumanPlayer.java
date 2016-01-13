@@ -49,8 +49,9 @@ public class HumanPlayer extends Player {
 
 	public List<Block> determineMove(List<Block> aFrontier) {
 		List<Block> set = new ArrayList<Block>();
-		List<Block> possibleMoves = this.getmHand();
+		List<Block> possibleMoves = new ArrayList<Block>();
 		List<Block> possiblePositions = new ArrayList<Block>();
+		possibleMoves.addAll(this.getmHand());
 		possiblePositions.addAll(aFrontier);
 		Scanner scanner = new Scanner(System.in);
 		int hand;
@@ -58,6 +59,10 @@ public class HumanPlayer extends Player {
 		boolean success = false;
 		while (!success) {
 			try {
+				List<Block> copyBoard = new ArrayList<Block>();
+				copyBoard.addAll(Game.setBlocks);
+				copyBoard.addAll(set);
+				Game.boardToString(copyBoard);
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
 				printNodeList(possiblePositions);
@@ -70,14 +75,15 @@ public class HumanPlayer extends Player {
 				hand = scanner.nextInt();
 				move = scanner.nextInt();
 				scanner.nextLine();
-
+				
 				if (hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
 					if (move < possiblePositions.size()) {
 						System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c op positie %s \n", hand, move,
 								possibleMoves.get(hand).getColor().toString().charAt(0),BlockPrinter.getChar(possibleMoves.get(hand)),possiblePositions.get(move).getPosition());
-						
-						set.add(possibleMoves.get(hand));
+						Block newMove=possibleMoves.get(hand);
 						Node currentNode = possiblePositions.get(move);
+						newMove.setPosition((int)currentNode.getPosition().getX(), (int)currentNode.getPosition().getY());
+						set.add(newMove);
 						Node[] neighbors = currentNode.getNeighborNodes();
 						((Block) currentNode).setBlock(set.get(set.size()-1).getShape(),set.get(set.size()-1).getColor());
 						
@@ -97,10 +103,11 @@ public class HumanPlayer extends Player {
 								}
 							}
 						}
+						//System.out.println("De boardrepresentatie");
+						//Game.boardToString((Block)currentNode);
 					}
 				}
-				System.out.println("De boardrepresentatie");
-				Game.boardToString(set.get(set.size()-1));
+				
 			} catch (java.util.InputMismatchException e) {
 				String input = scanner.next();
 				if (input.toLowerCase().equals("end")) {
@@ -109,7 +116,8 @@ public class HumanPlayer extends Player {
 					scanner.close();
 				} else if (input.toLowerCase().equals("redo")) {
 					set.clear();
-					possibleMoves = this.getmHand();
+					possibleMoves.clear();
+					possibleMoves.addAll(this.getmHand());
 					possiblePositions.clear();
 					possiblePositions.addAll(aFrontier);
 					System.out.println("Je zet is gereset");

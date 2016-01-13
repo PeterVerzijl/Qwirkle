@@ -129,11 +129,15 @@ public abstract class Player {
 
 	public void setMove(List<Block> aFrontier) {
 		List<Block> set = determineMove(aFrontier);
+	
 		if (!checkHand(set)) {
 			for (int i = 0; i < set.size(); i++) {
+				Game.setBlocks.add(set.get(i));
+				System.out.println(Game.setBlocks.get(i).getPosition());
 				// set.get(i).finalizeMove();
 			}
 		}
+		Game.boardToString(Game.setBlocks);
 		System.out.println("De zet is gezet");
 	}
 
