@@ -8,6 +8,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
+import java.io.IOException;
+import java.net.InetAddress;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -18,6 +20,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.peterverzijl.softwaresystems.qwirkle.server.Client;
+import com.peterverzijl.softwaresystems.qwirkle.server.Server;
+
 /**
  * A chat window GUI class that extends the JFrame.
  * @author Peter Verzijl
@@ -25,15 +30,29 @@ import javax.swing.JTextField;
  */
 @SuppressWarnings("serial")
 public class ChatWindow extends JFrame {
-		
+	
+	public String username = "John Doe";
+	
 	JButton 	mSendMessageButton;	// Sends the typed message
 	JTextField 	mMessageField;		// Input field for message
 	JTextArea	mChatBox;			// Shows the all recieved and send messages
 	
-	public String username = "John Doe";
+	private Client mClient;
 	
 	public ChatWindow(String windowName) {
 		super(windowName);
+		
+		// Add a client
+		try {
+			mClient = new Client(username, InetAddress.getByName("localhost"), Server.PORT, this);
+			(new Thread(mClient)).start();
+		} catch (IOException e) {
+			// Return and don't create anything
+			System.out.println("Error: could not create client object. Exiting chat window. Due to: " + e.getMessage());
+			// Try to merge thread
+			mClient.shutdown();
+			return;
+		}
 		
 		// Set border layout
 		setLayout(new BorderLayout());
@@ -99,9 +118,18 @@ public class ChatWindow extends JFrame {
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 		            MainWindow.chatWindow = null;
+		            try {
+						mClient.join();
+					} catch (InterruptedException e) {
+						System.out.println("Error, could not close chat. Due to: " + e.getMessage());
+					}
 		        }
 		    }
 		});
+	}
+	
+	public void addMessage(String message) {
+		mChatBox.append(message + "\n");
 	}
 		
 	class SendButtonAction extends AbstractAction {
@@ -117,7 +145,8 @@ public class ChatWindow extends JFrame {
 					mChatBox.setText("Cleared all messages\n");
 					mMessageField.setText("");
 				} else {
-					mChatBox.append(username + ": " + mMessageField.getText() + "\n");
+					// Add message to client
+					mClient.sendMessage(message);
 					mMessageField.setText("");
 				}
 				mMessageField.requestFocusInWindow();

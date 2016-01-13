@@ -1,9 +1,10 @@
+package com.peterverzijl.softwaresystems.qwirkle.server;
 
 /**
- * @author marti
+ * Based on marti's protocol implementation.
+ * @author Peter Verzijl
  *
  */
-
 public class Protocol {
 	
 	/**
