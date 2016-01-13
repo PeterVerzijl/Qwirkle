@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 //import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
-import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
 
 /**
  * Master class for the game, this handles the setting up and running of the

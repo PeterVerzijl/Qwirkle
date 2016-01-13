@@ -1,8 +1,8 @@
 package com.peterverzijl.softwaresystems.qwirkle;
 
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
-import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
 
 public class BlockSpriteMap {
 	

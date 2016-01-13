@@ -1,12 +1,11 @@
 package com.peterverzijl.softwaresystems.qwirkle.graphics;
 
-import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
 
 import java.util.HashMap;
 
 import com.peterverzijl.softwaresystems.qwirkle.Block;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector3;
 

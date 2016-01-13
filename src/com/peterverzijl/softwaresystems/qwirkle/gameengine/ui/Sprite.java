@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.ui;
+package com.peterverzijl.softwaresystems.qwirkle.gameengine.ui;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;

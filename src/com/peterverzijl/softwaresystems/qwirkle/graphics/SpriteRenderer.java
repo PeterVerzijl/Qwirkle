@@ -1,7 +1,7 @@
 package com.peterverzijl.softwaresystems.qwirkle.graphics;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
-import com.peterverzijl.softwaresystems.qwirkle.ui.Sprite;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 
 /**
  * A class that contains the sprite that is due for rendering.
