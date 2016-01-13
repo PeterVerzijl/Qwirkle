@@ -1,9 +1,14 @@
 package com.peterverzijl.softwaresystems.qwirkle.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.peterverzijl.softwaresystems.qwirkle.tui.ServerTUI;
+import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 
 /**
  * The server instance created by the server part of the java app.
@@ -15,11 +20,17 @@ public class Server implements Runnable {
 	public static final int PORT = 4444;
 	
 	private boolean mRunning = false;
-	private List<ClientHandler> mClients;
 	private ServerSocket mServerSocket;
+	private ServerView mViewer;
 	
-	public Server() {
-		mClients = new ArrayList<ClientHandler>();
+	private List<ClientHandler> mClients;
+	
+	public Server(InetAddress serverAddress, int port, ServerView viewer) throws IOException {
+		mViewer = viewer;
+		
+		mClients = new CopyOnWriteArrayList<ClientHandler>();
+		mServerSocket = new ServerSocket(port, 100, serverAddress);
+		System.out.println("Starting server...");
 	}
 	
 	/**
@@ -27,17 +38,15 @@ public class Server implements Runnable {
 	 */
 	public void run() {
 		mRunning = true;
-		try {
-			mServerSocket = new ServerSocket(PORT);
-			System.out.println("Starting server...");
-			while(mRunning) {
-				ClientHandler client = new ClientHandler(this, mServerSocket.accept());
+		while(mRunning) {
+			try {
+				ClientHandler client;
+				client = new ClientHandler(this, mServerSocket.accept());
 				(new Thread(client)).start();
-				mClients.add(client);
-				
+				addHandler(client);
+			} catch (IOException e) {
+				System.out.println("Error, could not connect to client due to: " + e.getMessage());
 			}
-		} catch (IOException e) {
-			shutdown();
 		}
 	}
 	
@@ -54,13 +63,37 @@ public class Server implements Runnable {
 	}
 	
 	/**
+	 * Adds a client to the client handler list.
+	 * @param client The client to add.
+	 */
+	public void addHandler(ClientHandler client) {
+		if (client != null && !mClients.contains(client)) {
+			mClients.add(client);
+			mViewer.sendMessage("Client " + client.name + " connected.");
+		}
+	}
+	
+	/**
+	 * Removes a client handler from the clients list.
+	 * @param client The client handler to remove from the clients list.
+	 */
+	public void removeHanlder(ClientHandler client) {
+		if (client != null && mClients.contains(client)) {
+			mClients.remove(client);
+			mViewer.sendMessage("Client " + client.name + " disconnected.");
+		}
+	}
+
+	/**
 	 * Call this to shut down the server.
 	 */
 	public void shutdown() {
 		mRunning = false;
 		System.out.println("Closing server...");
 		try {
-			for (ClientHandler client : mClients) {
+			Iterator<ClientHandler> it = mClients.iterator();
+			while (it.hasNext()) {
+				ClientHandler client = it.next();
 				client.shutdown();
 			}
 			if (mServerSocket != null) {
@@ -69,15 +102,5 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			System.out.println("Error: could not close down the server due to: " + e.getMessage());
  		}
-	}
-
-	/**
-	 * Removes a client handler from the clients list.
-	 * @param client The client handler to remove from the clients list.
-	 */
-	public void removeHanlder(ClientHandler client) {
-		if (mClients.contains(client)) {
-			mClients.remove(client);
-		}
 	}
 }

@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import com.peterverzijl.softwaresystems.qwirkle.gui.ChatWindow;
+import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
 /**
  * Client class for the chatting feature in the Qwirkle game.
@@ -22,17 +23,17 @@ public class Client extends Thread {
 	private BufferedReader in;
 	private BufferedWriter out;
 	
-	private ChatWindow mGUI;
+	private ChatView mViewer;
 	
 	private boolean mRunning = false;
 
 	/**
 	 * Constructs a Client-object and tries to make a socket connection
 	 */
-	public Client(String name, InetAddress host, int port, ChatWindow gui) throws IOException {
+	public Client(String name, InetAddress host, int port, ChatView viewer) throws IOException {
 		clientName = name;
 		sock = new Socket(host, port);
-		mGUI = gui;
+		mViewer = viewer;
 	}
 
 	/**
@@ -59,9 +60,7 @@ public class Client extends Thread {
 		sendMessage(clientName);
 		
 		mRunning = true;
-		while(mRunning) {
-			recieveMessage();
-		}
+		recieveMessage();
 	}
 	
 	/**
@@ -71,14 +70,23 @@ public class Client extends Thread {
 		String message;
 		try {
 			message = in.readLine();
-			if (message != null) {
-				mGUI.addMessage(message);
+			while(message != null && mRunning) {
+				if (message != null) {
+					mViewer.addMessage(message);
+					message = in.readLine();
+				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			// Close socket
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
-
+	
 	/** 
 	 * send a message to a ClientHandler.
 	 */
@@ -99,7 +107,7 @@ public class Client extends Thread {
 			}
 		}
 	}
-
+	
 	/** 
 	 * close the socket connection.
 	 */
@@ -107,14 +115,14 @@ public class Client extends Thread {
 		mRunning = false;
 		System.out.println("Closing socket connection...");
 		try {
+			sock.close();
 			in.close();
 			out.close();
-			sock.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/** 
 	 * returns the client name 
 	 */

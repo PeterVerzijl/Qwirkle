@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 
 import com.peterverzijl.softwaresystems.qwirkle.server.Client;
 import com.peterverzijl.softwaresystems.qwirkle.server.Server;
+import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
 /**
  * A chat window GUI class that extends the JFrame.
@@ -29,13 +30,14 @@ import com.peterverzijl.softwaresystems.qwirkle.server.Server;
  * @version 1.0a
  */
 @SuppressWarnings("serial")
-public class ChatWindow extends JFrame {
+public class ChatWindow extends JFrame implements ChatView {
 	
 	public String username = "John Doe";
 	
-	JButton 	mSendMessageButton;	// Sends the typed message
-	JTextField 	mMessageField;		// Input field for message
-	JTextArea	mChatBox;			// Shows the all recieved and send messages
+	private Thread		mClientThread;
+	private JButton 	mSendMessageButton;	// Sends the typed message
+	private JTextField 	mMessageField;		// Input field for message
+	private JTextArea	mChatBox;			// Shows the all recieved and send messages
 	
 	private Client mClient;
 	
@@ -45,12 +47,11 @@ public class ChatWindow extends JFrame {
 		// Add a client
 		try {
 			mClient = new Client(username, InetAddress.getByName("localhost"), Server.PORT, this);
-			(new Thread(mClient)).start();
+			mClientThread = new Thread(mClient);
+			mClientThread.start();
 		} catch (IOException e) {
 			// Return and don't create anything
 			System.out.println("Error: could not create client object. Exiting chat window. Due to: " + e.getMessage());
-			// Try to merge thread
-			mClient.shutdown();
 			return;
 		}
 		
@@ -119,7 +120,8 @@ public class ChatWindow extends JFrame {
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 		            MainWindow.chatWindow = null;
 		            try {
-						mClient.join();
+						mClient.shutdown();
+						mClientThread.join();
 					} catch (InterruptedException e) {
 						System.out.println("Error, could not close chat. Due to: " + e.getMessage());
 					}
@@ -128,6 +130,9 @@ public class ChatWindow extends JFrame {
 		});
 	}
 	
+	/**
+	 * Adds a message to the chat view.
+	 */
 	public void addMessage(String message) {
 		mChatBox.append(message + "\n");
 	}

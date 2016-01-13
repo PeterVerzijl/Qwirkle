@@ -25,6 +25,7 @@ import com.peterverzijl.softwaresystems.qwirkle.server.Server;
  */
 public class MainWindow {
 	
+	public static ServerWindow serverWindow;
 	public static ChatWindow chatWindow;
 	public static JFrame gameWindow;
 	
@@ -184,27 +185,14 @@ class CreateServerAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Server server = new Server();
-		(new Thread(server)).start();
-		
-		JFrame frame = new JFrame("Game Server");
-		frame.setSize(400, 200);
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-		
-		// Add window close listener
-		frame.addWindowListener(new WindowAdapter() {
-		    @Override
-		    public void windowClosing(WindowEvent windowEvent) {
-		        if (JOptionPane.showConfirmDialog(new JFrame(), 
-		            "Are you sure to close this window?", "Really Closing?", 
-		            JOptionPane.YES_NO_OPTION,
-		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-		            server.shutdown();
-		        }
-		    }
+		// Create chat window
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (MainWindow.serverWindow == null) {
+					MainWindow.serverWindow = 
+							new ServerWindow("Qwirkle Server");
+				}
+			}
 		});
 	}
-	
 }
