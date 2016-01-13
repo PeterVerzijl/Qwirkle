@@ -11,26 +11,34 @@ public class ServerTUI implements ServerView {
 	
 	private Server mServer;
 	private InetAddress mAddress;
+	private int mPort;
 	private Thread mServerThread;
 	
-	public ServerTUI() {
-		try {
-			mAddress = InetAddress.getByName("localhost");
-			mServer = new Server(mAddress, Server.PORT, this);			
-			mServerThread = new Thread(mServer);
-			mServerThread.start();
-		} catch (UnknownHostException e) {
-			System.out.println("Error, couldn't create a server at the port and address. Due to: " + e.getMessage());
-			return;
-		} catch (IOException e) {
-			System.out.println("Error, couldn't create a server at the port and address. Due to: " + e.getMessage());
-			return;
-		}
+	private String messageBuffer;
+	
+	/**
+	 * 
+	 * @param address
+	 * @param port
+	 */
+	public ServerTUI(InetAddress address, int port) throws IOException {
+		mAddress = address;
+		mPort = port;
+		
+		mServer = new Server(mAddress, mPort, this);			
+		mServerThread = new Thread(mServer);
+		mServerThread.start();
 	}
 
 	@Override
 	public void sendMessage(String message) {
-		// TODO Auto-generated method stub
-		
+		messageBuffer += ("Server: " + message + "\n");		
+	}
+	
+	/**
+	 * Displays all server messages
+	 */
+	public void displayMessages() {
+		System.out.println(messageBuffer);
 	}
 }

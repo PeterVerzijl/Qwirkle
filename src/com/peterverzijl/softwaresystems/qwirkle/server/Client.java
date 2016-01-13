@@ -119,7 +119,7 @@ public class Client extends Thread {
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			mViewer.addMessage("Chat left.");
 		}
 	}
 	

@@ -30,7 +30,7 @@ public class Server implements Runnable {
 		
 		mClients = new CopyOnWriteArrayList<ClientHandler>();
 		mServerSocket = new ServerSocket(port, 100, serverAddress);
-		System.out.println("Starting server...");
+		mViewer.sendMessage("Starting server...");
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Server implements Runnable {
 				(new Thread(client)).start();
 				addHandler(client);
 			} catch (IOException e) {
-				System.out.println("Error, could not connect to client due to: " + e.getMessage());
+				mViewer.sendMessage("Error, could not connect to client due to: " + e.getMessage());
 			}
 		}
 	}
@@ -89,7 +89,7 @@ public class Server implements Runnable {
 	 */
 	public void shutdown() {
 		mRunning = false;
-		System.out.println("Closing server...");
+		mViewer.sendMessage("Closing server...");
 		try {
 			Iterator<ClientHandler> it = mClients.iterator();
 			while (it.hasNext()) {
@@ -100,7 +100,7 @@ public class Server implements Runnable {
 				mServerSocket.close();
 			}
 		} catch (IOException e) {
-			System.out.println("Error: could not close down the server due to: " + e.getMessage());
+			mViewer.sendMessage("Error: could not close down the server due to: " + e.getMessage());
  		}
 	}
 }

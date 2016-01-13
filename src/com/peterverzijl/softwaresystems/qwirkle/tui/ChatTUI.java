@@ -12,9 +12,12 @@ public class ChatTUI implements ChatView {
 	
 	private boolean mRunning = false;
 	private Client mClient;
+	private Thread mChatThread;
 	
 	public ChatTUI(String username, InetAddress serverAddress, int serverPort) throws IOException {
 		mClient = new Client(username, serverAddress, serverPort, this);
+		mChatThread = new Thread(mClient);
+		mChatThread.start();
 		
 		// Start the chat interface.
 		run();
@@ -25,13 +28,13 @@ public class ChatTUI implements ChatView {
 	 */
 	public void run() {
 		System.out.println("Welcome to the chat!");
+		System.out.println("Start saying something!");
 		
 		// Do the input wait loop
 		
 		mRunning = true;
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Chat: ");
         try {
         	while(mRunning) {
         		String input = br.readLine();
@@ -39,8 +42,6 @@ public class ChatTUI implements ChatView {
         			close();
         		}      		
         		mClient.sendMessage(input);
-        		System.out.println("");
-        		System.out.print("Chat: ");
     		}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
