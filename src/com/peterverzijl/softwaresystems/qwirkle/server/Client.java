@@ -91,20 +91,11 @@ public class Client extends Thread {
 	 * send a message to a ClientHandler.
 	 */
 	public void sendMessage(String msg) {
-		if (!msg.trim().equals("exit")) {
-			try {
-				out.write(msg + System.lineSeparator());
-				out.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				out.write(clientName + " left the chat.");
-				shutdown();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			out.write(msg + System.lineSeparator());
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -114,12 +105,13 @@ public class Client extends Thread {
 	public void shutdown() {
 		mRunning = false;
 		System.out.println("Closing socket connection...");
+		sendMessage(clientName + " left the chat.");
 		try {
 			sock.close();
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			mViewer.addMessage("Chat left.");
+			mViewer.addMessage("Left chat.");
 		}
 	}
 	

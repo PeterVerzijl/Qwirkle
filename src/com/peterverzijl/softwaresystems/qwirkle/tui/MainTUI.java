@@ -96,12 +96,14 @@ public class MainTUI {
 				server.address = InetAddress.getByName(param[0]);
 			} catch (UnknownHostException e) {
 				System.out.println("Apparently typing in correct IP adresses is hard.");
+				return null;
 			}
 			
 			try {
 				server.port = Integer.parseInt(param[1]);
 			} catch (NumberFormatException e) {
 				System.out.println("Do you even know what a number is?!");
+				return null;
 			}
 		}
 		return server;

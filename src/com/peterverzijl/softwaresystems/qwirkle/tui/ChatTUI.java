@@ -18,9 +18,6 @@ public class ChatTUI implements ChatView {
 		mClient = new Client(username, serverAddress, serverPort, this);
 		mChatThread = new Thread(mClient);
 		mChatThread.start();
-		
-		// Start the chat interface.
-		run();
 	}
 	
 	/**
@@ -39,25 +36,26 @@ public class ChatTUI implements ChatView {
         	while(mRunning) {
         		String input = br.readLine();
         		if ("\\exit".equals(input)) {
+        			System.out.println("Exiting the chat application.");
         			close();
-        		}      		
-        		mClient.sendMessage(input);
+        		} else {
+        			mClient.sendMessage(input);
+        		}
     		}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+			System.out.println(e.getMessage());
+			mChatThread.interrupt();
 			try {
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				mChatThread.join();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
 			}
+			close();
 		}
 	}
 
 	private void close() {
-		mRunning = false;	
+		mRunning = false;
 	}
 
 	@Override
