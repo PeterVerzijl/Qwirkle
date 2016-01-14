@@ -22,10 +22,13 @@ public class ChatTUI implements ChatView {
 	 * Starts the chat TUI
 	 */
 	public void run() {
-		System.out.println("Welcome to the chat!\n" +
-							"Chat commands:\n" +
-							" - \\exit \t exits the app.\n" +
-							"Start saying something!");
+		System.out.println("------------------------------------------\n" +
+							"| Welcome to the chat!                   |\n" +
+							"| Commands:                              |\n" +
+							"| - \\exit    exits the app.              |\n" +
+							"|                                        |\n" +
+							"| Start typing to say something!         |\n" +
+							"------------------------------------------");
 		
 		// Do the input wait loop
 		
@@ -36,7 +39,8 @@ public class ChatTUI implements ChatView {
         	while(mRunning) {
         		String input = br.readLine();
         		if ("\\exit".equals(input)) {
-        			System.out.println("Exiting the chat application.");
+        			System.out.println("Exiting the chat application.\n" + 
+        								"------------------------------------------");
         			close();
         		} else {
         			mClient.sendChatMessage(input);
