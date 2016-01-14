@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.server;
+package com.peterverzijl.softwaresystems.qwirkle.networking;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.Arrays;
 
 import com.peterverzijl.softwaresystems.qwirkle.gui.ChatWindow;
+import com.peterverzijl.softwaresystems.qwirkle.tui.MainTUI;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
 /**
@@ -17,9 +18,9 @@ import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
  * @author Peter Verzijl
  * @version 1.0a
  */
-public class Client extends Thread {
+public class Client implements Runnable {
 	
-	private String clientName;
+	private String username;
 	private Socket sock;
 	private BufferedReader in;
 	private BufferedWriter out;
@@ -31,8 +32,7 @@ public class Client extends Thread {
 	/**
 	 * Constructs a Client-object and tries to make a socket connection
 	 */
-	public Client(String name, InetAddress host, int port, ChatView viewer) throws IOException {
-		clientName = name;
+	public Client(InetAddress host, int port, ChatView viewer) throws IOException {
 		sock = new Socket(host, port);
 		mViewer = viewer;
 	}
@@ -108,12 +108,26 @@ public class Client extends Thread {
 				
 				break;
 			case Protocol.Server.ERROR:
-				
+				try {
+					int error = Integer.parseInt(parameters[0]);
+					handleError(error);
+				} catch (NumberFormatException e) {
+					// TODO (peter) : Error logging in a file?
+				}
 				break;
 			case Protocol.Server.GAME_END:
 				
 				break;
 			case Protocol.Server.HALLO:
+				// Print server name and featues
+				for (int i = 0; i < parameters.length; i++) {
+					if (i == 0) {
+						System.out.println("Connected to server: " + parameters[i]);
+						System.out.println("Supported features: ");
+					} else {
+						System.out.println(" - " + parameters[i]);
+					}
+				}
 				
 				break;
 			case Protocol.Server.INVITE:
@@ -137,6 +151,30 @@ public class Client extends Thread {
 		}
 	}
 	
+private void handleError(int error) {
+		// TODO Auto-generated method stub
+		switch(error) {
+			case 1:			// Not your turn
+				break;
+			case 2:			// Not your turn
+				break;
+			case 3:			// Not your turn
+				break;
+			case 4:			// Name Exists
+				// Name was refused by the server
+				MainTUI.askName();
+				break;
+			case 5:			// Not your turn
+				// TODO (peter) : Implement challenging
+				break;
+			case 6:			// Challenger Refused
+				// TODO (peter) : Implement challenging
+				break;
+			case 7:			// Invalid move
+				break;
+		}
+	}
+
 	/** 
 	 * send a message to a ClientHandler.
 	 * @param msg The message to send to the client handler.
@@ -166,7 +204,7 @@ public class Client extends Thread {
 	public void shutdown() {
 		mRunning = false;
 		System.out.println("Closing socket connection...");
-		sendMessage(clientName + " left the chat.");
+		sendMessage(username + " left the chat.");
 		try {
 			sock.close();
 			in.close();
@@ -179,8 +217,8 @@ public class Client extends Thread {
 	/** 
 	 * returns the client name 
 	 */
-	public String getClientName() {
-		return clientName;
+	public String getName() {
+		return username;
 	}
 
 	public void setViewer(ChatView view) {
@@ -192,8 +230,9 @@ public class Client extends Thread {
 	 * @param name The client name.
 	 */
 	public void sendHallo(String name) {
+		username = name;
 		sendMessage(Protocol.Client.HALLO + 
 					Protocol.Server.Settings.DELIMITER + 
-					name);
+					username);
 	}
 }

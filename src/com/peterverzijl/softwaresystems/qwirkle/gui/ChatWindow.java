@@ -20,8 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.peterverzijl.softwaresystems.qwirkle.server.Client;
-import com.peterverzijl.softwaresystems.qwirkle.server.Server;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Client;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
 /**
@@ -46,7 +46,7 @@ public class ChatWindow extends JFrame implements ChatView {
 		
 		// Add a client
 		try {
-			mClient = new Client(username, InetAddress.getByName("localhost"), Server.PORT, this);
+			mClient = new Client(InetAddress.getByName("localhost"), Server.PORT, this);
 			mClientThread = new Thread(mClient);
 			mClientThread.start();
 		} catch (IOException e) {

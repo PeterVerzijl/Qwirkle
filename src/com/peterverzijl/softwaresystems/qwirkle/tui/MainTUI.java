@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import com.peterverzijl.softwaresystems.qwirkle.server.Client;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Client;
 
 public class MainTUI {
 	
@@ -26,6 +26,7 @@ public class MainTUI {
 	
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Qwirkle TUI!");
+		System.out.println("You can now start typing commands.00");
 		
 		// Do the input wait loop
 		mRunning = true;
@@ -33,7 +34,6 @@ public class MainTUI {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
         	do {
-        		System.out.print("Command: ");
         		handleCommand(br.readLine());
     		} while(mRunning);
 		} catch (IOException e) {
@@ -54,6 +54,12 @@ public class MainTUI {
 	 * @param input The command to execute.
 	 */
 	private static void handleCommand(String input) {
+		if (input.contains("help")) {
+			System.out.println("Perhaps you need HELP.");
+			return;
+		}
+		
+		input = input.toUpperCase();
 		
 		// Show the help
 		if (input.contains("HELP")) {
@@ -72,6 +78,12 @@ public class MainTUI {
 			} else {
 				System.out.println("No.");
 			}
+		} else if (input.contains("WHOAMI")) {
+			if (mClient != null && mClient.getName() != null) {
+				System.out.println(mClient.getName());
+			} else {
+				System.out.println("How am I supposed to know?!");
+			}			
 		} else if (input.contains("EXIT")) {
 			System.out.println("Initiating RAGEQUIT...\nExiting Qwirkle.");
 			mRunning = false;
@@ -125,6 +137,7 @@ public class MainTUI {
 		System.out.println("SERVER CONNECT <address> <port> \t connects to a server.");
 		System.out.println("SERVER CREATE <address> <port> \t creates server.");
 		System.out.println("SERVER MESSAGES \t shows all server messages.");
+		System.out.println("WHOAMI \t shows the name of the user.");
 		System.out.println("EXIT \t exits the application.");
 	}
 
@@ -135,24 +148,46 @@ public class MainTUI {
 	private static void connectServer(String input) {
 		server = getSettings(input);
 		// TODO (peter) : Make this less ugly
-		createClient();
+		if (mClient == null) {
+			try {
+				mClient = createClient();
+				// Now fetch the name of the user
+				System.out.println("Connecting to server...");
+				// Ask the player for his name.
+				askName();
+			} catch (IOException e) {
+				System.out.println("Failed to create a client. Due to: " + e.getMessage());
+			}
+		}
+	}
+	
+	public static void askName() {
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(System.in));
+		try {
+			String name = "";
+			 do {
+				 System.out.println("Enter your name: ");
+				 name = br.readLine();
+				 if (name.length() < 2) {
+					 System.out.println("Enter a longer name!");
+				 }
+			 } while (name.length() < 2);
+			 mClient.sendHallo(name);
+		} catch(IOException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 	
 	/**
 	 * Tries to create a client;
 	 * TODO (peter) : Make this less ugly.
 	 */
-	private static void createClient() {
-		if (mClient != null) {
-			return;
-		}
-		try {
-			mClient = new Client("Peter", server.address, server.port, null);
-			mClientThread = new Thread(mClient);
-			mClientThread.start();
-		} catch (IOException e) {
-			System.out.println("Failed to create a client. Due to: " + e.getMessage());
-		}
+	private static Client createClient() throws IOException {
+		Client client = null;
+		client = new Client(server.address, server.port, null);
+		(new Thread(client)).start();
+		return client;
 	}
 
 	/**
@@ -162,12 +197,16 @@ public class MainTUI {
 	 */
 	private static void createServer(String input) {
 		server = getSettings(input);
-		try {
-			mServerTUI = new ServerTUI(server.address, server.port);
-			createClient();
-		} catch (IOException e) {
-			System.out.println("Oeps, it seems you did something wrong. " + e.getMessage());
-		}		
+		if (server != null) {
+			try {
+				mServerTUI = new ServerTUI(server.address, server.port);
+				connectServer(input);
+			} catch (IOException e) {
+				System.out.println("Oeps, it seems you did something wrong. " + e.getMessage());
+			}
+		} else {
+			System.out.println("Forgot to enter the rest of the command?");
+		}
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.server;
+package com.peterverzijl.softwaresystems.qwirkle.networking;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -19,6 +19,14 @@ import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 public class Server implements Runnable {
 	
 	public static final int PORT = 4444;
+
+	private String mServerName = "Peter's Server";
+	private String[] mFeatures = new String[] {
+		//Protocol.Server.Features.CHALLENGE,
+		Protocol.Server.Features.CHAT,
+		//Protocol.Server.Features.LEADERBOARD,
+		//Protocol.Server.Features.SECURITY
+	};
 	
 	private boolean mRunning = false;
 	private ServerSocket mServerSocket;
@@ -89,6 +97,7 @@ public class Server implements Runnable {
 			case Protocol.Client.HALLO:
 				String name = parameters[0];
 				if (!isNameUsed(name)) {
+					sendHallo(client);			// Reply with hallo
 					client.setName(name);
 					client.setFeatures(Arrays.copyOfRange(parameters, 1, parameters.length));
 				} else {
@@ -115,13 +124,28 @@ public class Server implements Runnable {
 	}
 	
 	/**
+	 * Sends an hallo to the client with all the supported features.
+	 * @param client
+	 */
+	private void sendHallo(ClientHandler client) {
+		String message = Protocol.Server.HALLO;			// Command
+		message += Protocol.Server.Settings.DELIMITER + mServerName;
+		for (String s : mFeatures) {					// Features
+			message += Protocol.Server.Settings.DELIMITER;
+			message += s;
+		}
+		// Message the final message.
+		client.sendMessage(message);
+	}
+
+	/**
 	 * Loops the client handlers to see if this name is used yet.
 	 * @param name The name to check.
 	 */
 	private boolean isNameUsed(String name) {
 		boolean result = false;
 		for (ClientHandler client : mClients) {
-			if (client.getName().equals(name)) {
+			if (client.getName() != null && client.getName().equals(name)) {
 				result = true;
 			}
 		}
