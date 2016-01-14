@@ -76,10 +76,10 @@ public class HumanPlayer extends Player {
 				copyBoard.addAll(mGame.getSetStones());
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
-				Game.boardToString(copyBoard);
+				Game.boardToString(copyBoard,possiblePositions);
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
-				printNodeList(possiblePositions);
+				//printNodeList(possiblePositions);
 
 				if (possiblePositions.size() > 0) {
 					for (int i = 0; i < possiblePositions.size(); i++) {
@@ -122,8 +122,6 @@ public class HumanPlayer extends Player {
 								}
 							}
 						}
-						// System.out.println("De boardrepresentatie");
-						// Game.boardToString((Block)currentNode);
 					}
 				} else {
 					System.out.println("This was not a valid move");
@@ -162,7 +160,7 @@ public class HumanPlayer extends Player {
 							System.out.println("Blocks in hand: " + Player.handToString(possibleMoves));
 							System.out.println("Blocks pending for trade: " + Player.handToString(set));
 							hand = scanner.nextInt();
-							scanner.nextLine();
+						//	scanner.nextLine();
 							set.add(possibleMoves.get(hand));
 							possibleMoves.remove(possibleMoves.get(hand));
 						} catch (java.util.InputMismatchException e1) {

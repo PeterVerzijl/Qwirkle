@@ -3,6 +3,8 @@ package com.peterverzijl.softwaresystems.qwirkle;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
+
 /**
  * Player class for the Qwirkle game, contains all the player information.
  * 
@@ -19,7 +21,7 @@ public abstract class Player {
 	 * The total amount of players
 	 */
 	public static int playerCount = 0;
-	
+
 	/**
 	 * The game the player is playing
 	 */
@@ -33,7 +35,7 @@ public abstract class Player {
 	/**
 	 * The constructor for the player
 	 */
-	public Player(Game aGame,int mId) {
+	public Player(Game aGame, int mId) {
 		// Initialize player
 		this.mID = mId;
 		mGame = aGame;
@@ -128,7 +130,9 @@ public abstract class Player {
 		boolean inHand = true;
 		for (Block b : set) {
 			if (!mHand.contains(b)) {
+
 				System.err.println("Hand did not contain all the blocks");
+				System.err.println("Hand did not contain"+b);
 				inHand = false;
 			}
 		}
@@ -137,13 +141,19 @@ public abstract class Player {
 
 	public void setMove(List<Block> aFrontier) {
 		List<Block> set = determineMove(aFrontier);
-
+		boolean trade = false;
+		if (set.get(set.size() - 1) == null) {
+			set.remove(set.size() - 1);
+			trade = true;
+		}
 		if (checkHand(set)) {
 			for (int i = 0; i < set.size(); i++) {
-				if (set.get(set.size() - 1) != null) {
+				if (!trade) {
+					boardScale(set.get(i).getPosition());
 					mGame.getSetStones().add(set.get(i));
 				} else {
 					System.out.println("Now trading");
+					mGame.tradeBlocks(set.get(i));
 				}
 				mHand.remove(set.get(i));
 			}
@@ -159,8 +169,19 @@ public abstract class Player {
 		}
 		return hand;
 	}
-	
-	public Game getGame(){
+
+	void boardScale(Vector2 aPosition) {
+		if (mGame.borders[0] < aPosition.getX())
+			mGame.borders[0] = (int) aPosition.getX() + 6;
+		if (mGame.borders[1] > aPosition.getX())
+			mGame.borders[0] = (int) aPosition.getX() + 6;
+		if (mGame.borders[2] < aPosition.getY())
+			mGame.borders[0] = (int) aPosition.getY() + 6;
+		if (mGame.borders[3] > aPosition.getY())
+			mGame.borders[0] = (int) aPosition.getY() + 6;
+	}
+
+	public Game getGame() {
 		return mGame;
 	}
 }
