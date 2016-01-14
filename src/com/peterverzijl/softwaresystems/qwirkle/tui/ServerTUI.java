@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import com.peterverzijl.softwaresystems.qwirkle.server.Server;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 
 public class ServerTUI implements ServerView {

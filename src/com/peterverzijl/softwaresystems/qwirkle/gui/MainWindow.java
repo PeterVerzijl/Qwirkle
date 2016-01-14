@@ -16,7 +16,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
-import com.peterverzijl.softwaresystems.qwirkle.server.Server;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 
 /**
  * The start window that is shown when starting the game.

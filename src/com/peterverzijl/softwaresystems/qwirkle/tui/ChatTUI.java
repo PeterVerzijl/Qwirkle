@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
-import com.peterverzijl.softwaresystems.qwirkle.server.Client;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Client;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
 public class ChatTUI implements ChatView {
@@ -22,8 +22,10 @@ public class ChatTUI implements ChatView {
 	 * Starts the chat TUI
 	 */
 	public void run() {
-		System.out.println("Welcome to the chat!");
-		System.out.println("Start saying something!");
+		System.out.println("Welcome to the chat!\n" +
+							"Chat commands:\n" +
+							" - \\exit \t exits the app.\n" +
+							"Start saying something!");
 		
 		// Do the input wait loop
 		

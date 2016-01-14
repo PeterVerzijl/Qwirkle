@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.peterverzijl.softwaresystems.qwirkle.server.Server;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 
 /**

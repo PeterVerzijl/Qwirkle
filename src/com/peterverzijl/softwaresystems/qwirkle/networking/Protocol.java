@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.server;
+package com.peterverzijl.softwaresystems.qwirkle.networking;
 
 /**
  * Based on marti's protocol implementation.
