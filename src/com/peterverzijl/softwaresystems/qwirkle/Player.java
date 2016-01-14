@@ -19,6 +19,11 @@ public abstract class Player {
 	 * The total amount of players
 	 */
 	public static int playerCount = 0;
+	
+	/**
+	 * The game the player is playing
+	 */
+	protected static Game mGame;
 
 	/**
 	 * The blocks that the player has in his/her prosession
@@ -28,9 +33,10 @@ public abstract class Player {
 	/**
 	 * The constructor for the player
 	 */
-	public Player(int mId) {
+	public Player(Game aGame,int mId) {
 		// Initialize player
 		this.mID = mId;
+		mGame = aGame;
 		mHand.clear();
 	}
 
@@ -122,6 +128,7 @@ public abstract class Player {
 		boolean inHand = true;
 		for (Block b : set) {
 			if (!mHand.contains(b)) {
+				System.err.println("Hand did not contain all the blocks");
 				inHand = false;
 			}
 		}
@@ -134,17 +141,13 @@ public abstract class Player {
 		if (checkHand(set)) {
 			for (int i = 0; i < set.size(); i++) {
 				if (set.get(set.size() - 1) != null) {
-					Game.setBlocks.add(set.get(i));
-
-					System.out.println(Game.setBlocks.get(i).getPosition());
-					// addStone(set.size());
+					mGame.getSetStones().add(set.get(i));
 				} else {
 					System.out.println("Now trading");
 				}
 				mHand.remove(set.get(i));
 			}
 		}
-		Game.boardToString(Game.setBlocks);
 		System.out.println("De zet is gezet");
 	}
 
@@ -155,5 +158,9 @@ public abstract class Player {
 			hand += b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ";
 		}
 		return hand;
+	}
+	
+	public Game getGame(){
+		return mGame;
 	}
 }

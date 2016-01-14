@@ -26,8 +26,8 @@ public class Game {
 	private BlockBag mBag;
 
 	private List<HumanPlayer> mPlayers = new ArrayList<HumanPlayer>();
-	public static List<Block> mFrontier = new ArrayList<Block>();
-	public static List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
+	private List<Block> mFrontier = new ArrayList<Block>();
+	private List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
 
@@ -58,7 +58,7 @@ public class Game {
 		// Create a bunch of mPlayers
 		int playerCount = 4;
 		for (int i = 0; i < playerCount; i++) {
-			HumanPlayer p = new HumanPlayer(i);
+			HumanPlayer p = new HumanPlayer(this,i);
 			p.initHand(mBag, 6);
 			mPlayers.add(p);
 		}
@@ -114,7 +114,7 @@ public class Game {
 	Transform cameraTransform;
 
 	public void renderBlocks() {
-		for (Block b : Game.setBlocks) {
+		for (Block b : setBlocks) {
 			Sprite sprite = BlockSpriteMap.getSprite(b);
 			GameObject guiBlock = new GameObject("GUI Block");
 			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
@@ -123,9 +123,9 @@ public class Game {
 			// RectangleCollider c =
 			// guiBlock.addComponent(RectangleCollider.class);
 			float blockPadding = 75;
-			float xOffset = (Camera.getWidth() - blockPadding) / Game.setBlocks.size();
+			float xOffset = (Camera.getWidth() - blockPadding) / setBlocks.size();
 			int blockCount = 0;
-			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
+			t.setPosition(b.getPosition().getX(),b.getPosition().getY());//blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
 			System.out.println("hand block " + t.getPosition());
 		}
 	}
@@ -148,8 +148,10 @@ public class Game {
 	 * Function gets called every frame.
 	 */
 	public void tick() {
-		mPlayers.get(mCurrentPlayer).determineMove(mFrontier);
+		mPlayers.get(mCurrentPlayer).setMove(mFrontier);
 		mCurrentPlayer = (mCurrentPlayer + 1) % mPlayers.size();
+		System.out.println("Now the new board will get rendered");
+		System.out.println(setBlocks.size());
 		renderBlocks();
 	}
 
@@ -197,4 +199,10 @@ public class Game {
 			System.out.println("");
 		}
 	}
+	
+	
+	public List<Block> getSetStones(){
+		return setBlocks;
+	}
+
 }

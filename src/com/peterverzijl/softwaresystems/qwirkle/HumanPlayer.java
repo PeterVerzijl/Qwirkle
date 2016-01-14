@@ -14,8 +14,8 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  */
 public class HumanPlayer extends Player {
 
-	public HumanPlayer(int aID) {
-		super(aID);
+	public HumanPlayer(Game aGame,int aID) {
+		super(aGame, aID);
 	}
 
 	public static void main(String[] args) {
@@ -33,20 +33,17 @@ public class HumanPlayer extends Player {
 		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
 		 * new Vector2(-1, 0))]);
 		 */
-		// Game game = new Game();
-		Player player = new HumanPlayer(1);
+		Game game = new Game();
+		Player player = new HumanPlayer(game,1);
 		player.initHand(new BlockBag(), 6);
-		Player player2 = new HumanPlayer(2);
+		Player player2 = new HumanPlayer(game,2);
 		player2.initHand(new BlockBag(), 6);
 		// System.out.println("Start zet");
 		List<Block> frontierTest = new ArrayList<Block>();
-		frontierTest.add(new Block(null, null));
-		frontierTest.get(0).setPosition(0, 0);
-		Game.mFrontier.add(new Block(null, null));
-		Game.mFrontier.get(0).setPosition(0, 0);
+		mGame.getFrontier().add(new Block(null, null));
+		mGame.getFrontier().get(0).setPosition(0, 0);
 		// System.out.println("game." + game.mFrontier.size());
 
-		System.out.println("Game." + Game.mFrontier.size());
 		/*
 		 * frontierTest.add(new Block(null, null));
 		 * frontierTest.get(1).setPosition(1, 0); frontierTest.add(new
@@ -57,9 +54,9 @@ public class HumanPlayer extends Player {
 		 */
 		while (true) {
 			// Game.boardToString(Game.setBlocks);
-			player.setMove(Game.mFrontier);
+			player.setMove(mGame.getFrontier());
 			// Game.boardToString(Game.setBlocks);
-			player2.setMove(Game.mFrontier);
+			player2.setMove(mGame.getFrontier());
 		}
 	}
 
@@ -76,7 +73,7 @@ public class HumanPlayer extends Player {
 		while (!success) {
 			try {
 				List<Block> copyBoard = new ArrayList<Block>();
-				copyBoard.addAll(Game.setBlocks);
+				copyBoard.addAll(mGame.getSetStones());
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
 				Game.boardToString(copyBoard);
@@ -139,8 +136,9 @@ public class HumanPlayer extends Player {
 					success = true;
 					scanner.reset();
 					// scanner.close();
-					Game.mFrontier.clear();
-					Game.mFrontier.addAll(possiblePositions);
+					//Deze sowieso niet hier laten zetten
+					mGame.getFrontier().clear();
+					mGame.getFrontier().addAll(possiblePositions);
 					possibleMoves.clear();
 				} else if (input.toLowerCase().equals("reset")) {
 					set.clear();
