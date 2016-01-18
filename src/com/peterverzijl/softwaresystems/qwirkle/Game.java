@@ -28,8 +28,8 @@ public class Game {
 	private BlockBag mBag;
 
 	private List<HumanPlayer> mPlayers = new ArrayList<HumanPlayer>();
-	public static List<Block> mFrontier = new ArrayList<Block>();
-	public static List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
+	private List<Block> mFrontier = new ArrayList<Block>();
+	private List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
 
@@ -41,7 +41,7 @@ public class Game {
 
 	public GameObject currentBlock;
 
-	public static int[] borders = { 0, 0, 0, 0 };
+	public static int[] borders = { -10, 10, -10, 10 };
 
 	public void start() {
 
@@ -58,9 +58,9 @@ public class Game {
 		mBag = new BlockBag();
 
 		// Create a bunch of mPlayers
-		int playerCount = 4;
+		int playerCount = 1;
 		for (int i = 0; i < playerCount; i++) {
-			HumanPlayer p = new HumanPlayer(i);
+			HumanPlayer p = new HumanPlayer(this, i);
 			p.initHand(mBag, 6);
 			mPlayers.add(p);
 		}
@@ -119,8 +119,27 @@ public class Game {
 
 	Transform cameraTransform;
 
+	public void renderHand(Player aPlayer){
+		Player wePlayer = aPlayer;
+		List<Block> weHand = wePlayer.getmHand();
+		float blockPadding = 75;
+		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();
+		int blockCount = 0;
+		for (Block b : weHand) {
+			Sprite sprite = BlockSpriteMap.getSprite(b);
+			GameObject guiBlock = new GameObject("GUI Block");
+			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
+			r.setSprite(sprite);
+			Transform t = guiBlock.addComponent(Transform.class);
+			// RectangleCollider c =
+			// guiBlock.addComponent(RectangleCollider.class);
+			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
+			//System.out.println("hand block " + t.getPosition());
+		}
+	}
+	
 	public void renderBlocks() {
-		for (Block b : Game.setBlocks) {
+		for (Block b : setBlocks) {
 			Sprite sprite = BlockSpriteMap.getSprite(b);
 			GameObject guiBlock = new GameObject("GUI Block");
 			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
@@ -129,9 +148,18 @@ public class Game {
 			// RectangleCollider c =
 			// guiBlock.addComponent(RectangleCollider.class);
 			float blockPadding = 75;
-			float xOffset = (Camera.getWidth() - blockPadding) / Game.setBlocks.size();
+			float xOffset = (Camera.getWidth() - blockPadding) / setBlocks.size();
 			int blockCount = 0;
-			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
+			t.setPosition(b.getPosition().getX(), b.getPosition().getY());// blockPadding
+																			// /
+																			// 2
+																			// +
+																			// xOffset
+																			// *
+																			// blockCount++,
+																			// Camera.getHeight()
+																			// -
+																			// 8);
 			System.out.println("hand block " + t.getPosition());
 		}
 	}
@@ -154,14 +182,23 @@ public class Game {
 	 * Function gets called every frame.
 	 */
 	public void tick() {
-		mPlayers.get(mCurrentPlayer).determineMove(mFrontier);
+		renderHand(mPlayers.get(mCurrentPlayer));
+		mPlayers.get(mCurrentPlayer).setMove(mFrontier);
 		mCurrentPlayer = (mCurrentPlayer + 1) % mPlayers.size();
+		addBlocks(mPlayers.get(mCurrentPlayer));
+		System.out.println("Now the new board will get rendered");
 		renderBlocks();
 	}
 
-	public List<Block> addStone(int aAmount){
+	public void addBlocks(Player aPlayer) {
+		while (aPlayer.getmHand().size() != 6 && mBag.blocks.size() -(6- aPlayer.getmHand().size()) > -1) {
+			aPlayer.addBlock(mBag.drawBlock());
+		}
+	}
+
+	public List<Block> addStone(int aAmount) {
 		List<Block> newBlocks = new ArrayList<Block>();
-		for(int i = 0; i < aAmount;i++ ){
+		for (int i = 0; i < aAmount; i++) {
 			newBlocks.add(mBag.drawBlock());
 		}
 		return newBlocks;
@@ -171,11 +208,19 @@ public class Game {
 	// twice, the time complexity is O(n) where n is the number of nodes in
 	// given linked list.
 	// @ensure (aBlock instanceof Block) ==true.
-	public static void boardToString(List<Block> aBlockList) {
-		int x = 10;// borders[1] - borders[0];
-		int y = 10;// borders[3] - borders[2];
-		String boardToString[][] = new String[x][y];
+	public static void boardToString(List<Block> aBlockList, List<Block> aFrontierList) {
+		int x =  50;//(borders[1] - borders[0]);
+		int y =  50;//(borders[3] - borders[2]);
+		
+		System.out.println(x);
 
+		System.out.println(y);
+		
+		int midX=x/2;//(Math.abs(borders[0])+borders[1])/2;
+		int midY=y/2;//(Math.abs(borders[2])+borders[3])/2;
+
+		String boardToString[][] = new String[x+1][y+1];
+		
 		// Block currentBlock = aBlock;
 
 		/*
@@ -185,12 +230,15 @@ public class Game {
 		 * currentBlock.getParent(); } while (currentBlock != null);
 		 */
 
-		int t = 0;
 		for (int i = 0; i < aBlockList.size(); i++) {
-			System.out.println(++t);
-			boardToString[(int) aBlockList.get(i).getPosition().getX() + 5][(int) aBlockList.get(i).getPosition().getY()
-					+ 5] = aBlockList.get(i).getColor().toString().charAt(0) + ""
+			boardToString[(int) aBlockList.get(i).getPosition().getX() + midX][(int) aBlockList.get(i).getPosition().getY()
+					+ midY] = aBlockList.get(i).getColor().toString().charAt(0) + ""
 							+ BlockPrinter.getChar(aBlockList.get(i));
+		}
+		
+		for (int i = 0; i < aFrontierList.size(); i++) {
+			boardToString[(int) aFrontierList.get(i).getPosition().getX() + midX][(int) aFrontierList.get(i).getPosition().getY()
+					+ midY] = " "+i+" ";
 		}
 
 		for (int i = 0; i < x; i++) {
@@ -202,5 +250,13 @@ public class Game {
 			}
 			System.out.println("");
 		}
+	}
+
+	public List<Block> getSetStones() {
+		return setBlocks;
+	}
+
+	public void tradeBlocks(Block block) {
+		mBag.blocks.add(block);	
 	}
 }
