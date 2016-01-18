@@ -5,12 +5,14 @@ import java.util.List;
 
 //import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
+import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
+import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 
 /**
  * Master class for the game, this handles the setting up and running of the
@@ -96,13 +98,17 @@ public class Game {
 		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();
 		int blockCount = 0;
 		for (Block b : weHand) {
-			Sprite sprite = BlockSpriteMap.getSprite(b);
+
 			GameObject guiBlock = new GameObject("GUI Block");
-			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
-			r.setSprite(sprite);
 			Transform t = guiBlock.addComponent(Transform.class);
-			// RectangleCollider c =
-			// guiBlock.addComponent(RectangleCollider.class);
+			
+			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
+			r.setSprite(BlockSpriteMap.getSprite(b));
+			
+			RectangleCollider c = guiBlock.addComponent(RectangleCollider.class);
+			
+			guiBlock.addComponent(MoveOnMouse.class);	// Adds the move on mouse scipt
+			
 			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
 			System.out.println("hand block " + t.getPosition());
 		}
