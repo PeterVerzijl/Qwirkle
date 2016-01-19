@@ -1,5 +1,6 @@
 package com.peterverzijl.softwaresystems.qwirkle.graphics;
 
+import com.peterverzijl.softwaresystems.qwirkle.collision.Collider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 
@@ -33,5 +34,29 @@ public class SpriteRenderer extends RenderComponent {
 	public void Start() { }
 
 	@Override
-	public void Update() { }	
+	public void Update() { }
+
+	@Override
+	public void OnMouseEnter() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnMouseLeave() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnCollisionEnter(Collider other) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnCollisionExit(Collider other) {
+		// TODO Auto-generated method stub
+		
+	}	
 }
