@@ -27,10 +27,7 @@ public class ClientHandler implements Runnable {
 	public ClientHandler(Server server, Socket socket) {
 		mServer = server;
 		mSocket = socket;
-	}
-
-	@Override
-	public void run() {
+		
 		try {
 			in = new BufferedReader(
 					new InputStreamReader(
@@ -46,7 +43,10 @@ public class ClientHandler implements Runnable {
 		} catch (IOException e) {
 			System.out.println("Error: could not create buffered writer from socket. Due to: " + e.getMessage());
 		}
-		
+	}
+
+	@Override
+	public void run() {		
 		mRunning  = true;
 		while (mRunning) {
 			processMessages();
@@ -58,9 +58,12 @@ public class ClientHandler implements Runnable {
 	 */
 	private void processMessages() {
 		try {
-			mServer.sendMessage(in.readLine(), this);
+			while(in.ready()) {
+				mServer.sendMessage(in.readLine(), this);
+			}
 		} catch (IOException e) {
 			System.out.println("Error: could not read message. Assuming client disconnected.");
+			System.out.println(e.getMessage());
 			shutdown();
 		}
 	}
@@ -85,9 +88,9 @@ public class ClientHandler implements Runnable {
 	public void shutdown() {
 		mRunning = false;
 		try {
+			mSocket.close();
 			in.close();
 			out.close();
-			mSocket.close();
 			mServer.removeHanlder(this);
 		} catch (IOException e) {
 			System.out.println("Error: failed to close read and wirte buffers and the socket. Due to: "
@@ -142,5 +145,13 @@ public class ClientHandler implements Runnable {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * The server that this client handler reports to.
+	 * @param server The server to send messages to.
+	 */
+	public void setServer(Server server) {
+		mServer = server;
 	}
 }

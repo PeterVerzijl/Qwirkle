@@ -35,14 +35,7 @@ public class Client implements Runnable {
 	public Client(InetAddress host, int port, ChatView viewer) throws IOException {
 		sock = new Socket(host, port);
 		mViewer = viewer;
-	}
-
-	/**
-	 * Reads the messages in the socket connection. Each message will be
-	 * forwarded to the MessageUI
-	 */
-	@Override
-	public void run() {
+		
 		try {
 			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 		} catch (IOException e) {
@@ -56,7 +49,14 @@ public class Client implements Runnable {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		
+	}
+
+	/**
+	 * Reads the messages in the socket connection. Each message will be
+	 * forwarded to the MessageUI
+	 */
+	@Override
+	public void run() {
 		mRunning = true;
 		recieveMessage();
 	}
@@ -64,14 +64,11 @@ public class Client implements Runnable {
 	/**
 	 * Get the message from the server and display it there.
 	 */
-	public void recieveMessage() {
-		String message;
+	private void recieveMessage() {
 		try {
-			message = in.readLine();
-			while(message != null && mRunning) {
-				if (message != null) {
-					handleMessage(message);
-					message = in.readLine();
+			while(mRunning) {
+				while(in.ready()) {
+					handleMessage(in.readLine());
 				}
 			}
 		} catch (IOException e) {
@@ -206,9 +203,9 @@ private void handleError(int error) {
 		System.out.println("Closing socket connection...");
 		sendMessage(username + " left the chat.");
 		try {
-			sock.close();
 			in.close();
 			out.close();
+			sock.close();
 		} catch (IOException e) {
 			if(mViewer != null) mViewer.addMessage("Left chat.");
 		}
@@ -229,10 +226,20 @@ private void handleError(int error) {
 	 * Send to the server that we are ready to connect.
 	 * @param name The client name.
 	 */
-	public void sendHallo(String name) {
+	public void setPlayerName(String name) {
 		username = name;
 		sendMessage(Protocol.Client.HALLO + 
 					Protocol.Server.Settings.DELIMITER + 
 					username);
+	}
+
+	/**
+	 * Request a game with a certain amount of opponents.
+	 * @param numPlayers The ammount of opponents to play with.
+	 */
+	public void JoinGame(int numPlayers) {
+		sendMessage(Protocol.Client.REQUESTGAME + 
+				Protocol.Server.Settings.DELIMITER + 
+				numPlayers);
 	}
 }
