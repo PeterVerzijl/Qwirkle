@@ -11,7 +11,7 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  * @author Peter Verzijl
  *
  */
-public class Player {
+public abstract class Player {
 
 	/**
 	 * The id of the player.
@@ -35,10 +35,10 @@ public class Player {
 	/**
 	 * The constructor for the player
 	 */
-	public Player(int mId) {
+	public Player(Game aGame, int mId) {
 		// Initialize player
 		this.mID = mId;
-	//	mGame = aGame;
+		mGame = aGame;
 		mHand.clear();
 	}
 
@@ -124,9 +124,7 @@ public class Player {
 		return mHand;
 	}
 
-	public List<Block> determineMove(List<Block> aFrontier){
-		return null;
-	}
+	public abstract List<Block> determineMove(List<Block> aFrontier);
 
 	public boolean checkHand(List<Block> set) {
 		boolean inHand = true;
@@ -144,7 +142,7 @@ public class Player {
 	public void setMove(List<Block> aFrontier) {
 		List<Block> set = determineMove(aFrontier);
 		boolean trade = false;
-		if (set.size()>0&&set.get(set.size() - 1) == null) {
+		if (set.get(set.size() - 1) == null) {
 			set.remove(set.size() - 1);
 			trade = true;
 		}
@@ -162,11 +160,7 @@ public class Player {
 		}
 		System.out.println("De zet is gezet");
 	}
-	
-	public void setGame(Game aGame){
-		mGame=aGame;
-	}
-	
+
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
 		for (int i = 0; i < aHand.size(); i++) {
@@ -177,21 +171,17 @@ public class Player {
 	}
 
 	void boardScale(Vector2 aPosition) {
-		if (mGame.borders[0] > aPosition.getX())
-			mGame.borders[0] = (int) aPosition.getX()-7;
-		if (mGame.borders[1] < aPosition.getX())
-			mGame.borders[1] = (int) aPosition.getX()+7;
-		if (mGame.borders[2] > aPosition.getY())
-			mGame.borders[2] = (int) aPosition.getY()-7;
-		if (mGame.borders[3] < aPosition.getY())
-			mGame.borders[3] = (int) aPosition.getY()+7;
+		if (mGame.borders[0] < aPosition.getX())
+			mGame.borders[0] = (int) aPosition.getX() + 6;
+		if (mGame.borders[1] > aPosition.getX())
+			mGame.borders[0] = (int) aPosition.getX() + 6;
+		if (mGame.borders[2] < aPosition.getY())
+			mGame.borders[0] = (int) aPosition.getY() + 6;
+		if (mGame.borders[3] > aPosition.getY())
+			mGame.borders[0] = (int) aPosition.getY() + 6;
 	}
 
 	public Game getGame() {
 		return mGame;
-	}
-	
-	void resetHand(){
-		mHand.clear();
 	}
 }
