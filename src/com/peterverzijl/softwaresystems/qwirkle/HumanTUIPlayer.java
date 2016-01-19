@@ -12,10 +12,10 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  * @author Peter Verzijl
  *
  */
-public class HumanPlayer extends Player {
+public class HumanTUIPlayer extends Player {
 
-	public HumanPlayer(Game aGame,int aID) {
-		super(aGame, aID);
+	public HumanTUIPlayer(int aID) {
+		super(aID);
 	}
 
 	public static void main(String[] args) {
@@ -33,10 +33,10 @@ public class HumanPlayer extends Player {
 		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
 		 * new Vector2(-1, 0))]);
 		 */
-		Game game = new Game();
-		Player player = new HumanPlayer(game,1);
+		Game game = new Game(null);
+		Player player = new HumanTUIPlayer(1);
 		player.initHand(new BlockBag(), 6);
-		Player player2 = new HumanPlayer(game,2);
+		Player player2 = new HumanTUIPlayer(2);
 		player2.initHand(new BlockBag(), 6);
 		// System.out.println("Start zet");
 		List<Block> frontierTest = new ArrayList<Block>();
