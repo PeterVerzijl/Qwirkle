@@ -5,12 +5,14 @@ import java.util.List;
 
 //import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
+import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
+import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 
 /**
  * Master class for the game, this handles the setting up and running of the
@@ -51,9 +53,57 @@ public class Game implements Runnable {
 			mPlayers.get(i).setGame(this);
 			mPlayers.get(i).initHand(mBag, 6);
 		}
+<<<<<<< HEAD
 		// Add first possible move
 		mFrontier.add(new Block(null, null));
 		mFrontier.get(0).setPosition(0, 0);
+=======
+
+		// Load the tile map
+		if (mTilemap == null) {
+			mTilemap = Bitmap.load("qwirkle-tiles.png");
+			tileSprite = new Sprite(mTilemap, new Rect(6 * 16, 0, 16, 16));
+		}
+
+		// Build the board
+		int spriteSize = 16;
+		for (int x = 0; x < spriteSize; x++) {
+			for (int y = 0; y < spriteSize; y++) {
+				GameObject gridCell = new GameObject("Grid Cell");
+				SpriteRenderer renderer = gridCell.addComponent(SpriteRenderer.class);
+				renderer.setSprite(tileSprite);
+
+				Transform transform = gridCell.addComponent(Transform.class);
+				transform.setPosition((x * spriteSize) + (int) mMainCamera.transform.getPosition().getX(),
+						(y * spriteSize) + (int) mMainCamera.transform.getPosition().getY());
+			}
+		}
+
+		// Show hand on screen
+		HumanPlayer wePlayer = mPlayers.get(0);
+		List<Block> weHand = wePlayer.getmHand();
+		float blockPadding = 75;
+		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();
+		int blockCount = 0;
+		for (Block b : weHand) {
+
+			GameObject guiBlock = new GameObject("GUI Block");
+			Transform t = guiBlock.addComponent(Transform.class);
+			
+			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
+			r.setSprite(BlockSpriteMap.getSprite(b));
+			
+			RectangleCollider c = guiBlock.addComponent(RectangleCollider.class);
+			
+			guiBlock.addComponent(MoveOnMouse.class);	// Adds the move on mouse scipt
+			
+			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
+			System.out.println("hand block " + t.getPosition());
+		}
+
+		// Print amount of left over blocks after mPlayers have drawn
+		System.out.println(mBag.blocks.size() + " blocks left in the mBag.");
+>>>>>>> origin/master
 	}
 
 	public void run() {

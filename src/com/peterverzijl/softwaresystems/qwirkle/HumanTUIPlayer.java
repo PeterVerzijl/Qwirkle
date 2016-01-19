@@ -52,6 +52,7 @@ public class HumanTUIPlayer extends Player {
 		 * frontierTest.get(3).setPosition(3, 0); frontierTest.add(new
 		 * Block(null, null)); frontierTest.get(4).setPosition(4, 0);
 		 */
+		
 		while (true) {
 			// Game.boardToString(Game.setBlocks);
 			player.setMove(mGame.getFrontier());

@@ -3,6 +3,8 @@ package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.peterverzijl.softwaresystems.qwirkle.collision.Collider;
+
 /**
  * A generic component class that can be added to a  
  * @author Peter Verzijl
@@ -44,7 +46,29 @@ public abstract class Component extends EngineObject {
 	 * Called every frame.
 	 */
 	public abstract void Update();
-		
+	
+	/**
+	 * Called when the mouse enters the collider.
+	 */
+	public abstract void OnMouseEnter();
+	
+	/**
+	 * Called when the mouse exits the colllider.
+	 */
+	public abstract void OnMouseLeave();
+	
+	/**
+	 * Called when a collider enters the collider.
+	 * @param other
+	 */
+	public abstract void OnCollisionEnter(Collider other);
+	
+	/**
+	 * Called when a collider exits the collider.
+	 * @param other
+	 */
+	public abstract void OnCollisionExit(Collider other);
+	
 	/**
 	 * Returns a component of type T.
 	 * Returns the first component found.

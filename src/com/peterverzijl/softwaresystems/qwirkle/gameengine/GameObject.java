@@ -49,4 +49,12 @@ public class GameObject extends EngineObject {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns all the components of this game object.
+	 * @return All the components.
+	 */
+	public Component[] getComponents() {
+		return (Component[]) components.toArray();
+	}
 }

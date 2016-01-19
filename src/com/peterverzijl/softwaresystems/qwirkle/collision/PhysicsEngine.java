@@ -3,7 +3,9 @@ package com.peterverzijl.softwaresystems.qwirkle.collision;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Component;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Input;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 
@@ -34,11 +36,19 @@ public class PhysicsEngine {
 			if (isColliding) {
 				if (!mMouseCollisions.contains(c)) {
 					mMouseCollisions.add(c);
-					c.OnMouseEnter();
+					GameObject go = c.getGameObject();
+					Component[] components = go.getComponents();
+					for (Component co : components) {
+						co.OnMouseEnter();
+					}
 				}
 			} else {
 				if (mMouseCollisions.contains(c)) {
-					c.OnMouseLeave();
+					GameObject go = c.getGameObject();
+					Component[] components = go.getComponents();
+					for (Component co : components) {
+						co.OnMouseLeave();
+					}
 					mMouseCollisions.remove(c);
 				}
 			}

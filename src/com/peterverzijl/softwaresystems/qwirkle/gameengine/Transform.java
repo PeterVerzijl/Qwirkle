@@ -1,5 +1,7 @@
 package com.peterverzijl.softwaresystems.qwirkle.gameengine;
 
+import com.peterverzijl.softwaresystems.qwirkle.collision.Collider;
+
 public class Transform extends Component {
 	
 	// TODO(peter): Implement these!
@@ -47,4 +49,29 @@ public class Transform extends Component {
 
 	@Override
 	public void Update() { }
+
+// -------- These functions are not used by the transform.
+	@Override
+	public void OnMouseEnter() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnMouseLeave() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnCollisionEnter(Collider other) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void OnCollisionExit(Collider other) {
+		// TODO Auto-generated method stub
+		
+	}
 }

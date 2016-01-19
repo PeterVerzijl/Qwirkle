@@ -50,26 +50,4 @@ public abstract class Collider extends Component {
 	public void setCenter(float x, float y) {
 		setCenter(new Vector2(x, y));
 	}
-		
-	/**
-	 * Called when the mouse enters the collider.
-	 */
-	public abstract void OnMouseEnter();
-	
-	/**
-	 * Called when the mouse exits the colllider.
-	 */
-	public abstract void OnMouseLeave();
-	
-	/**
-	 * Called when a collider enters the collider.
-	 * @param other
-	 */
-	public abstract void OnCollisionEnter(Collider other);
-	
-	/**
-	 * Called when a collider exits the collider.
-	 * @param other
-	 */
-	public abstract void OnCollisionExit(Collider other);
 }
