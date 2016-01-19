@@ -16,6 +16,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameEngineComponent;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.editor.GameObjectViewer;
 import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 
 /**
@@ -159,14 +160,17 @@ class CreateGameView extends AbstractAction {
 			            "Are you sure to close this window?", "Really Closing?", 
 			            JOptionPane.YES_NO_OPTION,
 			            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+			        	game.stop();
 			            MainWindow.gameWindow = null;
-			            game.stop();
 			        }
 			    }
 			});
 			// Set global game window
 			MainWindow.gameWindow = frame;
-			game.start();	
+			game.start();
+			
+			// Add game object viewer
+			JFrame objectViewer = new GameObjectViewer(game);
 		}
 	}
 } 
