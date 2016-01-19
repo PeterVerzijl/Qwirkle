@@ -32,7 +32,9 @@ public class Game {
 	private List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
-
+	
+	private List<GameObject> mHandBlocks = new ArrayList<GameObject>();
+	
 	private Camera mMainCamera;
 
 	private int mCurrentPlayer = 0;
@@ -81,7 +83,8 @@ public class Game {
 		int spriteSize = 16;
 		for (int x = 0; x < spriteSize; x++) {
 			for (int y = 0; y < spriteSize; y++) {
-				GameObject gridCell = new GameObject("Grid Cell");
+				GameObject gridCell = GameObject.Instantiate(GameObject.class);
+				gridCell.name = "Grid Cell";
 				SpriteRenderer renderer = gridCell.addComponent(SpriteRenderer.class);
 				renderer.setSprite(tileSprite);
 
@@ -99,49 +102,47 @@ public class Game {
 		int blockCount = 0;
 		for (Block b : weHand) {
 
-			GameObject guiBlock = new GameObject("GUI Block");
+			GameObject guiBlock = GameObject.Instantiate(GameObject.class);
+			guiBlock.name = "Hand block";
 			Transform t = guiBlock.addComponent(Transform.class);
 			
 			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
 			r.setSprite(BlockSpriteMap.getSprite(b));
 			
-			RectangleCollider c = guiBlock.addComponent(RectangleCollider.class);
-			
+			guiBlock.addComponent(RectangleCollider.class);
 			guiBlock.addComponent(MoveOnMouse.class);	// Adds the move on mouse scipt
 			
 			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
 			System.out.println("hand block " + t.getPosition());
+			
+			mHandBlocks.add(guiBlock);
 		}
 
 		// Print amount of left over blocks after mPlayers have drawn
 		System.out.println(mBag.blocks.size() + " blocks left in the mBag.");
+		
+		renderHand(mPlayers.get(mCurrentPlayer));
 	}
 
-	Transform cameraTransform;
-
 	public void renderHand(Player aPlayer){
-		Player wePlayer = aPlayer;
-		List<Block> weHand = wePlayer.getmHand();
+		List<Block> weHand = aPlayer.getmHand();
 		float blockPadding = 75;
 		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();
-		int blockCount = 0;
-		for (Block b : weHand) {
-			Sprite sprite = BlockSpriteMap.getSprite(b);
-			GameObject guiBlock = new GameObject("GUI Block");
-			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
-			r.setSprite(sprite);
-			Transform t = guiBlock.addComponent(Transform.class);
-			// RectangleCollider c =
-			// guiBlock.addComponent(RectangleCollider.class);
-			t.setPosition(blockPadding / 2 + xOffset * blockCount++, Camera.getHeight() - 8);
+		// Loop trough game objecs and set the stones
+		for (int i = 0; i < weHand.size(); i++) {
+			GameObject guiBlock = mHandBlocks.get(i);
+			Sprite sprite = BlockSpriteMap.getSprite(weHand.get(i));
+			guiBlock.getComponent(SpriteRenderer.class).setSprite(sprite);;
+			guiBlock.getComponent(Transform.class).setPosition(blockPadding / 2 + xOffset * i, Camera.getHeight() - 8);
 			//System.out.println("hand block " + t.getPosition());
 		}
 	}
 	
+	/*
 	public void renderBlocks() {
+		
 		for (Block b : setBlocks) {
 			Sprite sprite = BlockSpriteMap.getSprite(b);
-			GameObject guiBlock = new GameObject("GUI Block");
 			SpriteRenderer r = guiBlock.addComponent(SpriteRenderer.class);
 			r.setSprite(sprite);
 			Transform t = guiBlock.addComponent(Transform.class);
@@ -163,6 +164,7 @@ public class Game {
 			System.out.println("hand block " + t.getPosition());
 		}
 	}
+	*/
 
 	public List<Block> getFrontier() {
 		return mFrontier;
@@ -182,12 +184,11 @@ public class Game {
 	 * Function gets called every frame.
 	 */
 	public void tick() {
-		renderHand(mPlayers.get(mCurrentPlayer));
 		mPlayers.get(mCurrentPlayer).setMove(mFrontier);
 		mCurrentPlayer = (mCurrentPlayer + 1) % mPlayers.size();
 		addBlocks(mPlayers.get(mCurrentPlayer));
 		System.out.println("Now the new board will get rendered");
-		renderBlocks();
+		renderHand(mPlayers.get(mCurrentPlayer));
 	}
 
 	public void addBlocks(Player aPlayer) {
