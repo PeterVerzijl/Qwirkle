@@ -55,6 +55,6 @@ public class GameObject extends EngineObject {
 	 * @return All the components.
 	 */
 	public Component[] getComponents() {
-		return (Component[]) components.toArray();
+		return components.toArray(new Component[components.size()]);
 	}
 }
