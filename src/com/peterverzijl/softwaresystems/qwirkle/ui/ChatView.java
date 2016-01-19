@@ -12,4 +12,9 @@ public interface ChatView {
 	 * @param message
 	 */
 	public void addMessage(String message);
+
+	/**
+	 * Ask the 
+	 */
+	public void askName();
 }

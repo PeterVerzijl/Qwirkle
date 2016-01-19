@@ -173,7 +173,7 @@ public class MainTUI {
 					 System.out.println("Enter a longer name!");
 				 }
 			 } while (name.length() < 2);
-			 mClient.sendHallo(name);
+			 mClient.setPlayerName(name);
 		} catch(IOException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
