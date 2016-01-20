@@ -76,4 +76,68 @@ public class Block extends Node {
 		mShape = shape;
 		mColor = color;
 	}
+	
+	/**
+	 * Gets a new block by a two character string AA - FF
+	 * @param stone The string representing the stone.
+	 * @return A new stone if the string is valid.
+	 */
+	public static Block getBlockFromCharPair(String stone) {
+		Color c = null;
+		Shape s = null;
+		if (stone.length() != 2) {
+			return null;
+		}
+		// Get color
+		char color = stone.charAt(0);
+		switch (color) {
+			case 'A':
+				c = Color.RED;
+				break;
+			case 'B':
+				c = Color.ORANGE;
+				break;
+			case 'C':
+				c = Color.YELLOW;
+				break;
+			case 'D':
+				c = Color.GREEN;
+				break;
+			case 'E':
+				c = Color.BLUE;
+				break;
+			case 'F':
+				c = Color.PURPLE;
+				break;
+			default:
+				return null;
+		}
+		
+		// Get shape
+		char shape = stone.charAt(1);
+		switch (shape) {
+			case 'A':
+				s = Shape.CIRCLE;
+				break;
+			case 'B':
+				s = Shape.CROSS;
+				break;
+			case 'C':
+				s = Shape.DIAMOND;
+				break;
+			case 'D':
+				s = Shape.SQUARE;
+				break;
+			case 'E':
+				s = Shape.STAR;
+				break;
+			case 'F':
+				s = Shape.PLUS;
+				break;
+			default:
+				return null;
+		}
+		// Return the correct block type
+		return new Block(s, c);
+	}
 }
