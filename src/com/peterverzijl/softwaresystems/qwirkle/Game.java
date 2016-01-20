@@ -40,7 +40,7 @@ public class Game implements Runnable {
 
 	public GameObject currentBlock;
 
-	public static int[] borders = { -7, 7, -7, 7 };
+	public int[] borders = { -7, 7, -7, 7 };
 
 	public Game(List<Player> aPlayerList) {
 		mBag = new BlockBag();
@@ -197,7 +197,7 @@ public class Game implements Runnable {
 	// twice, the time complexity is O(n) where n is the number of nodes in
 	// given linked list.
 	// @ensure (aBlock instanceof Block) ==true.
-	public static void boardToString(List<Block> aBlockList, List<Block> aFrontierList) {
+	public void boardToString(List<Block> aBlockList, List<Block> aFrontierList) {
 		int x =  (borders[1] - borders[0]);
 		int y =  (borders[3] - borders[2]);
 
@@ -247,5 +247,13 @@ public class Game implements Runnable {
 
 	public void tradeBlocks(Block block) {
 		mBag.blocks.add(block);
+	}
+	
+	/**
+	 * Removes a player from the game.
+	 * @param player
+	 */
+	public void removePlayer(Player player) {
+		mPlayers.remove(player);		
 	}
 }
