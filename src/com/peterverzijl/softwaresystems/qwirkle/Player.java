@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
+import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourTurnException;
 
 /**
  * Player class for the Qwirkle game, contains all the player information.
@@ -56,17 +58,19 @@ public class Player {
 	}
 
 	/**
-	 * Removes a certain block from the players hand
-	 * 
-	 * @param block
-	 *            The block to remove
+	 * Removes a block of the same kind from the players hand.
+	 * @param block The block to remove
+	 * @throws NotYourBlockException 
 	 */
-	public void removeBlock(Block block) {
-		if (mHand.contains(block)) {
-			mHand.remove(block);
-		} else {
-			// TODO(Peter): else throw an error?
+	public void removeBlock(Block block) 
+			throws NotYourBlockException {
+		for (Block b : mHand) {
+			if (b.equals(block)) {
+				mHand.remove(b);
+				return;
+			}
 		}
+		throw new NotYourBlockException();
 	}
 
 	/**
@@ -98,18 +102,35 @@ public class Player {
 	public List<Block> determineMove(List<Block> aFrontier){
 		return null;
 	}
-
-	public boolean checkHand(List<Block> set) {
-		boolean inHand = true;
-		for (Block b : set) {
-			if (!mHand.contains(b)) {
-
-				System.err.println("Hand did not contain all the blocks");
-				System.err.println("Hand did not contain"+b);
-				inHand = false;
+	
+	/**
+	 * Checks if the given block is in the hand of the player.
+	 * @param block The block to check.
+	 * @return Weighter the block is in the hand of the player.
+	 */
+	public boolean checkHand(Block block) {
+		boolean result = false;
+		for (Block b : mHand) {
+			if (b.equals(block)) {
+				result = true;
 			}
 		}
-		return inHand;
+		return result;
+	}
+	
+	/**
+	 * Checks if all the given blocks are in the hand of the player.
+	 * @param set The set of blocks to check.
+	 * @return Weighter all the blocks are in the hand of the player.
+	 */
+	public boolean checkHand(List<Block> set) {
+		boolean result = true;
+		for (Block b : set) {
+			if (!checkHand(b)) {
+				result = false;
+			}
+		}
+		return result;
 	}
 
 	public void setMove(List<Block> aFrontier) {
@@ -126,7 +147,15 @@ public class Player {
 					mGame.getSetStones().add(set.get(i));
 				} else {
 					System.out.println("Now trading");
-					mGame.tradeBlocks(set.get(i));
+					try {
+						mGame.tradeBlock(this, set.get(i));
+					} catch (NotYourTurnException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NotYourBlockException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				mHand.remove(set.get(i));
 			}

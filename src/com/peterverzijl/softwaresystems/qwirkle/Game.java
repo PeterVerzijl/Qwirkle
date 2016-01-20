@@ -11,6 +11,8 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
+import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourTurnException;
 import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 
 /**
@@ -33,11 +35,12 @@ public class Game implements Runnable {
 	private Sprite tileSprite;
 
 	private Camera mMainCamera;
-
+	
+	// TODO (dennis) : Change this to a reference to the player object, please!
 	private int mCurrentPlayer = 0;
 
 	private Node mStartNode;
-
+	
 	public GameObject currentBlock;
 
 	public int[] borders = { -7, 7, -7, 7 };
@@ -244,9 +247,30 @@ public class Game implements Runnable {
 	public List<Block> getSetStones() {
 		return setBlocks;
 	}
-
-	public void tradeBlocks(Block block) {
-		mBag.blocks.add(block);
+	
+	/**
+	 * Trades a block with the bag.
+	 * @param player The player who does the trade.
+	 * @param block The block type the player wants to trade.
+	 * @throws NotYourTurnException Thrown if this function is called when the player is not the current player.
+	 * @throws NotYourBlockException Thrown if you try to trade a block that is not yours.
+	 */
+	public void tradeBlock(Player player, Block block) 
+			throws NotYourTurnException, 
+			NotYourBlockException {
+		// Look if we are the current player
+		if (player == mPlayers.get(mCurrentPlayer)) {
+			if (player.checkHand(block)) {
+				// Do the trade
+				player.removeBlock(block);			// Don't change this order!
+				player.addBlock(mBag.drawBlock());	// !!
+				mBag.returnBlock(block);			// !!
+			} else {
+				throw new NotYourBlockException();
+			}
+		} else {
+			throw new NotYourTurnException();
+		}
 	}
 	
 	/**
@@ -255,5 +279,13 @@ public class Game implements Runnable {
 	 */
 	public void removePlayer(Player player) {
 		mPlayers.remove(player);		
+	}
+	
+	/**
+	 * Returns the current amount of stones in the stone bag.
+	 * @return The amount of stones left in the bag.
+	 */
+	public int getNumStonesInBag() {
+		return mBag.blocks.size();
 	}
 }
