@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.peterverzijl.softwaresystems.qwirkle.Block;
 import com.peterverzijl.softwaresystems.qwirkle.Game;
+import com.peterverzijl.softwaresystems.qwirkle.HumanTUIPlayer;
 import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.AddPlayerToGameException;
 import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.GameFullException;
+import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourTurnException;
 
 /**
  * Handles a single game on the server, 
@@ -68,6 +72,8 @@ public class GameServer implements Server, Runnable {
 	 */
 	@Override
 	public void sendMessage(String message, ClientHandler client) {
+		if (message.length() < 1) { return; }
+		
 		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
 		String command = parameters[0];
 		// Remove command from parameters
@@ -75,7 +81,28 @@ public class GameServer implements Server, Runnable {
 		
 		switch(command) {
 			case Protocol.Client.CHANGESTONE:
-				
+				// Get stones from command
+				for (String stone : parameters) {
+					Block b = Block.getBlockFromCharPair(stone);
+					if (b != null) {
+						// Check if the current player has this block.
+						try {
+							mGame.tradeBlock(playerClientMap.get(client), b);
+						} catch (NotYourTurnException e) {
+							client.sendMessage(Protocol.Server.ERROR + 
+									Protocol.Server.Settings.DELIMITER + 
+									1);
+						} catch (NotYourBlockException e) {
+							client.sendMessage(Protocol.Server.ERROR + 
+									Protocol.Server.Settings.DELIMITER + 
+									2);
+						}
+					} else {
+						client.sendMessage(Protocol.Server.ERROR + 
+								Protocol.Server.Settings.DELIMITER + 
+								2);
+					}
+				}
 				break;
 			case Protocol.Client.CHAT:
 				broadcast(Protocol.Server.CHAT + 
@@ -83,18 +110,29 @@ public class GameServer implements Server, Runnable {
 						client.getName() + ": " + parameters[0]);	// The first parameter is the text.
 				break;
 			case Protocol.Client.GETSTONESINBAG:
-				
+				if (hasGameStarted) {
+					client.sendMessage(Protocol.Server.CHAT + 
+								Protocol.Server.Settings.DELIMITER + 
+								mGame.getNumStonesInBag());
+				} else {
+					client.sendMessage(Protocol.Server.ERROR + 
+							Protocol.Server.Settings.DELIMITER + 
+							8);
+				}
 				break;
 			case Protocol.Client.MAKEMOVE:
-				
+				// TODO (peter) : 
 				break;
 			case Protocol.Client.QUIT:
 				// Ok doei lol
 				mClients.remove(client);
 				mGame.removePlayer(playerClientMap.get(client));
+				client.shutdown();
 				break;
 			default:
-				client.sendMessage(Protocol.Server.ERROR + Protocol.Server.Settings.DELIMITER + -1);
+				client.sendMessage(Protocol.Server.ERROR + 
+									Protocol.Server.Settings.DELIMITER + 
+									8);
 				break;
 		}
 	}

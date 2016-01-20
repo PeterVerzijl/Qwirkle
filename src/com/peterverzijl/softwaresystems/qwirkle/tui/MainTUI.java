@@ -22,7 +22,9 @@ public class MainTUI {
 	private static ServerSettings server;
 	
 	private static Client mClient;
-	private static Thread mClientThread;
+	// private static Thread mClientThread;
+	
+	private static boolean mInGame = false;
 	
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Qwirkle TUI!");
@@ -80,9 +82,19 @@ public class MainTUI {
 			}
 		} else if (input.contains("GAME JOIN")) {
 			if (mClient != null) {
-				tryJoinGame(input);
+				if (!mInGame) {
+					tryJoinGame(input);
+				} else {
+					System.out.println("You are already in a game!");
+				}
 			} else {
 				System.out.println("Go play with yourself somewhere else!");
+			}
+		} else if (input.contains("GAME STONE AMOUNT")) {
+			if (mInGame && mClient != null) {
+				mClient.getNumStones();
+			} else {
+				System.out.println("Deez nuts are in Da sack.");
 			}
 		} else if (input.contains("WHOAMI")) {
 			if (mClient != null && mClient.getName() != null) {
@@ -118,7 +130,7 @@ public class MainTUI {
 			System.out.println("Do you even know what a number is?!");
 			return;
 		}
-		
+		mInGame = true;
 	}
 
 	/**
@@ -166,6 +178,7 @@ public class MainTUI {
 		System.out.println("SERVER CREATE <address> <port> \t creates server.");
 		System.out.println("SERVER MESSAGES \t shows all server messages.");
 		System.out.println("GAME JOIN <number of opponents> \t tries to join a game with x opponents.");
+		System.out.println("GAME STONE AMOUNT \t asks the game how many stones are left in the game bag.");
 		System.out.println("WHOAMI \t shows the name of the user.");
 		System.out.println("EXIT \t exits the application.");
 	}
