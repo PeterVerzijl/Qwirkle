@@ -66,7 +66,12 @@ public class ChatTUI implements ChatView {
 	}
 
 	@Override
-	public void addMessage(String message) {
+	public void displayMessage(String message) {
 		System.out.println(message);
+	}
+
+	@Override
+	public void askName() {
+		MainTUI.askName();		
 	}
 }

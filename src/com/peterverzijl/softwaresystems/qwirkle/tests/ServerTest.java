@@ -51,8 +51,8 @@ public class ServerTest {
 			client2.setPlayerName(PLAYER2_NAME);
 			
 			// Ask for a game
-			client1.JoinGame(2);
-			client2.JoinGame(2);
+			client1.joinGame(2);
+			client2.joinGame(2);
 			
 			
 			//server.shutdown();

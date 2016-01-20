@@ -98,11 +98,11 @@ public class Client implements Runnable {
 			case Protocol.Server.CHAT:
 				if(mViewer != null) {
 					// Remove the header thing
-					mViewer.addMessage(parameters[0]);
+					mViewer.displayMessage(parameters[0]);
 				}
 				break;
 			case Protocol.Server.DECLINEINVITE:
-				
+				// TODO (peter) : Implement inviting.
 				break;
 			case Protocol.Server.ERROR:
 				try {
@@ -113,7 +113,7 @@ public class Client implements Runnable {
 				}
 				break;
 			case Protocol.Server.GAME_END:
-				
+				endGame();
 				break;
 			case Protocol.Server.HALLO:
 				// Print server name and featues
@@ -128,27 +128,61 @@ public class Client implements Runnable {
 				
 				break;
 			case Protocol.Server.INVITE:
-				
+				// TODO (peter) : Implement challenging
 				break;
 			case Protocol.Server.LEADERBOARD:
-				
+				// TODO (peter) : Implement leader board
 				break;
 			case Protocol.Server.MOVE:
-				
+				// TODO (peter) : Get the move from the server and roll with it!
 				break;
 			case Protocol.Server.OKWAITFOR:
-				
+				try {
+					int numPlayers = Integer.parseInt(parameters[0]);
+					if (mViewer != null) {
+						mViewer.displayMessage("Waiting for " + numPlayers + " other players...");
+					}
+				} catch (NumberFormatException e) {
+					// TODO (peter) : Error logging in a file?
+				}
 				break;
 			case Protocol.Server.STARTGAME:
-				
+				if (mViewer != null) {
+					mViewer.displayMessage("Game is starting!!");
+					mViewer.displayMessage("Opponents:");
+					for (String name : parameters) {
+						mViewer.displayMessage(name);
+					}
+				}
 				break;
 			case Protocol.Server.STONESINBAG:
-				
+				try {
+					int numStones = Integer.parseInt(parameters[0]);
+					if (mViewer != null) {
+						mViewer.displayMessage("There are " + numStones + 
+												" stones left in the bag.");
+					}
+				} catch (NumberFormatException e) {
+					// TODO (peter) : Error logging in a file?
+				}
+				break;
+			default:
+				if (mViewer != null) {
+					mViewer.displayMessage(message);
+				}
 				break;
 		}
 	}
 	
-private void handleError(int error) {
+	private void endGame() {
+		if (mViewer != null) {
+			mViewer.displayMessage("The game has ended. " + 
+									"You can disconnect now.");
+			shutdown();
+		}
+	}
+
+	private void handleError(int error) {
 		// TODO Auto-generated method stub
 		switch(error) {
 			case 1:			// Not your turn
@@ -168,6 +202,8 @@ private void handleError(int error) {
 				// TODO (peter) : Implement challenging
 				break;
 			case 7:			// Invalid move
+				break;
+			case 8:			// General error ??
 				break;
 		}
 	}
@@ -207,7 +243,7 @@ private void handleError(int error) {
 			out.close();
 			sock.close();
 		} catch (IOException e) {
-			if(mViewer != null) mViewer.addMessage("Left chat.");
+			if(mViewer != null) mViewer.displayMessage("Left chat.");
 		}
 	}
 	
@@ -237,7 +273,7 @@ private void handleError(int error) {
 	 * Request a game with a certain amount of opponents.
 	 * @param numPlayers The ammount of opponents to play with.
 	 */
-	public void JoinGame(int numPlayers) {
+	public void joinGame(int numPlayers) {
 		sendMessage(Protocol.Client.REQUESTGAME + 
 				Protocol.Server.Settings.DELIMITER + 
 				numPlayers);

@@ -78,6 +78,12 @@ public class MainTUI {
 			} else {
 				System.out.println("No.");
 			}
+		} else if (input.contains("GAME JOIN")) {
+			if (mClient != null) {
+				tryJoinGame(input);
+			} else {
+				System.out.println("Go play with yourself somewhere else!");
+			}
 		} else if (input.contains("WHOAMI")) {
 			if (mClient != null && mClient.getName() != null) {
 				System.out.println(mClient.getName());
@@ -93,6 +99,28 @@ public class MainTUI {
 		}
 	}
 	
+	private static void tryJoinGame(String input) {
+		// Remove the command
+		input = input.replaceAll("GAME JOIN ", "");
+		String[] param = input.split(" ");
+		
+		// Try to get the number
+		if (param.length != 1) {
+			// Stupid
+			System.out.println("");
+			return;
+		}
+		try {
+			int numPlayers = Integer.parseInt(param[0]);
+			mClient.joinGame(numPlayers);
+			System.out.println("Waiting for other players...");
+		} catch (NumberFormatException e) {
+			System.out.println("Do you even know what a number is?!");
+			return;
+		}
+		
+	}
+
 	/**
 	 * Gets the settings from a string file.
 	 * @param input The server settings in string.
@@ -137,6 +165,7 @@ public class MainTUI {
 		System.out.println("SERVER CONNECT <address> <port> \t connects to a server.");
 		System.out.println("SERVER CREATE <address> <port> \t creates server.");
 		System.out.println("SERVER MESSAGES \t shows all server messages.");
+		System.out.println("GAME JOIN <number of opponents> \t tries to join a game with x opponents.");
 		System.out.println("WHOAMI \t shows the name of the user.");
 		System.out.println("EXIT \t exits the application.");
 	}
@@ -185,7 +214,7 @@ public class MainTUI {
 	 */
 	private static Client createClient() throws IOException {
 		Client client = null;
-		client = new Client(server.address, server.port, null);
+		client = new Client(server.address, server.port, new ClientViewer());
 		(new Thread(client)).start();
 		return client;
 	}

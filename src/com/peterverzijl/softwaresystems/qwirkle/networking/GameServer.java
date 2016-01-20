@@ -25,7 +25,7 @@ public class GameServer implements Server, Runnable {
 	private Game mGame;						// The game played
 	private List<ClientHandler> mClients;	// The client handlers
 	
-	private Map<Player, ClientHandler> playerClientMap;
+	private Map<ClientHandler, Player> playerClientMap;
 	
 	/**
 	 * Constructor
@@ -35,7 +35,7 @@ public class GameServer implements Server, Runnable {
 		mTargetPlayerCount = targetPlayerCount;
 		
 		mClients = new ArrayList<ClientHandler>();
-		playerClientMap = new HashMap<Player, ClientHandler>();
+		playerClientMap = new HashMap<ClientHandler, Player>();
 	}
 	
 	/**
@@ -89,7 +89,9 @@ public class GameServer implements Server, Runnable {
 				
 				break;
 			case Protocol.Client.QUIT:
-				
+				// Ok doei lol
+				mClients.remove(client);
+				mGame.removePlayer(playerClientMap.get(client));
 				break;
 			default:
 				client.sendMessage(Protocol.Server.ERROR + Protocol.Server.Settings.DELIMITER + -1);
@@ -125,11 +127,15 @@ public class GameServer implements Server, Runnable {
 	public void addPlayer(ClientHandler client) 
 			throws GameFullException {
 		if (!hasGameStarted && mClients.size() <= mTargetPlayerCount) {
-			mClients.add(client);
+			addClient(client);
 			client.setServer(this);
 			// Check if we can now start the game
 			if (mClients.size() == mTargetPlayerCount) {
 				startGame();
+			} else {
+				broadcast(Protocol.Server.OKWAITFOR + 
+							Protocol.Server.Settings.DELIMITER + 
+							(mTargetPlayerCount - mClients.size()));
 			}
 		} else {
 			throw new GameFullException();
@@ -140,17 +146,23 @@ public class GameServer implements Server, Runnable {
 	 * Start the game.
 	 */
 	private void startGame() {
-		hasGameStarted = true;
+		// Send start game message
+		String message = Protocol.Server.STARTGAME;
+		for (ClientHandler client : mClients) {
+			message += Protocol.Server.Settings.DELIMITER;
+			message += client.getName();
+		}
+		broadcast(message);
 		
-		System.out.println("Game is starting!!");
+		hasGameStarted = true;
 		
 		// TODO (peter) : make new game
 		// Create a new player for every client.
 		List<Player> players = new ArrayList<Player>();
 		for (ClientHandler client : mClients) {
-			Player p = new Player(5);
+			Player p = new Player();
 			players.add(p);
-			playerClientMap.put(p, client);
+			playerClientMap.put(client, p);
 		}
 		mGame = new Game(players);
 		

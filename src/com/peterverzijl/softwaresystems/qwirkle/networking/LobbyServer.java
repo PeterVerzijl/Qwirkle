@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.peterverzijl.softwaresystems.qwirkle.Game;
 import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.GameFullException;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 
@@ -116,19 +117,18 @@ public class LobbyServer implements Server, Runnable {
 			case Protocol.Client.REQUESTGAME:
 				try {
 					int numPlayers = Integer.parseInt(parameters[0]);
-					if (numPlayers < 1) {
+					if (numPlayers < 0) {
 						throw new NumberFormatException();
 					}
 					assignPlayerToGame(numPlayers, client);
 				} catch (NumberFormatException e) {
 					// Errors! this is not a number
 					client.sendMessage(Protocol.Server.ERROR + 
-							Protocol.Server.Settings.DELIMITER + (-4));
+							Protocol.Server.Settings.DELIMITER + 8);
 				}
-				// REQUESTGAME_<numPlayers>\n\n
 				break;
 			default:
-				client.sendMessage(Protocol.Server.ERROR + Protocol.Server.Settings.DELIMITER + -1);
+				client.sendMessage(Protocol.Server.ERROR + Protocol.Server.Settings.DELIMITER + 8);
 				break;
 		}
 	}
@@ -141,7 +141,7 @@ public class LobbyServer implements Server, Runnable {
 	private void assignPlayerToGame(int numPlayers, ClientHandler client) {
 		// Search for a server game with this amount of players
 		for (GameServer game : mGameServers) {
-			if (game.getTargetPlayerCount() == numPlayers) {
+			if (numPlayers == 0 || game.getTargetPlayerCount() == numPlayers) {
 				try {
 					game.addPlayer(client);
 					return;
@@ -152,7 +152,7 @@ public class LobbyServer implements Server, Runnable {
 			}
 		}
 		// Make new game with same target players
-		GameServer newGame = new GameServer(numPlayers);
+		GameServer newGame = new GameServer((numPlayers == 0)?2:numPlayers);
 		try {
 			newGame.addPlayer(client);
 			(new Thread(newGame)).start();
