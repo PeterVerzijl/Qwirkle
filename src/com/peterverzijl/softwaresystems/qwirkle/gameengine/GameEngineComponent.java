@@ -59,7 +59,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 		setMinimumSize(size);
 		setMaximumSize(size);
 
-		mGame = new Game();
+		//mGame = new Game();
 		mScreen = new Screen(WIDTH, HEIGHT);
 		input = new Input(SCALE);
 		
@@ -77,7 +77,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 		}
 		
 		// Call start on the mGame
-		mGame.start();
+		//mGame.start();
 		
 		running = true;
 		thread = new Thread(this);
