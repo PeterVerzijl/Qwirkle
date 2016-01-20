@@ -14,10 +14,10 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  */
 public class HumanTUIPlayer extends Player {
 
-	public HumanTUIPlayer(int aID) {
-		super(aID);
-	}
-
+	public HumanTUIPlayer() {}
+	
+	public static Game mGame;
+	
 	public static void main(String[] args) {
 
 		/**
@@ -33,10 +33,10 @@ public class HumanTUIPlayer extends Player {
 		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
 		 * new Vector2(-1, 0))]);
 		 */
-		Game game = new Game(null);
-		Player player = new HumanTUIPlayer(1);
+		mGame = new Game(null);
+		Player player = new HumanTUIPlayer();
 		player.initHand(new BlockBag(), 6);
-		Player player2 = new HumanTUIPlayer(2);
+		Player player2 = new HumanTUIPlayer();
 		player2.initHand(new BlockBag(), 6);
 		// System.out.println("Start zet");
 		List<Block> frontierTest = new ArrayList<Block>();
@@ -77,7 +77,7 @@ public class HumanTUIPlayer extends Player {
 				copyBoard.addAll(mGame.getSetStones());
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
-				Game.boardToString(copyBoard,possiblePositions);
+				mGame.boardToString(copyBoard,possiblePositions);
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
 				//printNodeList(possiblePositions);
@@ -179,7 +179,8 @@ public class HumanTUIPlayer extends Player {
 						}
 					}
 				} else if (input.toLowerCase().equals("player")) {
-					System.out.println(this.getmID());
+					// TODO (dennis) : Players no longer have an ID.
+					//System.out.println(this.getmID());
 				} else {
 					System.err.println("Input was not a valid number or command. Try again");
 					hand = GameConstants.INALID_MOVE;

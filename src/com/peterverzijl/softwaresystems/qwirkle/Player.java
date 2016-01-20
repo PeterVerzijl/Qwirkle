@@ -14,18 +14,9 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 public class Player {
 
 	/**
-	 * The id of the player.
-	 */
-	private int mID = -1;
-	/**
-	 * The total amount of players
-	 */
-	public static int playerCount = 0;
-
-	/**
 	 * The game the player is playing
 	 */
-	protected static Game mGame;
+	protected Game mGame;
 
 	/**
 	 * The blocks that the player has in his/her prosession
@@ -35,9 +26,7 @@ public class Player {
 	/**
 	 * The constructor for the player
 	 */
-	public Player(int mId) {
-		// Initialize player
-		this.mID = mId;
+	public Player() {
 	//	mGame = aGame;
 		mHand.clear();
 	}
@@ -96,24 +85,6 @@ public class Player {
 	}
 
 	/* --- Getters and setters --- */
-
-	/**
-	 * Gets the ID of the current player
-	 * 
-	 * @return The player's ID
-	 */
-	public int getmID() {
-		return mID;
-	}
-
-	/**
-	 * Returns the player count
-	 * 
-	 * @return Player count
-	 */
-	public static int getPlayerCount() {
-		return playerCount;
-	}
 
 	/**
 	 * Returns the current hand of the player
