@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.Charset;
 
 /**
  * A handler thread that handles communication between a client and the server.
@@ -31,7 +32,8 @@ public class ClientHandler implements Runnable {
 		try {
 			in = new BufferedReader(
 					new InputStreamReader(
-						mSocket.getInputStream()));
+						mSocket.getInputStream(), 
+						Charset.forName(Protocol.Server.Settings.ENCODING)));
 		} catch (IOException e) {
 			System.out.println("Error: could not create buffered reader from socket. Due to: " + e.getMessage());
 		}
@@ -39,7 +41,8 @@ public class ClientHandler implements Runnable {
 		try {
 			out = new BufferedWriter(
 					new OutputStreamWriter(
-						mSocket.getOutputStream()));
+						mSocket.getOutputStream(), 
+						Charset.forName(Protocol.Server.Settings.ENCODING)));
 		} catch (IOException e) {
 			System.out.println("Error: could not create buffered writer from socket. Due to: " + e.getMessage());
 		}
@@ -74,7 +77,7 @@ public class ClientHandler implements Runnable {
 	 */
 	public void sendMessage(String message) {
 		try {
-			out.write(message + System.lineSeparator());
+			out.write(message + Protocol.Server.Settings.COMMAND_END);
 			out.flush();
 		} catch (IOException e) {
 			System.out.println("Error: could not read message. Assuming client disconnected.");

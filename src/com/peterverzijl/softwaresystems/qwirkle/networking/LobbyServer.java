@@ -80,6 +80,8 @@ public class LobbyServer implements Server, Runnable {
 	 * @param client The client handler that send the message.
 	 */
 	public synchronized void sendMessage(String message, ClientHandler client) {
+		if (message.length() < 1) { return; }
+		
 		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
 		String command = parameters[0];
 		// Remove command from parameters

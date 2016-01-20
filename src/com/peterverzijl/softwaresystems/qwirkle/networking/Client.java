@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import com.peterverzijl.softwaresystems.qwirkle.gui.ChatWindow;
@@ -37,14 +38,20 @@ public class Client implements Runnable {
 		mViewer = viewer;
 		
 		try {
-			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+			out = new BufferedWriter(
+					new OutputStreamWriter(
+							sock.getOutputStream(), 
+							Charset.forName(Protocol.Server.Settings.ENCODING)));
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 
 		try {
-			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			in = new BufferedReader(
+					new InputStreamReader(
+							sock.getInputStream(), 
+							Charset.forName(Protocol.Server.Settings.ENCODING)));
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -87,6 +94,8 @@ public class Client implements Runnable {
 	 * @param message
 	 */
 	private void handleMessage(String message) {
+		if (message.length() < 1) { return; }
+		
 		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
 		String command = parameters[0];
 		// Remove command from parameters
@@ -204,6 +213,9 @@ public class Client implements Runnable {
 			case 7:			// Invalid move
 				break;
 			case 8:			// General error ??
+				if (mViewer != null) {
+					mViewer.displayMessage("Nope.");
+				}
 				break;
 		}
 	}
@@ -214,7 +226,7 @@ public class Client implements Runnable {
 	 */
 	private void sendMessage(String msg) {
 		try {
-			out.write(msg + System.lineSeparator());
+			out.write(msg + Protocol.Server.Settings.COMMAND_END);
 			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -277,5 +289,12 @@ public class Client implements Runnable {
 		sendMessage(Protocol.Client.REQUESTGAME + 
 				Protocol.Server.Settings.DELIMITER + 
 				numPlayers);
+	}
+
+	/**
+	 * Asks the server to push the amount of stones in the bag.
+	 */
+	public void getNumStones() {
+		sendMessage(Protocol.Client.GETSTONESINBAG);
 	}
 }
