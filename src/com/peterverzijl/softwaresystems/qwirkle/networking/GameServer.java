@@ -90,9 +90,15 @@ public class GameServer implements Server {
 			try {
 				List<Block> tradedBlocks = new ArrayList<Block>();
 				for (String stone : parameters) {
-					// TODO (Peter) : Get the stone from his hand instead of a
-					// copy.
+					// TODO (Peter) : Change the way we get a stone from the player hand.
 					Block b = Block.getBlockFromCharPair(stone);
+					
+					for (Block handBlock : playerClientMap.get(client).getHand()) {
+						if (b.equals(handBlock)) {
+							b = handBlock;
+						}
+					}
+					
 					if (b != null) {
 						// Check if the current player has this block.
 						Block newBlock = mGame.tradeBlock(playerClientMap.get(client), b);
@@ -218,7 +224,6 @@ public class GameServer implements Server {
 
 		hasGameStarted = true;
 
-		// TODO (peter) : make new game
 		// Create a new player for every client.
 		List<Player> players = new ArrayList<Player>();
 		for (ClientHandler client : mClients) {

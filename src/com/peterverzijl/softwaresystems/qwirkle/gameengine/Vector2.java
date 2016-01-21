@@ -76,9 +76,8 @@ public class Vector2 {
 	 * @param length The length of the vector
 	 */
 	public void setMagnitude(float length) {
-		assert length > 0 : "Error: The length of a vector cannot be negative!";
-		// TODO(Peter): Sets the magnitude of the vector.
-		// TODO(Peter): Maybe take the absolute value of the length and generate an error?
+		normalize();
+		multiply(Math.abs(length));
 	}
 	
 	/**
@@ -210,7 +209,7 @@ public class Vector2 {
 	
 	/**
 	 * Returns the dot product of two vectors.
-	 * Following the formula: a · b = ax × bx + ay × by
+	 * Following the formula: a ï¿½ b = ax ï¿½ bx + ay ï¿½ by
 	 * @param v1 The first Vector3
 	 * @param v2 The second Vector3
 	 * @return The resulting lenth of the dot product.

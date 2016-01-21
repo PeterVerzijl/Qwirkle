@@ -31,32 +31,21 @@ public class SpriteRenderer extends RenderComponent {
 	}
 
 	@Override
-	public void Start() { }
+	public void Start() {}
 
 	@Override
-	public void Update() { }
+	public void Update() {}
 
 	@Override
-	public void OnMouseEnter() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnMouseEnter() {}
 
 	@Override
-	public void OnMouseLeave() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnMouseLeave() {}
 
 	@Override
 	public void OnCollisionEnter(Collider other) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public void OnCollisionExit(Collider other) {
-		// TODO Auto-generated method stub
-		
-	}	
+	public void OnCollisionExit(Collider other) {}	
 }

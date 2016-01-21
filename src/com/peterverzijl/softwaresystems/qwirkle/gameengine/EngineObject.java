@@ -39,7 +39,6 @@ public class EngineObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends EngineObject> T Instantiate(T o) {
-		// TODO(Peter): Factory pattern
 		try {
 			Constructor<? extends EngineObject> con = o.getClass().getConstructor();
 			try {

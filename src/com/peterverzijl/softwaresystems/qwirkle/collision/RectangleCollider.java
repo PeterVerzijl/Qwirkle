@@ -21,30 +21,26 @@ public class RectangleCollider extends Collider {
 	
 	@Override
 	public void Update() {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
 	public void OnMouseEnter() {
-		// TODO Auto-generated method stub
 		System.out.println("Mouse enters!");
 	}
 
 	@Override
 	public void OnMouseLeave() {
-		// TODO Auto-generated method stub
 		System.out.println("Mouse leaves!");
 	}
 
 	@Override
 	public void OnCollisionEnter(Collider other) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void OnCollisionExit(Collider other) {
-		// TODO Auto-generated method stub
 		
 	}
 }

@@ -37,26 +37,19 @@ public class ChatTUI implements ChatView {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
         	while(mRunning) {
-        		String input = br.readLine();
-        		if ("\\exit".equals(input)) {
-        			System.out.println("Exiting the chat application.\n" + 
-        								"------------------------------------------");
-        			close();
-        		} else {
-        			mClient.sendChatMessage(input);
+        		if (br.ready()) {
+	        		String input = br.readLine();
+	        		if ("\\exit".equals(input)) {
+	        			System.out.println("Exiting the chat application.\n" + 
+	        								"------------------------------------------");
+	        			close();
+	        		} else {
+	        			mClient.sendChatMessage(input);
+	        		}
         		}
     		}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
-			// TODO (Peter) : Chat TUI should recieve a client as parameter
-			/*
-			mChatThread.interrupt();
-			try {
-				mChatThread.join();
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			*/
 			close();
 		}
 	}

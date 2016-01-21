@@ -150,7 +150,6 @@ public class Client implements Runnable {
 						System.out.println(" - " + parameters[i]);
 					}
 				}
-				
 				break;
 			case Protocol.Server.INVITE:
 				// TODO (peter) : Implement challenging
@@ -167,9 +166,18 @@ public class Client implements Runnable {
 					Node n = Board.moveStringToNode(move);
 					//doMove(n);
 				}
+				if (movingPlayer != username) {
+					// Message the viewer that a move has been done
+					if (mViewer != null) {
+						mViewer.displayMessage(movingPlayer + " has made a move.");
+						// Draw updated board
+						mViewer.displayMessage(nextPlayer + " now has the turn.");
+					}
+				}
 				// Is it our turn?
 				if (nextPlayer == username) {
-					//mGame.
+					// TODO (peter) : Contact PlayerTUI
+					// We have the turn now!!! Do something with the game TUI.
 				}
 				break;
 			case Protocol.Server.OKWAITFOR:
@@ -215,6 +223,9 @@ public class Client implements Runnable {
 		}
 	}
 	
+	/**
+	 * Show the viewer that the game has stopped.
+	 */
 	private void endGame() {
 		if (mViewer != null) {
 			mViewer.displayMessage("The game has ended. " + 
@@ -222,7 +233,20 @@ public class Client implements Runnable {
 			shutdown();
 		}
 	}
-
+	
+	/**
+	 * Handles an error message gotten from the server.
+	 * Code | Definition
+	 * ---- | -----------------
+	 *   1  | notYourTurn
+	 *   2  | notYourStone
+	 *   3  | notEnoughStones
+	 *   4  | nameExists
+	 *   5  | notChallengable
+	 *   6  | ChallengerRefused
+	 *   7  | invalidMove
+	 * @param error The error code.
+	 */
 	private void handleError(int error) {
 		// TODO Auto-generated method stub
 		switch(error) {
@@ -236,10 +260,15 @@ public class Client implements Runnable {
 					mViewer.displayMessage("Not your stone.");
 				}
 				break;
-			case 3:			// Not your turn
+			case 3:			// Not enough stones
+				if (mViewer != null) {
+					mViewer.displayMessage("Oeps, it seems the server has run out of stones.");
+				}
 				break;
 			case 4:			// Name Exists
-				// Name was refused by the server
+				if (mViewer != null) {
+					mViewer.displayMessage("Name already taken.");
+				}
 				MainTUI.askName();
 				break;
 			case 5:			// Not your turn
@@ -249,6 +278,9 @@ public class Client implements Runnable {
 				// TODO (peter) : Implement challenging
 				break;
 			case 7:			// Invalid move
+				if (mViewer != null) {
+					mViewer.displayMessage("Invalid move.");
+				}
 				break;
 			case 8:			// General error ??
 				if (mViewer != null) {
@@ -303,7 +335,11 @@ public class Client implements Runnable {
 	public String getName() {
 		return username;
 	}
-
+	
+	/**
+	 * Sets the viewer of this client.
+	 * @param view The viewer of the client.
+	 */
 	public void setViewer(ChatView view) {
 		mViewer = view;
 	}
@@ -349,7 +385,6 @@ public class Client implements Runnable {
 	 * @return The player hand in string form.
 	 */
 	public String getPlayerHand() {
-		// TODO Auto-generated method stub
 		return Player.handToString(mPlayer.getHand());
 	}
 	
