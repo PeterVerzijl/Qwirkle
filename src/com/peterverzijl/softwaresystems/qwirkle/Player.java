@@ -3,9 +3,8 @@ package com.peterverzijl.softwaresystems.qwirkle;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
-import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 
 /**
  * Player class for the Qwirkle game, contains all the player information.
@@ -15,6 +14,7 @@ import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
  */
 public class Player {
 
+	
 	/**
 	 * The game the player is playing
 	 */
@@ -29,7 +29,6 @@ public class Player {
 	 * The constructor for the player
 	 */
 	public Player() {
-	//	mGame = aGame;
 		mHand.clear();
 	}
 
@@ -90,6 +89,7 @@ public class Player {
 
 	/* --- Getters and setters --- */
 
+
 	/**
 	 * Returns the current hand of the player
 	 * 
@@ -99,74 +99,14 @@ public class Player {
 		return mHand;
 	}
 
-	public List<Block> determineMove(List<Block> aFrontier){
+	public List<Node> determineMove(List<Node> aFrontier) {
 		return null;
 	}
-	
-	/**
-	 * Checks if the given block is in the hand of the player.
-	 * @param block The block to check.
-	 * @return Weighter the block is in the hand of the player.
-	 */
-	public boolean checkHand(Block block) {
-		boolean result = false;
-		for (Block b : mHand) {
-			if (b.equals(block)) {
-				result = true;
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Checks if all the given blocks are in the hand of the player.
-	 * @param set The set of blocks to check.
-	 * @return Weighter all the blocks are in the hand of the player.
-	 */
-	public boolean checkHand(List<Block> set) {
-		boolean result = true;
-		for (Block b : set) {
-			if (!checkHand(b)) {
-				result = false;
-			}
-		}
-		return result;
+
+	public void setGame(Game aGame) {
+		mGame = aGame;
 	}
 
-	public void setMove(List<Block> aFrontier) {
-		List<Block> set = determineMove(aFrontier);
-		boolean trade = false;
-		if (set.size()>0&&set.get(set.size() - 1) == null) {
-			set.remove(set.size() - 1);
-			trade = true;
-		}
-		if (checkHand(set)) {
-			for (int i = 0; i < set.size(); i++) {
-				if (!trade) {
-					boardScale(set.get(i).getPosition());
-					mGame.getSetStones().add(set.get(i));
-				} else {
-					System.out.println("Now trading");
-					try {
-						mGame.tradeBlock(this, set.get(i));
-					} catch (NotYourTurnException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NotYourBlockException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				mHand.remove(set.get(i));
-			}
-		}
-		System.out.println("De zet is gezet");
-	}
-	
-	public void setGame(Game aGame){
-		mGame=aGame;
-	}
-	
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
 		for (int i = 0; i < aHand.size(); i++) {
@@ -177,21 +117,21 @@ public class Player {
 	}
 
 	void boardScale(Vector2 aPosition) {
-		if (mGame.borders[0] > aPosition.getX())
-			mGame.borders[0] = (int) aPosition.getX()-7;
-		if (mGame.borders[1] < aPosition.getX())
-			mGame.borders[1] = (int) aPosition.getX()+7;
-		if (mGame.borders[2] > aPosition.getY())
-			mGame.borders[2] = (int) aPosition.getY()-7;
-		if (mGame.borders[3] < aPosition.getY())
-			mGame.borders[3] = (int) aPosition.getY()+7;
+		if (Board.borders[0] > aPosition.getX())
+			Board.borders[0] = (int) aPosition.getX() - 7;
+		if (Board.borders[1] < aPosition.getX())
+			Board.borders[1] = (int) aPosition.getX() + 7;
+		if (Board.borders[2] > aPosition.getY())
+			Board.borders[2] = (int) aPosition.getY() - 7;
+		if (Board.borders[3] < aPosition.getY())
+			Board.borders[3] = (int) aPosition.getY() + 7;
 	}
 
 	public Game getGame() {
 		return mGame;
 	}
-	
-	void resetHand(){
+
+	void resetHand() {
 		mHand.clear();
 	}
 }

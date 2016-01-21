@@ -5,119 +5,174 @@ import java.util.List;
 
 //import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
-import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
-import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 
 /**
  * Master class for the game, this handles the setting up and running of the
  * game.
+ * 
  * @author Peter Verzijl
- * @version 1.0a
+ *
  */
-public class Game implements Runnable {
+public class Game {
 
 	public static final int HAND_SIZE = 6;
 
 	private BlockBag mBag;
 
 	private List<Player> mPlayers = new ArrayList<Player>();
-	private List<Block> mFrontier = new ArrayList<Block>();
-	private List<Block> setBlocks = new ArrayList<Block>(); // RAGERAGERAGERAGE
 	private Bitmap mTilemap;
 	private Sprite tileSprite;
 
 	private Camera mMainCamera;
-	
+
 	// TODO (dennis) : Change this to a reference to the player object, please!
 	private int mCurrentPlayer = 0;
 
-	private Node mStartNode;
-	
+	private Board mBoard;
+
 	public GameObject currentBlock;
-	
-	public int[] borders = { -7, 7, -7, 7 };
-	
-	/**
-	 * Create a game with a list of players.
-	 * @param aPlayerList The players of the game.
-	 */
+
 	public Game(List<Player> aPlayerList) {
 		mBag = new BlockBag();
+		mBoard = new Board();
 		// TODO: DENNIS score resetten
-		//
+		
 		mPlayers = aPlayerList;
 		for (int i = 0; i < mPlayers.size(); i++) {
 			mPlayers.get(i).resetHand();
-			mPlayers.get(i).setGame(this);
 			mPlayers.get(i).initHand(mBag, 6);
+			mPlayers.get(i).setGame(this);
 		}
 		// Add first possible move
-		mFrontier.add(new Block(null, null));
-		mFrontier.get(0).setPosition(0, 0);
-	}
-	
-	/**
-	 * The main thread method.
-	 */
-	@Override
+		}
+	//test unit
 	public void run() {
 		while(!hasEnded()) {
-			mPlayers.get(mCurrentPlayer).setMove(mFrontier);
-			addBlocks(mPlayers.get(mCurrentPlayer));
-			mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());
+			try {
+				doMove(mPlayers.get(mCurrentPlayer).determineMove(mBoard.getEmptySpaces()));
+				addBlocks(mPlayers.get(mCurrentPlayer));
+				mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());
+			} catch (IllegalMoveException e) {
+				System.err.println("Er gaan dingen mis!!!");
+			}
+			
 		}
 		//doe iets als de game klaar is
 	}
-	
-	/**
-	 * Returns weighter the game has ended.
-	 * @return Weighter the game has ended.
-	 */
+
 	public boolean hasEnded() {
-		// TODO (peter) : To be implemented
 		return false;
 	}
 	
-	/**
-	 * Returns a list of empty fields on which blocks can be placed.
-	 * @return A list of empty fields where you can place blocks.
-	 */
-	public List<Block> getFrontier() {
-		return mFrontier;
-	}
-	
-	/**
-	 * Adds a block to the frontier.
-	 * @param aBlock The block to add to the frontier.
-	 */
-	public void addFrontier(Block aBlock) {
-		mFrontier.add(aBlock);
-	}
-	
-	/**
-	 * Removes a block from the frontier.
-	 * @param aBlock The block to remove from the frontier.
-	 */
-	public void removeFrontier(Block aBlock) {
-		if (mFrontier.contains(aBlock)) {
-			mFrontier.remove(aBlock);
-		}
+
+	public boolean checkHand(Player player,Block block) {
+		boolean result = false;
+		if(player==mPlayers.get(mCurrentPlayer)){
+		List<Block> playerHand= mPlayers.get(mCurrentPlayer).getHand();
+		for (Block b : playerHand) {
+			if (b.equals(block)) {
+				result = true;
+			}
+		}}
+		return result;
 	}
 
-	
+	/**
+	 * Checks if all the given blocks are in the hand of the player.
+	 * 
+	 * @param set
+	 *            The set of blocks to check.
+	 * @return Weighter all the blocks are in the hand of the player.
+	 */
+	public boolean checkHand(List<Node> set) {
+		boolean result = true;
+		for (Node n : set) {
+			if (!checkHand(mPlayers.get(mCurrentPlayer),n.getBlock())) {
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException{
+		List<Node> playersMove = aPlayerMove;
+		boolean trade = false;
+		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX()==GameConstants.UNSET_NODE) {
+			playersMove.remove(playersMove.size() - 1);
+			trade = true;
+		}
+		System.out.println("checking hand!");
+		if (checkHand(playersMove)) {
+			System.out.println("Set in hand");
+			System.out.println(playersMove.size());
+			for (int i = 0; i < playersMove.size(); i++) {
+				if (!trade) {
+				//	boardScale(playersMove.get(i).getPosition());
+					//if (Board.isValid(playersMove)) {
+						System.out.println("if isValid");
+						mBoard.setFrontier(playersMove.get(i));
+						mBoard.getPlacedBlocks().add(playersMove.get(i));
+					//}
+				} else {
+					System.out.println("Now trading");
+					tradeBlocks(playersMove.get(i).getBlock());
+				}
+				try {
+					mPlayers.get(mCurrentPlayer).removeBlock(playersMove.get(i).getBlock());
+				} catch (NotYourBlockException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {System.out.println("checkHand was false");}
+		System.out.println("De zet is gezet");
+	}
+
+	public List<Node> getFrontier() {
+		List<Node> copy = new ArrayList<Node>();
+		List<Node> original = mBoard.getEmptySpaces();
+		for(Node v : original){
+			copy.add(v);
+		}
+		return copy;
+	}
+
+		public List<Player> getPlayers(){
+		return mPlayers;
+	}
+
+	/**
+	 * Function gets called every frame.
+	 */
+	public void tick() {
+		/*
+		 * renderHand(mPlayers.get(mCurrentPlayer));
+		 * mPlayers.get(mCurrentPlayer).setMove(mFrontier); mCurrentPlayer =
+		 * (mCurrentPlayer + 1) % mPlayers.size();
+		 * addBlocks(mPlayers.get(mCurrentPlayer)); System.out.println(
+		 * "Now the new board will get rendered"); renderBlocks();
+		 */
+	}
+
 	public void addBlocks(Player aPlayer) {
 		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
 			aPlayer.addBlock(mBag.drawBlock());
 		}
 	}
 
+	public List<Node> getCopyBoard(){
+		return mBoard.getPlacedBlocks();
+	}
+	
 	public List<Block> addStone(int aAmount) {
 		List<Block> newBlocks = new ArrayList<Block>();
 		for (int i = 0; i < aAmount; i++) {
@@ -126,59 +181,12 @@ public class Game implements Runnable {
 		return newBlocks;
 	}
 
-	// voor in het verslag Time Complexity: Since every node is visited at most
-	// twice, the time complexity is O(n) where n is the number of nodes in
-	// given linked list.
-	// @ensure (aBlock instanceof Block) ==true.
-	public void boardToString(List<Block> aBlockList, List<Block> aFrontierList) {
-		int x =  (borders[1] - borders[0]);
-		int y =  (borders[3] - borders[2]);
-
-		System.out.println("X: " + borders[1] +" - " +borders[0]+ " "+x);
-
-		System.out.println("Y: "+y);
-
-		int midX = x / 2 +1;// (Math.abs(borders[0])+borders[1])/2;
-		int midY = y / 2 +1;// (Math.abs(borders[2])+borders[3])/2;
-
-		String boardToString[][] = new String[x + 1][y + 1];
-
-		// Block currentBlock = aBlock;
-
-		/*
-		 * int t = 0; do { System.out.println(++t); boardToString[(int)
-		 * aBlock.getPosition().getX()][(int) aBlock.getPosition().getY()] =
-		 * aBlock.getShape() .toString(); currentBlock = (Block)
-		 * currentBlock.getParent(); } while (currentBlock != null);
-		 */
-
-		for (int i = 0; i < aBlockList.size(); i++) {
-			boardToString[(int) aBlockList.get(i).getPosition().getX()
-					+ midX][(int) aBlockList.get(i).getPosition().getY() + midY] = aBlockList.get(i).getColor()
-							.toString().charAt(0) + "" + BlockPrinter.getChar(aBlockList.get(i));
-		}
-
-		for (int i = 0; i < aFrontierList.size(); i++) {
-			boardToString[(int) aFrontierList.get(i).getPosition().getX()
-					+ midX][(int) aFrontierList.get(i).getPosition().getY() + midY] = " " + i + " ";
-		}
-
-		for (int i = 0; i < x; i++) {
-			for (int j = 0; j < x; j++) {
-				if (boardToString[i][j] == null) {
-					boardToString[i][j] = "  ";
-				}
-				System.out.print(boardToString[i][j] + "");
-			}
-			System.out.println("");
-		}
-	}
-
-	public List<Block> getSetStones() {
-		return setBlocks;
+	public void tradeBlocks(Block aBlock) {
+		mBag.blocks.add(aBlock);
 	}
 	
-	/**
+
+/**
 	 * Trades a block with the bag.
 	 * @param player The player who does the trade.
 	 * @param block The block type the player wants to trade.
@@ -190,7 +198,7 @@ public class Game implements Runnable {
 			NotYourBlockException {
 		// Look if we are the current player
 		if (player == mPlayers.get(mCurrentPlayer)) {
-			if (player.checkHand(block)) {
+			if (checkHand(player,block)) {
 				// Do the trade
 				Block newBlock = mBag.drawBlock();
 				player.removeBlock(block);			// Don't change this order!
@@ -204,7 +212,8 @@ public class Game implements Runnable {
 			throw new NotYourTurnException();
 		}
 	}
-	
+
+
 	/**
 	 * Removes a player from the game.
 	 * @param player
@@ -212,12 +221,11 @@ public class Game implements Runnable {
 	public void removePlayer(Player player) {
 		mPlayers.remove(player);		
 	}
-	
-	/**
+
+/**
 	 * Returns the current amount of stones in the stone bag.
 	 * @return The amount of stones left in the bag.
 	 */
 	public int getNumStonesInBag() {
-		return mBag.blocks.size();
-	}
+		return mBag.blocks.size();}
 }

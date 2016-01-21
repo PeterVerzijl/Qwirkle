@@ -9,6 +9,6 @@ public class LokalGame {
 		players.add(new HumanTUIPlayer());
 		players.add(new HumanTUIPlayer());
 		Game newGame = new Game(players);
-		new Thread(newGame).start();
+		newGame.run();
 	}
 }

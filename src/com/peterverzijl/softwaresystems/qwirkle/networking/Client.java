@@ -413,12 +413,10 @@ public class Client implements Runnable {
 	 */
 	void tradeBlocks(List<Block> blocks) {
 		String message = Protocol.Client.CHANGESTONE;
-		if (mPlayer.checkHand(blocks)) {
 			for (Block b : blocks) {
 				message += Protocol.Server.Settings.DELIMITER;
 				message += Block.toChars(b);
 			}
-		}
 		sendMessage(message);		
 	}
 	

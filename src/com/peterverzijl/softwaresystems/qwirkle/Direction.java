@@ -45,4 +45,29 @@ public enum Direction {
 		}
 		return index;
 	}
+	// TODO DENNIS add substraction to Vector
+		// TODO DENNS IN DIRECTION STOPPEN
+		// @ensure possiblePositions.contains(aNode) &&
+		// anotherNode==findDuplicateNode()
+		// @ ensure xDiff==1 || xDiff==-1
+
+	public static int getDirection(Vector2 aNode, Vector2 anotherNode) {
+		int direction = -1;
+		int xDiff = (int) (aNode.getX() - anotherNode.getX());
+		int yDiff = (int) (aNode.getY() - anotherNode.getY());
+
+		if (xDiff == 1) {
+			direction = 1;
+		}
+		if (xDiff == -1) {
+			direction = 3;
+		}
+		if (yDiff == 1) {
+			direction = 0;
+		}
+		if (yDiff == -1) {
+			direction = 2;
+		}
+		return direction;
+	}
 }
