@@ -140,4 +140,55 @@ public class Block extends Node {
 		// Return the correct block type
 		return new Block(s, c);
 	}
+	
+	/**
+	 * Converts the stone to a two char representation.
+	 * Example: RED CROSS AB
+	 * @param b The block to convert.
+	 * @return The two char representation for a stone.
+	 */
+	public static String toChars(Block b) {
+		String result = "";
+		switch(b.mColor) {
+			case RED:
+				result += 'A';
+				break;
+			case ORANGE:
+				result += 'B';
+				break;
+			case YELLOW: 
+				result += 'C';
+				break;
+			case GREEN:
+				result += 'D';
+				break;
+			case BLUE:
+				result += 'E';
+				break;
+			case PURPLE:
+				result += 'F';
+				break;
+		}
+		switch(b.mShape) {
+			case CIRCLE:
+				result += 'A';
+				break;
+			case CROSS:
+				result += 'B';
+				break;
+			case DIAMOND:
+				result += 'C';
+				break;
+			case SQUARE:
+				result += 'D';
+				break;
+			case STAR:
+				result += 'E';
+				break;
+			case PLUS:
+				result += 'F';
+				break;
+		}
+		return result;
+	}
 }
