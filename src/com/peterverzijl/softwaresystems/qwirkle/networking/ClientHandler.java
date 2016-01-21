@@ -157,4 +157,12 @@ public class ClientHandler implements Runnable {
 	public void setServer(Server server) {
 		mServer = server;
 	}
+
+	/**
+	 * Gets the 
+	 * @return The ip location of the server.
+	 */
+	public String getLocation() {
+		return mSocket.getInetAddress().getHostAddress();
+	}
 }
