@@ -16,11 +16,6 @@ public class Node {
 	public static final int NEIGHBOR_NODES = 4;
 	
 	/**
-	 * The parent node.
-	 */
-	private Node mParent;
-	
-	/**
 	 * The neighbor nodes for this node.
 	 * These exits in the four wind directions.
 	 * Are initialized to null.
@@ -30,13 +25,14 @@ public class Node {
 	/**
 	 * 
 	 */
-	private Vector2 mPosition; 
+	private Vector2 mPosition;
 	
 	/**
-	 * 
+	 * The block that is positioned on this node.
 	 */
-	protected Vector2 mTempPosition;
+	private Block mBlock;
 	
+
 	/**
 	 * Node constructor
 	 */
@@ -46,14 +42,6 @@ public class Node {
 		mPosition = new Vector2(GameConstants.UNSET_NODE,GameConstants.UNSET_NODE);
 	}
 	
-	/**
-	 * Creates a node with a particular parent.
-	 * @param parent The node that is the parent of this node.
-	 */
-	public Node(Node parent) {
-		mParent = parent;
-	}
-		
 	/**
 	 * Sets the node of a given location index.
 	 * 0 north, 1 east, 2 south, 3 west
@@ -118,22 +106,7 @@ public class Node {
 		}
 	}
 	
-	/**
-	 * Sets the parent of this node.
-	 * @param n The node to set as parent.
-	 */
-	public void setParent(Node n) {
-		mParent = n;
-	}
-	
-	/**
-	 * Returns the parent of this node.
-	 * @return The parent of this node.
-	 */
-	public Node getParent() {
-		return mParent;
-	}
-	
+		
 	/**
 	 * Returns an array of four neighbor nodes. 
 	 * Beware that neighbor nodes can be null.
@@ -147,16 +120,23 @@ public class Node {
 		mPosition.set(aX, aY);
 	}
 	
-	public void setTempPosition(int aX, int aY){
-		mTempPosition.set(aX, aY);
-	}
-	
-	public void finalizeMove(){
-		mPosition.set(mTempPosition.getX(), mTempPosition.getY());
-	}
-	
 	public Vector2 getPosition(){
 		return mPosition;
 	}
 	
+	/**
+	 * Sets the block on this node.
+	 * @param aBlock The block to put on the node.
+	 */
+	public void setBlock(Block aBlock){
+        mBlock = aBlock;
+    }
+    
+	/**
+	 * Returns the block on this node.
+	 * @return The block on this node.
+	 */
+	public Block getBlock(){
+        return mBlock;
+    }
 }

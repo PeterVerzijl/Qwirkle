@@ -1,5 +1,7 @@
 package com.peterverzijl.softwaresystems.qwirkle;
 
+import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
+
 /**
  * The four cardinal directions.
  * 

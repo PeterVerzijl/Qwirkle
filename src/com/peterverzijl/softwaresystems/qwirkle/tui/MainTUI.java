@@ -39,13 +39,11 @@ public class MainTUI {
         		handleCommand(br.readLine());
     		} while(mRunning);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
 				br.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -80,6 +78,11 @@ public class MainTUI {
 			} else {
 				System.out.println("No.");
 			}
+		} else if (input.contains("SERVER COMMAND")) {
+			if (mClient != null) {
+				input = input.replace("SERVER COMMAND ", "");
+				mClient.sendCommand(input);
+			}
 		} else if (input.contains("GAME JOIN")) {
 			if (mClient != null) {
 				if (!mInGame) {
@@ -96,6 +99,24 @@ public class MainTUI {
 			} else {
 				System.out.println("Deez nuts are in Da sack.");
 			}
+		} else if (input.contains("GAME HAND")) {
+			if (mInGame && mClient != null) {
+				System.out.println(mClient.getPlayerHand());
+			} else {
+				System.out.println("Put your hand in my pants and I bet you feel nutz!");
+			}
+		} else if (input.contains("GAME TRADE")) {
+			input = input.replace("GAME TRADE ", "");
+			if (mInGame && mClient != null) {
+				String[] blocks = input.split(" ");
+				int[] blockIndexes = new int[blocks.length];
+				for (int i = 0; i < blocks.length; i++) {
+					blockIndexes[i] = Integer.parseInt(blocks[i]);
+				}
+				mClient.tradeBlocks(blockIndexes);
+			} else {
+				System.out.println("You have nothing of value to me.");
+			}
 		} else if (input.contains("WHOAMI")) {
 			if (mClient != null && mClient.getName() != null) {
 				System.out.println(mClient.getName());
@@ -110,7 +131,7 @@ public class MainTUI {
 			System.out.println("I don't speak retard. Command " + input + " does not exist.");
 		}
 	}
-	
+
 	private static void tryJoinGame(String input) {
 		// Remove the command
 		input = input.replaceAll("GAME JOIN ", "");
@@ -179,6 +200,7 @@ public class MainTUI {
 		System.out.println("SERVER MESSAGES \t shows all server messages.");
 		System.out.println("GAME JOIN <number of opponents> \t tries to join a game with x opponents.");
 		System.out.println("GAME STONE AMOUNT \t asks the game how many stones are left in the game bag.");
+		System.out.println("GAME HAND \t asks the game to display the stones in the hand.");
 		System.out.println("WHOAMI \t shows the name of the user.");
 		System.out.println("EXIT \t exits the application.");
 	}
@@ -189,7 +211,6 @@ public class MainTUI {
 	 */
 	private static void connectServer(String input) {
 		server = getSettings(input);
-		// TODO (peter) : Make this less ugly
 		if (mClient == null) {
 			try {
 				mClient = createClient();
@@ -223,7 +244,6 @@ public class MainTUI {
 	
 	/**
 	 * Tries to create a client;
-	 * TODO (peter) : Make this less ugly.
 	 */
 	private static Client createClient() throws IOException {
 		Client client = null;
