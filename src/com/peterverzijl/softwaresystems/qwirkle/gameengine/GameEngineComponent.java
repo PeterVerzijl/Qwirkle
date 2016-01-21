@@ -159,7 +159,7 @@ public class GameEngineComponent extends Canvas implements Runnable {
 	 * Ticks the mGame logic.
 	 */
 	public void tick() {
-		mGame.tick();
+		// mGame.tick();
 		input.tick();
 	}
 
