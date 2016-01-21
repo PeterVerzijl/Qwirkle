@@ -95,7 +95,7 @@ public class Player {
 	 * 
 	 * @return
 	 */
-	public List<Block> getmHand() {
+	public List<Block> getHand() {
 		return mHand;
 	}
 

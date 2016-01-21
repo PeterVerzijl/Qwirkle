@@ -65,7 +65,7 @@ public class HumanTUIPlayer extends Player {
 		List<Block> set = new ArrayList<Block>();
 		List<Block> possibleMoves = new ArrayList<Block>();
 		List<Block> possiblePositions = new ArrayList<Block>();
-		possibleMoves.addAll(this.getmHand());
+		possibleMoves.addAll(this.getHand());
 		possiblePositions.addAll(aFrontier);
 		Scanner scanner = new Scanner(System.in);
 		int hand;
@@ -142,7 +142,7 @@ public class HumanTUIPlayer extends Player {
 				} else if (input.toLowerCase().equals("reset")) {
 					set.clear();
 					possibleMoves.clear();
-					possibleMoves.addAll(this.getmHand());
+					possibleMoves.addAll(this.getHand());
 					possiblePositions.clear();
 					possiblePositions.addAll(aFrontier);
 					System.out.println("Je zet is gereset");
@@ -151,7 +151,7 @@ public class HumanTUIPlayer extends Player {
 				} else if (input.toLowerCase().equals("trade")) {
 					set.clear();
 					possibleMoves.clear();
-					possibleMoves.addAll(this.getmHand());
+					possibleMoves.addAll(this.getHand());
 					possiblePositions.clear();
 					possiblePositions.addAll(aFrontier);
 					boolean trading = true;

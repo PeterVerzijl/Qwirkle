@@ -18,9 +18,8 @@ import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 /**
  * Master class for the game, this handles the setting up and running of the
  * game.
- * 
  * @author Peter Verzijl
- *
+ * @version 1.0a
  */
 public class Game implements Runnable {
 
@@ -42,9 +41,13 @@ public class Game implements Runnable {
 	private Node mStartNode;
 	
 	public GameObject currentBlock;
-
+	
 	public int[] borders = { -7, 7, -7, 7 };
-
+	
+	/**
+	 * Create a game with a list of players.
+	 * @param aPlayerList The players of the game.
+	 */
 	public Game(List<Player> aPlayerList) {
 		mBag = new BlockBag();
 		// TODO: DENNIS score resetten
@@ -59,7 +62,11 @@ public class Game implements Runnable {
 		mFrontier.add(new Block(null, null));
 		mFrontier.get(0).setPosition(0, 0);
 	}
-
+	
+	/**
+	 * The main thread method.
+	 */
+	@Override
 	public void run() {
 		while(!hasEnded()) {
 			mPlayers.get(mCurrentPlayer).setMove(mFrontier);
@@ -68,122 +75,45 @@ public class Game implements Runnable {
 		}
 		//doe iets als de game klaar is
 	}
-
+	
+	/**
+	 * Returns weighter the game has ended.
+	 * @return Weighter the game has ended.
+	 */
 	public boolean hasEnded() {
+		// TODO (peter) : To be implemented
 		return false;
 	}
-
+	
 	/**
-	 * 
-	 * TODO: Deze block in HumanGUIPlayer zetten
-	 * 
+	 * Returns a list of empty fields on which blocks can be placed.
+	 * @return A list of empty fields where you can place blocks.
 	 */
-	/*
-	 * public void start() {
-	 * 
-	 * mMainCamera = new Camera();
-	 * 
-	 * System.out.println("The game has started, aw yeah!"); System.out.println(
-	 * "Shuffeling mBag of blocks...");
-	 * 
-	 * // Make first move // mFrontier = new ArrayList<Block>();
-	 * mFrontier.add(new Block(null, null)); mFrontier.get(0).setPosition(0, 0);
-	 * 
-	 * mBag = new BlockBag();
-	 * 
-	 * // Print all mPlayers their blocks for (int j = 0; j < mPlayers.size();
-	 * j++) { System.out.print("Player " + j + "'s hand: ");
-	 * System.out.println(Player.handToString(mPlayers.get(j).getmHand())); }
-	 * 
-	 * // Load the tile map if (mTilemap == null) { mTilemap =
-	 * Bitmap.load("qwirkle-tiles.png"); tileSprite = new Sprite(mTilemap, new
-	 * Rect(6 * 16, 0, 16, 16)); }
-	 * 
-	 * // Build the board int spriteSize = 16; for (int x = 0; x < spriteSize;
-	 * x++) { for (int y = 0; y < spriteSize; y++) { GameObject gridCell = new
-	 * GameObject("Grid Cell"); SpriteRenderer renderer =
-	 * gridCell.addComponent(SpriteRenderer.class);
-	 * renderer.setSprite(tileSprite);
-	 * 
-	 * Transform transform = gridCell.addComponent(Transform.class);
-	 * transform.setPosition((x * spriteSize) + (int)
-	 * mMainCamera.transform.getPosition().getX(), (y * spriteSize) + (int)
-	 * mMainCamera.transform.getPosition().getY()); } }
-	 * 
-	 * // Show hand on screen Player wePlayer = mPlayers.get(0); List<Block>
-	 * weHand = wePlayer.getmHand(); float blockPadding = 75; float xOffset =
-	 * (Camera.getWidth() - blockPadding) / weHand.size(); int blockCount = 0;
-	 * for (Block b : weHand) { Sprite sprite = BlockSpriteMap.getSprite(b);
-	 * GameObject guiBlock = new GameObject("GUI Block"); SpriteRenderer r =
-	 * guiBlock.addComponent(SpriteRenderer.class); r.setSprite(sprite);
-	 * Transform t = guiBlock.addComponent(Transform.class); //
-	 * RectangleCollider c = // guiBlock.addComponent(RectangleCollider.class);
-	 * t.setPosition(blockPadding / 2 + xOffset * blockCount++,
-	 * Camera.getHeight() - 8); System.out.println("hand block " +
-	 * t.getPosition()); }
-	 * 
-	 * // Print amount of left over blocks after mPlayers have drawn
-	 * System.out.println(mBag.blocks.size() + " blocks left in the mBag."); }
-	 */
-	/*
-	 * Transform cameraTransform;
-	 * 
-	 * public void renderHand(Player aPlayer){ Player wePlayer = aPlayer;
-	 * List<Block> weHand = wePlayer.getmHand(); float blockPadding = 75; float
-	 * xOffset = (Camera.getWidth() - blockPadding) / weHand.size(); int
-	 * blockCount = 0; for (Block b : weHand) { Sprite sprite =
-	 * BlockSpriteMap.getSprite(b); GameObject guiBlock = new GameObject(
-	 * "GUI Block"); SpriteRenderer r =
-	 * guiBlock.addComponent(SpriteRenderer.class); r.setSprite(sprite);
-	 * Transform t = guiBlock.addComponent(Transform.class); //
-	 * RectangleCollider c = // guiBlock.addComponent(RectangleCollider.class);
-	 * t.setPosition(blockPadding / 2 + xOffset * blockCount++,
-	 * Camera.getHeight() - 8); //System.out.println("hand block " +
-	 * t.getPosition()); } }
-	 * 
-	 * public void renderBlocks() { for (Block b : setBlocks) { Sprite sprite =
-	 * BlockSpriteMap.getSprite(b); GameObject guiBlock = new GameObject(
-	 * "GUI Block"); SpriteRenderer r =
-	 * guiBlock.addComponent(SpriteRenderer.class); r.setSprite(sprite);
-	 * Transform t = guiBlock.addComponent(Transform.class); //
-	 * RectangleCollider c = // guiBlock.addComponent(RectangleCollider.class);
-	 * float blockPadding = 75; float xOffset = (Camera.getWidth() -
-	 * blockPadding) / setBlocks.size(); int blockCount = 0;
-	 * t.setPosition(b.getPosition().getX(), b.getPosition().getY());//
-	 * blockPadding // / // 2 // + // xOffset // * // blockCount++, //
-	 * Camera.getHeight() // - // 8); System.out.println("hand block " +
-	 * t.getPosition()); } }
-	 */
-
 	public List<Block> getFrontier() {
 		return mFrontier;
 	}
-
+	
+	/**
+	 * Adds a block to the frontier.
+	 * @param aBlock The block to add to the frontier.
+	 */
 	public void addFrontier(Block aBlock) {
 		mFrontier.add(aBlock);
 	}
-
+	
+	/**
+	 * Removes a block from the frontier.
+	 * @param aBlock The block to remove from the frontier.
+	 */
 	public void removeFrontier(Block aBlock) {
 		if (mFrontier.contains(aBlock)) {
 			mFrontier.remove(aBlock);
 		}
 	}
 
-	/**
-	 * Function gets called every frame.
-	 */
-	public void tick() {
-		/*
-		 * renderHand(mPlayers.get(mCurrentPlayer));
-		 * mPlayers.get(mCurrentPlayer).setMove(mFrontier); mCurrentPlayer =
-		 * (mCurrentPlayer + 1) % mPlayers.size();
-		 * addBlocks(mPlayers.get(mCurrentPlayer)); System.out.println(
-		 * "Now the new board will get rendered"); renderBlocks();
-		 */
-	}
-
+	
 	public void addBlocks(Player aPlayer) {
-		while (aPlayer.getmHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getmHand().size()) > -1) {
+		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
 			aPlayer.addBlock(mBag.drawBlock());
 		}
 	}
@@ -255,16 +185,18 @@ public class Game implements Runnable {
 	 * @throws NotYourTurnException Thrown if this function is called when the player is not the current player.
 	 * @throws NotYourBlockException Thrown if you try to trade a block that is not yours.
 	 */
-	public void tradeBlock(Player player, Block block) 
+	public Block tradeBlock(Player player, Block block) 
 			throws NotYourTurnException, 
 			NotYourBlockException {
 		// Look if we are the current player
 		if (player == mPlayers.get(mCurrentPlayer)) {
 			if (player.checkHand(block)) {
 				// Do the trade
+				Block newBlock = mBag.drawBlock();
 				player.removeBlock(block);			// Don't change this order!
-				player.addBlock(mBag.drawBlock());	// !!
+				player.addBlock(newBlock);			// !!
 				mBag.returnBlock(block);			// !!
+				return newBlock;
 			} else {
 				throw new NotYourBlockException();
 			}
