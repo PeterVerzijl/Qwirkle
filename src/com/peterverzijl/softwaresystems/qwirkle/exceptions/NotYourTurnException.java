@@ -1,4 +1,4 @@
-package com.peterverzijl.softwaresystems.qwirkle.networking.exceptions;
+package com.peterverzijl.softwaresystems.qwirkle.exceptions;
 
 /**
  * This exception is thrown when you try to add act on the game when it is not your turn.

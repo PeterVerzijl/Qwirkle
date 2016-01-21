@@ -11,8 +11,8 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
-import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourBlockException;
-import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourTurnException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 
 /**

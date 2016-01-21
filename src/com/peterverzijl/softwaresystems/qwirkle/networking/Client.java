@@ -8,9 +8,15 @@ import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import com.peterverzijl.softwaresystems.qwirkle.gui.ChatWindow;
+import com.peterverzijl.softwaresystems.qwirkle.Block;
+import com.peterverzijl.softwaresystems.qwirkle.Board;
+import com.peterverzijl.softwaresystems.qwirkle.Node;
+import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.tui.MainTUI;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
@@ -26,7 +32,13 @@ public class Client implements Runnable {
 	private BufferedReader in;
 	private BufferedWriter out;
 	
+	private Map<String, Player> mPlayerNameMap;
+	
 	private ChatView mViewer;
+	
+	// Game stuff
+	private Board mBoard;
+	private Player mPlayer;
 	
 	private boolean mRunning = false;
 
@@ -102,7 +114,11 @@ public class Client implements Runnable {
 		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
 		switch(command) {
 			case Protocol.Server.ADDTOHAND:
-				
+				// Gets the hand from the server
+				for (String blockString : parameters) {
+					Block b = Block.getBlockFromCharPair(blockString);
+					mPlayer.addBlock(b);
+				}
 				break;
 			case Protocol.Server.CHAT:
 				if(mViewer != null) {
@@ -143,7 +159,18 @@ public class Client implements Runnable {
 				// TODO (peter) : Implement leader board
 				break;
 			case Protocol.Server.MOVE:
-				// TODO (peter) : Get the move from the server and roll with it!
+				// MOVE_<playerName>_<nextPlayerName>_<move>_<move>_..\n\n
+				String movingPlayer = parameters[0];
+				String nextPlayer = parameters[1];
+				String[] moves = Arrays.copyOfRange(parameters, 2, parameters.length);
+				for (String move : moves) {
+					Node n = Board.moveStringToNode(move);
+					//doMove(n);
+				}
+				// Is it our turn?
+				if (nextPlayer == username) {
+					//mGame.
+				}
 				break;
 			case Protocol.Server.OKWAITFOR:
 				try {
@@ -162,7 +189,12 @@ public class Client implements Runnable {
 					for (String name : parameters) {
 						mViewer.displayMessage(name);
 					}
+					mPlayer = new Player();
+					mBoard = new Board();
+					
 				}
+				
+				///mGame = new Game();
 				break;
 			case Protocol.Server.STONESINBAG:
 				try {
@@ -195,8 +227,14 @@ public class Client implements Runnable {
 		// TODO Auto-generated method stub
 		switch(error) {
 			case 1:			// Not your turn
+				if (mViewer != null) {
+					mViewer.displayMessage("Nope.");
+				}
 				break;
-			case 2:			// Not your turn
+			case 2:			// Not your stone
+				if (mViewer != null) {
+					mViewer.displayMessage("Not your stone.");
+				}
 				break;
 			case 3:			// Not your turn
 				break;
@@ -296,5 +334,64 @@ public class Client implements Runnable {
 	 */
 	public void getNumStones() {
 		sendMessage(Protocol.Client.GETSTONESINBAG);
+	}
+
+	/**
+	 * Returns the player associated with the client.
+	 * @return The player associated with the client.
+	 */
+	public Player getPlayer() {
+		return mPlayer;
+	}
+	
+	/**
+	 * Returns the string form of the player hand.
+	 * @return The player hand in string form.
+	 */
+	public String getPlayerHand() {
+		// TODO Auto-generated method stub
+		return Player.handToString(mPlayer.getHand());
+	}
+	
+	/**
+	 * Trades stones with the server given that we think we have them.
+	 * @param blockIndexes indexes of blocks to trade.
+	 */
+	public void tradeBlocks(int[] blockIndexes) {
+		if (blockIndexes.length <= mPlayer.getHand().size()) {
+			List<Block> blocks = new ArrayList<Block>();
+			for (int i : blockIndexes) {
+				blocks.add(mPlayer.getHand().get(i));
+				mPlayer.getHand().remove(i);
+			}
+			tradeBlocks(blocks);
+		} else {
+			if (mViewer != null) {
+				mViewer.displayMessage("You do not have a stone at that index!");
+			}
+		}
+	}
+	
+	/**
+	 * Trades stones with the server given that we think we have them.
+	 * @param blocks The blocks to trade.
+	 */
+	void tradeBlocks(List<Block> blocks) {
+		String message = Protocol.Client.CHANGESTONE;
+		if (mPlayer.checkHand(blocks)) {
+			for (Block b : blocks) {
+				message += Protocol.Server.Settings.DELIMITER;
+				message += Block.toChars(b);
+			}
+		}
+		sendMessage(message);		
+	}
+	
+	/**
+	 * Sends a user input command to the server.
+	 * @param input Command
+	 */
+	public void sendCommand(String input) {
+		sendMessage(input);	
 	}
 }

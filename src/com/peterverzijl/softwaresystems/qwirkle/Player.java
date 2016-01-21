@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
-import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourBlockException;
-import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.NotYourTurnException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 
 /**
  * Player class for the Qwirkle game, contains all the player information.
