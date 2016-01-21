@@ -50,28 +50,16 @@ public class Transform extends Component {
 	@Override
 	public void Update() { }
 
-// -------- These functions are not used by the transform.
+	// -------- These functions are not used by the transform.
 	@Override
-	public void OnMouseEnter() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnMouseEnter() {}
 
 	@Override
-	public void OnMouseLeave() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnMouseLeave() {}
 
 	@Override
-	public void OnCollisionEnter(Collider other) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnCollisionEnter(Collider other) {}
 
 	@Override
-	public void OnCollisionExit(Collider other) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void OnCollisionExit(Collider other) {}
 }

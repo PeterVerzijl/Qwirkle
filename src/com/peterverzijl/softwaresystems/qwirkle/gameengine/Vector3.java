@@ -87,9 +87,8 @@ public class Vector3 {
 	 * @param length The length of the vector
 	 */
 	public void setMagnitude(float length) {
-		assert length > 0 : "Error: The length of a vector cannot be negative!";
-		// TODO(Peter): Sets the magnitude of the vector.
-		// TODO(Peter): Maybe take the absolute value of the length and generate an error?
+		normalize();
+		multiply(Math.abs(length));
 	}
 	
 	/**
