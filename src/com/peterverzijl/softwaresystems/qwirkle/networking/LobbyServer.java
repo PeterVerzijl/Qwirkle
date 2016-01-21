@@ -66,6 +66,9 @@ public class LobbyServer implements Server, Runnable {
 				client = new ClientHandler(this, mServerSocket.accept());
 				(new Thread(client)).start();
 				addHandler(client);
+				if (mViewer != null) {
+					mViewer.sendMessage("Client connected: " + client.getLocation());
+				}
 			} catch (IOException e) {
 				if (mViewer != null) {
 					mViewer.sendMessage("Error, could not connect to client due to: " + e.getMessage());
@@ -157,7 +160,6 @@ public class LobbyServer implements Server, Runnable {
 		GameServer newGame = new GameServer((numPlayers == 0)?2:numPlayers);
 		try {
 			newGame.addPlayer(client);
-			(new Thread(newGame)).start();
 			mGameServers.add(newGame);
 		} catch (GameFullException e) {
 			// A game cannot be full after creating a new one.
@@ -212,9 +214,6 @@ public class LobbyServer implements Server, Runnable {
 	public void addHandler(ClientHandler client) {
 		if (client != null && !mClients.contains(client)) {
 			mClients.add(client);
-			if (mViewer != null) {
-				mViewer.sendMessage("Client " + client.getName() + " connected.");
-			}
 		}
 	}
 	
@@ -225,9 +224,6 @@ public class LobbyServer implements Server, Runnable {
 	public void removeHanlder(ClientHandler client) {
 		if (client != null && mClients.contains(client)) {
 			mClients.remove(client);
-			if (mViewer != null) {
-				mViewer.sendMessage("Client " + client.getName() + " disconnected.");
-			}
 		}
 	}
 
