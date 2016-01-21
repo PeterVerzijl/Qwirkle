@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
-import com.peterverzijl.softwaresystems.qwirkle.server.Protocol;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Protocol;
+
 
 /**
  * The playing field of the Qwirkle game.

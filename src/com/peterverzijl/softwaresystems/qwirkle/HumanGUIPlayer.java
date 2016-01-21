@@ -6,7 +6,7 @@ import java.util.List;
 public class HumanGUIPlayer extends Player{
 	
 	public HumanGUIPlayer(int aID){
-		super(aID);
+		super();
 		
 	}
 	//TODO: 

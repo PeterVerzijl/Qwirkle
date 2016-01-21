@@ -28,13 +28,13 @@ public class PlayerGUI {
 		mPlayer=aPlayer;
 		mGame=mPlayer.getGame();
 		
-		GameEngineComponent game = new GameEngineComponent(this);
+	/*	GameEngineComponent game = new GameEngineComponent(this);
 		JFrame frame = new JFrame("Game Engine");
 		frame.add(game);
 		frame.pack();
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		frame.setVisible(true);*/
 	}
 	
 	
@@ -68,8 +68,8 @@ public class PlayerGUI {
 		System.out.println("Building board done");
 		
 		// Show hand on screen
-		List<Block> weHand = mPlayer.getmHand();
-		System.out.println(mPlayer.getmHand().size());
+		List<Block> weHand = mPlayer.getHand();
+		System.out.println(mPlayer.getHand().size());
 		
 		float blockPadding = 75;
 		float xOffset = (Camera.getWidth() - blockPadding) / weHand.size();
