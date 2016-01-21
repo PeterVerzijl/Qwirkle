@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.peterverzijl.softwaresystems.qwirkle.networking.LobbyServer;
 import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 
@@ -26,7 +27,7 @@ import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 @SuppressWarnings("serial")
 public class ServerWindow extends JFrame implements ServerView {
 	
-	private Server mServer;
+	private LobbyServer mServer;
 	private InetAddress mAddress;
 	private Thread mServerThread;
 	private JTextArea mAddressField;	// Has the address and port of the server
@@ -37,7 +38,7 @@ public class ServerWindow extends JFrame implements ServerView {
 		
 		try {
 			mAddress = InetAddress.getByName("localhost");
-			mServer = new Server(mAddress, Server.PORT, this);			
+			mServer = new LobbyServer(mAddress, Server.PORT, this);			
 			mServerThread = new Thread(mServer);
 			mServerThread.start();
 		} catch (UnknownHostException e) {

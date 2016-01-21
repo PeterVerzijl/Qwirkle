@@ -71,4 +71,12 @@ public class BlockBag {
 		blocks.remove(b);
 		return b;
 	}
+	
+	/**
+	 * Adds the block to the block bag.
+	 * @param block The block to add to the bag.
+	 */
+	public void returnBlock(Block block) {
+		blocks.add(block);
+	}
 }

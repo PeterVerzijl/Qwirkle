@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
+import com.peterverzijl.softwaresystems.qwirkle.server.Protocol;
 
 /**
  * The playing field of the Qwirkle game.
@@ -42,6 +43,21 @@ public class Board {
 		mFrontier.add(mRootBlock);
 	}
 
+	/**
+	 * Reads a move string
+	 * @return
+	 */
+	public static Node moveStringToNode(String s) {
+		String[] move = s.split("" + Protocol.Server.Settings.DELIMITER2);
+		String stone = move[0];
+		int x = Integer.parseInt(move[1]);
+		int y = Integer.parseInt(move[2]); 
+		Node n = new Node();
+		n.setPosition(x, y);
+		n.setBlock(Block.getBlockFromCharPair(stone));
+		return n;
+		}
+	
 	public boolean placeBlock() {
 		return false;
 	}

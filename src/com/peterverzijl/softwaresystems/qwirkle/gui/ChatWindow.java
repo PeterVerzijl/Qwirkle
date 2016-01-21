@@ -133,7 +133,7 @@ public class ChatWindow extends JFrame implements ChatView {
 	/**
 	 * Adds a message to the chat view.
 	 */
-	public void addMessage(String message) {
+	public void displayMessage(String message) {
 		mChatBox.append(message + "\n");
 	}
 		
@@ -157,5 +157,10 @@ public class ChatWindow extends JFrame implements ChatView {
 				mMessageField.requestFocusInWindow();
 			}
 		}
+	}
+
+	@Override
+	public void askName() {
+		// TODO (peter) : Do something that asks the user for a name.
 	}
 }

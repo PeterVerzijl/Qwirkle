@@ -5,6 +5,8 @@ import java.util.List;
 
 //import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
@@ -32,6 +34,7 @@ public class Game {
 
 	private Camera mMainCamera;
 
+	// TODO (dennis) : Change this to a reference to the player object, please!
 	private int mCurrentPlayer = 0;
 
 	private Board mBoard;
@@ -71,14 +74,15 @@ public class Game {
 	}
 	
 
-	public boolean checkHand(Block block) {
+	public boolean checkHand(Player player,Block block) {
 		boolean result = false;
-		List<Block> playerHand= mPlayers.get(mCurrentPlayer).getmHand();
+		if(player==mPlayers.get(mCurrentPlayer)){
+		List<Block> playerHand= mPlayers.get(mCurrentPlayer).getHand();
 		for (Block b : playerHand) {
 			if (b.equals(block)) {
 				result = true;
 			}
-		}
+		}}
 		return result;
 	}
 
@@ -92,7 +96,7 @@ public class Game {
 	public boolean checkHand(List<Node> set) {
 		boolean result = true;
 		for (Node n : set) {
-			if (!checkHand(n.getBlock())) {
+			if (!checkHand(mPlayers.get(mCurrentPlayer),n.getBlock())) {
 				result = false;
 			}
 		}
@@ -122,7 +126,12 @@ public class Game {
 					System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
 				}
-				mPlayers.get(mCurrentPlayer).removeBlock(playersMove.get(i).getBlock());
+				try {
+					mPlayers.get(mCurrentPlayer).removeBlock(playersMove.get(i).getBlock());
+				} catch (NotYourBlockException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		} else {System.out.println("checkHand was false");}
 		System.out.println("De zet is gezet");
@@ -155,7 +164,7 @@ public class Game {
 	}
 
 	public void addBlocks(Player aPlayer) {
-		while (aPlayer.getmHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getmHand().size()) > -1) {
+		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
 			aPlayer.addBlock(mBag.drawBlock());
 		}
 	}
@@ -175,4 +184,48 @@ public class Game {
 	public void tradeBlocks(Block aBlock) {
 		mBag.blocks.add(aBlock);
 	}
+	
+
+/**
+	 * Trades a block with the bag.
+	 * @param player The player who does the trade.
+	 * @param block The block type the player wants to trade.
+	 * @throws NotYourTurnException Thrown if this function is called when the player is not the current player.
+	 * @throws NotYourBlockException Thrown if you try to trade a block that is not yours.
+	 */
+	public Block tradeBlock(Player player, Block block) 
+			throws NotYourTurnException, 
+			NotYourBlockException {
+		// Look if we are the current player
+		if (player == mPlayers.get(mCurrentPlayer)) {
+			if (checkHand(player,block)) {
+				// Do the trade
+				Block newBlock = mBag.drawBlock();
+				player.removeBlock(block);			// Don't change this order!
+				player.addBlock(newBlock);			// !!
+				mBag.returnBlock(block);			// !!
+				return newBlock;
+			} else {
+				throw new NotYourBlockException();
+			}
+		} else {
+			throw new NotYourTurnException();
+		}
+	}
+
+
+	/**
+	 * Removes a player from the game.
+	 * @param player
+	 */
+	public void removePlayer(Player player) {
+		mPlayers.remove(player);		
+	}
+
+/**
+	 * Returns the current amount of stones in the stone bag.
+	 * @return The amount of stones left in the bag.
+	 */
+	public int getNumStonesInBag() {
+		return mBag.blocks.size();}
 }

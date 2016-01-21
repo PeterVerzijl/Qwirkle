@@ -3,6 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 
 /**
@@ -13,19 +14,11 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  */
 public class Player {
 
-	/**
-	 * The id of the player.
-	 */
-	private int mID = -1;
-	/**
-	 * The total amount of players
-	 */
-	public static int playerCount = 0;
-
+	
 	/**
 	 * The game the player is playing
 	 */
-	protected static Game mGame;
+	protected Game mGame;
 
 	/**
 	 * The blocks that the player has in his/her prosession
@@ -35,10 +28,7 @@ public class Player {
 	/**
 	 * The constructor for the player
 	 */
-	public Player(int mId) {
-		// Initialize player
-		this.mID = mId;
-		// mGame = aGame;
+	public Player() {
 		mHand.clear();
 	}
 
@@ -67,17 +57,19 @@ public class Player {
 	}
 
 	/**
-	 * Removes a certain block from the players hand
-	 * 
-	 * @param block
-	 *            The block to remove
+	 * Removes a block of the same kind from the players hand.
+	 * @param block The block to remove
+	 * @throws NotYourBlockException 
 	 */
-	public void removeBlock(Block block) {
-		if (mHand.contains(block)) {
-			mHand.remove(block);
-		} else {
-			// TODO(Peter): else throw an error?
+	public void removeBlock(Block block) 
+			throws NotYourBlockException {
+		for (Block b : mHand) {
+			if (b.equals(block)) {
+				mHand.remove(b);
+				return;
+			}
 		}
+		throw new NotYourBlockException();
 	}
 
 	/**
@@ -97,30 +89,13 @@ public class Player {
 
 	/* --- Getters and setters --- */
 
-	/**
-	 * Gets the ID of the current player
-	 * 
-	 * @return The player's ID
-	 */
-	public int getmID() {
-		return mID;
-	}
-
-	/**
-	 * Returns the player count
-	 * 
-	 * @return Player count
-	 */
-	public static int getPlayerCount() {
-		return playerCount;
-	}
 
 	/**
 	 * Returns the current hand of the player
 	 * 
 	 * @return
 	 */
-	public List<Block> getmHand() {
+	public List<Block> getHand() {
 		return mHand;
 	}
 

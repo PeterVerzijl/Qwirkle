@@ -7,9 +7,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import com.peterverzijl.softwaresystems.qwirkle.gui.ChatWindow;
+import com.peterverzijl.softwaresystems.qwirkle.Block;
+import com.peterverzijl.softwaresystems.qwirkle.Board;
+import com.peterverzijl.softwaresystems.qwirkle.Node;
+import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.tui.MainTUI;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
@@ -25,7 +32,13 @@ public class Client implements Runnable {
 	private BufferedReader in;
 	private BufferedWriter out;
 	
+	private Map<String, Player> mPlayerNameMap;
+	
 	private ChatView mViewer;
+	
+	// Game stuff
+	private Board mBoard;
+	private Player mPlayer;
 	
 	private boolean mRunning = false;
 
@@ -35,6 +48,26 @@ public class Client implements Runnable {
 	public Client(InetAddress host, int port, ChatView viewer) throws IOException {
 		sock = new Socket(host, port);
 		mViewer = viewer;
+		
+		try {
+			out = new BufferedWriter(
+					new OutputStreamWriter(
+							sock.getOutputStream(), 
+							Charset.forName(Protocol.Server.Settings.ENCODING)));
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(
+							sock.getInputStream(), 
+							Charset.forName(Protocol.Server.Settings.ENCODING)));
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -43,20 +76,6 @@ public class Client implements Runnable {
 	 */
 	@Override
 	public void run() {
-		try {
-			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-
-		try {
-			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-		
 		mRunning = true;
 		recieveMessage();
 	}
@@ -64,14 +83,11 @@ public class Client implements Runnable {
 	/**
 	 * Get the message from the server and display it there.
 	 */
-	public void recieveMessage() {
-		String message;
+	private void recieveMessage() {
 		try {
-			message = in.readLine();
-			while(message != null && mRunning) {
-				if (message != null) {
-					handleMessage(message);
-					message = in.readLine();
+			while(mRunning) {
+				while(in.ready()) {
+					handleMessage(in.readLine());
 				}
 			}
 		} catch (IOException e) {
@@ -90,22 +106,28 @@ public class Client implements Runnable {
 	 * @param message
 	 */
 	private void handleMessage(String message) {
+		if (message.length() < 1) { return; }
+		
 		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
 		String command = parameters[0];
 		// Remove command from parameters
 		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
 		switch(command) {
 			case Protocol.Server.ADDTOHAND:
-				
+				// Gets the hand from the server
+				for (String blockString : parameters) {
+					Block b = Block.getBlockFromCharPair(blockString);
+					mPlayer.addBlock(b);
+				}
 				break;
 			case Protocol.Server.CHAT:
 				if(mViewer != null) {
 					// Remove the header thing
-					mViewer.addMessage(parameters[0]);
+					mViewer.displayMessage(parameters[0]);
 				}
 				break;
 			case Protocol.Server.DECLINEINVITE:
-				
+				// TODO (peter) : Implement inviting.
 				break;
 			case Protocol.Server.ERROR:
 				try {
@@ -116,7 +138,7 @@ public class Client implements Runnable {
 				}
 				break;
 			case Protocol.Server.GAME_END:
-				
+				endGame();
 				break;
 			case Protocol.Server.HALLO:
 				// Print server name and featues
@@ -131,32 +153,88 @@ public class Client implements Runnable {
 				
 				break;
 			case Protocol.Server.INVITE:
-				
+				// TODO (peter) : Implement challenging
 				break;
 			case Protocol.Server.LEADERBOARD:
-				
+				// TODO (peter) : Implement leader board
 				break;
 			case Protocol.Server.MOVE:
-				
+				// MOVE_<playerName>_<nextPlayerName>_<move>_<move>_..\n\n
+				String movingPlayer = parameters[0];
+				String nextPlayer = parameters[1];
+				String[] moves = Arrays.copyOfRange(parameters, 2, parameters.length);
+				for (String move : moves) {
+					Node n = Board.moveStringToNode(move);
+					//doMove(n);
+				}
+				// Is it our turn?
+				if (nextPlayer == username) {
+					//mGame.
+				}
 				break;
 			case Protocol.Server.OKWAITFOR:
-				
+				try {
+					int numPlayers = Integer.parseInt(parameters[0]);
+					if (mViewer != null) {
+						mViewer.displayMessage("Waiting for " + numPlayers + " other players...");
+					}
+				} catch (NumberFormatException e) {
+					// TODO (peter) : Error logging in a file?
+				}
 				break;
 			case Protocol.Server.STARTGAME:
+				if (mViewer != null) {
+					mViewer.displayMessage("Game is starting!!");
+					mViewer.displayMessage("Opponents:");
+					for (String name : parameters) {
+						mViewer.displayMessage(name);
+					}
+					mPlayer = new Player();
+					mBoard = new Board();
+					
+				}
 				
+				///mGame = new Game();
 				break;
 			case Protocol.Server.STONESINBAG:
-				
+				try {
+					int numStones = Integer.parseInt(parameters[0]);
+					if (mViewer != null) {
+						mViewer.displayMessage("There are " + numStones + 
+												" stones left in the bag.");
+					}
+				} catch (NumberFormatException e) {
+					// TODO (peter) : Error logging in a file?
+				}
+				break;
+			default:
+				if (mViewer != null) {
+					mViewer.displayMessage(message);
+				}
 				break;
 		}
 	}
 	
-private void handleError(int error) {
+	private void endGame() {
+		if (mViewer != null) {
+			mViewer.displayMessage("The game has ended. " + 
+									"You can disconnect now.");
+			shutdown();
+		}
+	}
+
+	private void handleError(int error) {
 		// TODO Auto-generated method stub
 		switch(error) {
 			case 1:			// Not your turn
+				if (mViewer != null) {
+					mViewer.displayMessage("Nope.");
+				}
 				break;
-			case 2:			// Not your turn
+			case 2:			// Not your stone
+				if (mViewer != null) {
+					mViewer.displayMessage("Not your stone.");
+				}
 				break;
 			case 3:			// Not your turn
 				break;
@@ -172,6 +250,11 @@ private void handleError(int error) {
 				break;
 			case 7:			// Invalid move
 				break;
+			case 8:			// General error ??
+				if (mViewer != null) {
+					mViewer.displayMessage("Nope.");
+				}
+				break;
 		}
 	}
 
@@ -181,7 +264,7 @@ private void handleError(int error) {
 	 */
 	private void sendMessage(String msg) {
 		try {
-			out.write(msg + System.lineSeparator());
+			out.write(msg + Protocol.Server.Settings.COMMAND_END);
 			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -206,11 +289,11 @@ private void handleError(int error) {
 		System.out.println("Closing socket connection...");
 		sendMessage(username + " left the chat.");
 		try {
-			sock.close();
 			in.close();
 			out.close();
+			sock.close();
 		} catch (IOException e) {
-			if(mViewer != null) mViewer.addMessage("Left chat.");
+			if(mViewer != null) mViewer.displayMessage("Left chat.");
 		}
 	}
 	
@@ -229,10 +312,86 @@ private void handleError(int error) {
 	 * Send to the server that we are ready to connect.
 	 * @param name The client name.
 	 */
-	public void sendHallo(String name) {
+	public void setPlayerName(String name) {
 		username = name;
 		sendMessage(Protocol.Client.HALLO + 
 					Protocol.Server.Settings.DELIMITER + 
 					username);
+	}
+
+	/**
+	 * Request a game with a certain amount of opponents.
+	 * @param numPlayers The ammount of opponents to play with.
+	 */
+	public void joinGame(int numPlayers) {
+		sendMessage(Protocol.Client.REQUESTGAME + 
+				Protocol.Server.Settings.DELIMITER + 
+				numPlayers);
+	}
+
+	/**
+	 * Asks the server to push the amount of stones in the bag.
+	 */
+	public void getNumStones() {
+		sendMessage(Protocol.Client.GETSTONESINBAG);
+	}
+
+	/**
+	 * Returns the player associated with the client.
+	 * @return The player associated with the client.
+	 */
+	public Player getPlayer() {
+		return mPlayer;
+	}
+	
+	/**
+	 * Returns the string form of the player hand.
+	 * @return The player hand in string form.
+	 */
+	public String getPlayerHand() {
+		// TODO Auto-generated method stub
+		return Player.handToString(mPlayer.getHand());
+	}
+	
+	/**
+	 * Trades stones with the server given that we think we have them.
+	 * @param blockIndexes indexes of blocks to trade.
+	 */
+	public void tradeBlocks(int[] blockIndexes) {
+		if (blockIndexes.length <= mPlayer.getHand().size()) {
+			List<Block> blocks = new ArrayList<Block>();
+			for (int i : blockIndexes) {
+				blocks.add(mPlayer.getHand().get(i));
+				mPlayer.getHand().remove(i);
+			}
+			tradeBlocks(blocks);
+		} else {
+			if (mViewer != null) {
+				mViewer.displayMessage("You do not have a stone at that index!");
+			}
+		}
+	}
+	
+	/**
+	 * Trades stones with the server given that we think we have them.
+	 * @param blocks The blocks to trade.
+	 */
+	void tradeBlocks(List<Block> blocks) {
+		String message = Protocol.Client.CHANGESTONE;
+		if (mPlayer.checkHand(blocks)) {
+			for (Block b : blocks) {
+				message += Protocol.Server.Settings.DELIMITER;
+				message += Block.toChars(b);
+			}
+		}
+		sendMessage(message);		
+	}
+	
+	/**
+	 * Sends a user input command to the server.
+	 * @param input Command
+	 */
+	public void sendCommand(String input) {
+		sendMessage(input);	
 	}
 }

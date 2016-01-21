@@ -14,8 +14,8 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  */
 public class HumanTUIPlayer extends Player {
 
-	public HumanTUIPlayer(int aID) {
-		super(aID);
+	public HumanTUIPlayer() {
+	 super();
 	}
 
 	public static void main(String[] args) {
@@ -34,9 +34,9 @@ public class HumanTUIPlayer extends Player {
 		 * new Vector2(-1, 0))]);
 		 */
 		Game game = new Game(null);
-		Player player = new HumanTUIPlayer(1);
+		Player player = new HumanTUIPlayer();
 		player.initHand(new BlockBag(), 6);
-		Player player2 = new HumanTUIPlayer(2);
+		Player player2 = new HumanTUIPlayer();
 		player2.initHand(new BlockBag(), 6);
 		// System.out.println("Start zet");
 		List<Block> frontierTest = new ArrayList<Block>();
@@ -71,7 +71,7 @@ public class HumanTUIPlayer extends Player {
 		List<Node> set = new ArrayList<Node>();
 		List<Block> possibleMoves = new ArrayList<Block>();
 		List<Node> possiblePositions = new ArrayList<Node>();
-		possibleMoves.addAll(this.getmHand());
+		possibleMoves.addAll(this.getHand());
 		possiblePositions.addAll(aListOfEmptySpaces);
 		List<Node> copyBoard = new ArrayList<Node>();
 		copyBoard.addAll(mGame.getCopyBoard());
@@ -163,7 +163,7 @@ public class HumanTUIPlayer extends Player {
 				} else if (input.toLowerCase().equals("reset")) {
 					set.clear();
 					possibleMoves.clear();
-					possibleMoves.addAll(this.getmHand());
+					possibleMoves.addAll(this.getHand());
 					possiblePositions.clear();
 					possiblePositions.addAll(aListOfEmptySpaces);
 					System.out.println("Je zet is gereset");
@@ -171,7 +171,7 @@ public class HumanTUIPlayer extends Player {
 				} else if (input.toLowerCase().equals("trade")) {
 					set.clear();
 					possibleMoves.clear();
-					possibleMoves.addAll(this.getmHand());
+					possibleMoves.addAll(this.getHand());
 					possiblePositions.clear();
 					possiblePositions.addAll(aListOfEmptySpaces);
 					boolean trading = true;
@@ -203,7 +203,7 @@ public class HumanTUIPlayer extends Player {
 						}
 					}
 				} else if (input.toLowerCase().equals("player")) {
-					System.out.println(this.getmID());
+					//System.out.println(this.getID());
 				} else {
 					System.err.println("Input was not a valid number or command. Try again");
 					hand = GameConstants.INALID_MOVE;

@@ -149,7 +149,7 @@ public class Protocol {
 		public static final String GAME_END = "END";
 		
 		/**
-		 * Message the clients that the game has finished
+		 * Message that a move has been made and who is the next message.
 		 * 					ColorShape*X*Y
 		 * [Syntax] <move> CharChar*int*int
 		 * [Syntax] MOVE_<playerName>_<nextPlayerName>_<move>_<move>_..\n\n

@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import com.peterverzijl.softwaresystems.qwirkle.networking.LobbyServer;
 import com.peterverzijl.softwaresystems.qwirkle.networking.Server;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ServerView;
 
 public class ServerTUI implements ServerView {
 	
-	private Server mServer;
+	private LobbyServer mServer;
 	private InetAddress mAddress;
 	private int mPort;
 	private Thread mServerThread;
@@ -25,7 +26,7 @@ public class ServerTUI implements ServerView {
 		mAddress = address;
 		mPort = port;
 		
-		mServer = new Server(mAddress, mPort, this);			
+		mServer = new LobbyServer(mAddress, mPort, this);			
 		mServerThread = new Thread(mServer);
 		mServerThread.start();
 	}

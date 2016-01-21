@@ -22,7 +22,9 @@ public class MainTUI {
 	private static ServerSettings server;
 	
 	private static Client mClient;
-	private static Thread mClientThread;
+	// private static Thread mClientThread;
+	
+	private static boolean mInGame = false;
 	
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Qwirkle TUI!");
@@ -37,13 +39,11 @@ public class MainTUI {
         		handleCommand(br.readLine());
     		} while(mRunning);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
 				br.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -78,6 +78,45 @@ public class MainTUI {
 			} else {
 				System.out.println("No.");
 			}
+		} else if (input.contains("SERVER COMMAND")) {
+			if (mClient != null) {
+				input = input.replace("SERVER COMMAND ", "");
+				mClient.sendCommand(input);
+			}
+		} else if (input.contains("GAME JOIN")) {
+			if (mClient != null) {
+				if (!mInGame) {
+					tryJoinGame(input);
+				} else {
+					System.out.println("You are already in a game!");
+				}
+			} else {
+				System.out.println("Go play with yourself somewhere else!");
+			}
+		} else if (input.contains("GAME STONE AMOUNT")) {
+			if (mInGame && mClient != null) {
+				mClient.getNumStones();
+			} else {
+				System.out.println("Deez nuts are in Da sack.");
+			}
+		} else if (input.contains("GAME HAND")) {
+			if (mInGame && mClient != null) {
+				System.out.println(mClient.getPlayerHand());
+			} else {
+				System.out.println("Put your hand in my pants and I bet you feel nutz!");
+			}
+		} else if (input.contains("GAME TRADE")) {
+			input = input.replace("GAME TRADE ", "");
+			if (mInGame && mClient != null) {
+				String[] blocks = input.split(" ");
+				int[] blockIndexes = new int[blocks.length];
+				for (int i = 0; i < blocks.length; i++) {
+					blockIndexes[i] = Integer.parseInt(blocks[i]);
+				}
+				mClient.tradeBlocks(blockIndexes);
+			} else {
+				System.out.println("You have nothing of value to me.");
+			}
 		} else if (input.contains("WHOAMI")) {
 			if (mClient != null && mClient.getName() != null) {
 				System.out.println(mClient.getName());
@@ -92,7 +131,29 @@ public class MainTUI {
 			System.out.println("I don't speak retard. Command " + input + " does not exist.");
 		}
 	}
-	
+
+	private static void tryJoinGame(String input) {
+		// Remove the command
+		input = input.replaceAll("GAME JOIN ", "");
+		String[] param = input.split(" ");
+		
+		// Try to get the number
+		if (param.length != 1) {
+			// Stupid
+			System.out.println("");
+			return;
+		}
+		try {
+			int numPlayers = Integer.parseInt(param[0]);
+			mClient.joinGame(numPlayers);
+			System.out.println("Waiting for other players...");
+		} catch (NumberFormatException e) {
+			System.out.println("Do you even know what a number is?!");
+			return;
+		}
+		mInGame = true;
+	}
+
 	/**
 	 * Gets the settings from a string file.
 	 * @param input The server settings in string.
@@ -137,6 +198,9 @@ public class MainTUI {
 		System.out.println("SERVER CONNECT <address> <port> \t connects to a server.");
 		System.out.println("SERVER CREATE <address> <port> \t creates server.");
 		System.out.println("SERVER MESSAGES \t shows all server messages.");
+		System.out.println("GAME JOIN <number of opponents> \t tries to join a game with x opponents.");
+		System.out.println("GAME STONE AMOUNT \t asks the game how many stones are left in the game bag.");
+		System.out.println("GAME HAND \t asks the game to display the stones in the hand.");
 		System.out.println("WHOAMI \t shows the name of the user.");
 		System.out.println("EXIT \t exits the application.");
 	}
@@ -147,7 +211,6 @@ public class MainTUI {
 	 */
 	private static void connectServer(String input) {
 		server = getSettings(input);
-		// TODO (peter) : Make this less ugly
 		if (mClient == null) {
 			try {
 				mClient = createClient();
@@ -173,7 +236,7 @@ public class MainTUI {
 					 System.out.println("Enter a longer name!");
 				 }
 			 } while (name.length() < 2);
-			 mClient.sendHallo(name);
+			 mClient.setPlayerName(name);
 		} catch(IOException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
@@ -181,11 +244,10 @@ public class MainTUI {
 	
 	/**
 	 * Tries to create a client;
-	 * TODO (peter) : Make this less ugly.
 	 */
 	private static Client createClient() throws IOException {
 		Client client = null;
-		client = new Client(server.address, server.port, null);
+		client = new Client(server.address, server.port, new ClientViewer());
 		(new Thread(client)).start();
 		return client;
 	}
