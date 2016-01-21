@@ -15,10 +15,6 @@ public class Node {
 	 */
 	public static final int NEIGHBOR_NODES = 4;
 	
-	/**
-	 * The parent node.
-	 */
-	private Node mParent;
 	
 	/**
 	 * The neighbor nodes for this node.
@@ -33,9 +29,9 @@ public class Node {
 	private Vector2 mPosition; 
 	
 	/**
-	 * 
+	 * A block that can be placed on a board
 	 */
-	protected Vector2 mTempPosition;
+	private Block mBlock; 
 	
 	/**
 	 * Node constructor
@@ -46,13 +42,6 @@ public class Node {
 		mPosition = new Vector2(GameConstants.UNSET_NODE,GameConstants.UNSET_NODE);
 	}
 	
-	/**
-	 * Creates a node with a particular parent.
-	 * @param parent The node that is the parent of this node.
-	 */
-	public Node(Node parent) {
-		mParent = parent;
-	}
 		
 	/**
 	 * Sets the node of a given location index.
@@ -119,22 +108,6 @@ public class Node {
 	}
 	
 	/**
-	 * Sets the parent of this node.
-	 * @param n The node to set as parent.
-	 */
-	public void setParent(Node n) {
-		mParent = n;
-	}
-	
-	/**
-	 * Returns the parent of this node.
-	 * @return The parent of this node.
-	 */
-	public Node getParent() {
-		return mParent;
-	}
-	
-	/**
 	 * Returns an array of four neighbor nodes. 
 	 * Beware that neighbor nodes can be null.
 	 * @return An array of all neighbor nodes. Can be null.
@@ -147,16 +120,14 @@ public class Node {
 		mPosition.set(aX, aY);
 	}
 	
-	public void setTempPosition(int aX, int aY){
-		mTempPosition.set(aX, aY);
-	}
-	
-	public void finalizeMove(){
-		mPosition.set(mTempPosition.getX(), mTempPosition.getY());
-	}
 	
 	public Vector2 getPosition(){
 		return mPosition;
 	}
-	
+	public void setBlock(Block aBlock){
+		mBlock=aBlock;
+	}
+	public Block getBlock(){
+		return mBlock;
+	}
 }

@@ -38,7 +38,7 @@ public class Player {
 	public Player(int mId) {
 		// Initialize player
 		this.mID = mId;
-	//	mGame = aGame;
+		// mGame = aGame;
 		mHand.clear();
 	}
 
@@ -124,49 +124,14 @@ public class Player {
 		return mHand;
 	}
 
-	public List<Block> determineMove(List<Block> aFrontier){
+	public List<Node> determineMove(List<Node> aFrontier) {
 		return null;
 	}
 
-	public boolean checkHand(List<Block> set) {
-		boolean inHand = true;
-		for (Block b : set) {
-			if (!mHand.contains(b)) {
-
-				System.err.println("Hand did not contain all the blocks");
-				System.err.println("Hand did not contain"+b);
-				inHand = false;
-			}
-		}
-		return inHand;
+	public void setGame(Game aGame) {
+		mGame = aGame;
 	}
 
-	public void setMove(List<Block> aFrontier) {
-		List<Block> set = determineMove(aFrontier);
-		boolean trade = false;
-		if (set.size()>0&&set.get(set.size() - 1) == null) {
-			set.remove(set.size() - 1);
-			trade = true;
-		}
-		if (checkHand(set)) {
-			for (int i = 0; i < set.size(); i++) {
-				if (!trade) {
-					boardScale(set.get(i).getPosition());
-					mGame.getSetStones().add(set.get(i));
-				} else {
-					System.out.println("Now trading");
-					mGame.tradeBlocks(set.get(i));
-				}
-				mHand.remove(set.get(i));
-			}
-		}
-		System.out.println("De zet is gezet");
-	}
-	
-	public void setGame(Game aGame){
-		mGame=aGame;
-	}
-	
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
 		for (int i = 0; i < aHand.size(); i++) {
@@ -177,21 +142,21 @@ public class Player {
 	}
 
 	void boardScale(Vector2 aPosition) {
-		if (mGame.borders[0] > aPosition.getX())
-			mGame.borders[0] = (int) aPosition.getX()-7;
-		if (mGame.borders[1] < aPosition.getX())
-			mGame.borders[1] = (int) aPosition.getX()+7;
-		if (mGame.borders[2] > aPosition.getY())
-			mGame.borders[2] = (int) aPosition.getY()-7;
-		if (mGame.borders[3] < aPosition.getY())
-			mGame.borders[3] = (int) aPosition.getY()+7;
+		if (Board.borders[0] > aPosition.getX())
+			Board.borders[0] = (int) aPosition.getX() - 7;
+		if (Board.borders[1] < aPosition.getX())
+			Board.borders[1] = (int) aPosition.getX() + 7;
+		if (Board.borders[2] > aPosition.getY())
+			Board.borders[2] = (int) aPosition.getY() - 7;
+		if (Board.borders[3] < aPosition.getY())
+			Board.borders[3] = (int) aPosition.getY() + 7;
 	}
 
 	public Game getGame() {
 		return mGame;
 	}
-	
-	void resetHand(){
+
+	void resetHand() {
 		mHand.clear();
 	}
 }

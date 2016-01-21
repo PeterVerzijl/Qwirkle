@@ -40,8 +40,8 @@ public class HumanTUIPlayer extends Player {
 		player2.initHand(new BlockBag(), 6);
 		// System.out.println("Start zet");
 		List<Block> frontierTest = new ArrayList<Block>();
-		mGame.getFrontier().add(new Block(null, null));
-		mGame.getFrontier().get(0).setPosition(0, 0);
+		// mGame.getFrontier().add(new Node(null, null));
+		// mGame.getFrontier().get(0).setPosition(0, 0);
 		// System.out.println("game." + game.mFrontier.size());
 
 		/*
@@ -52,35 +52,42 @@ public class HumanTUIPlayer extends Player {
 		 * frontierTest.get(3).setPosition(3, 0); frontierTest.add(new
 		 * Block(null, null)); frontierTest.get(4).setPosition(4, 0);
 		 */
-		
+
 		while (true) {
 			// Game.boardToString(Game.setBlocks);
-			player.setMove(mGame.getFrontier());
+			// player.setMove(mGame.getFrontier());
 			// Game.boardToString(Game.setBlocks);
-			player2.setMove(mGame.getFrontier());
+			// player2.setMove(mGame.getFrontier());
 		}
 	}
 
-	public List<Block> determineMove(List<Block> aFrontier) {
-		List<Block> set = new ArrayList<Block>();
+	/**
+	 * Let a HumanPlayer do a move based on an input and output
+	 * 
+	 * @param aListOfEmptySpaces
+	 * @return
+	 */
+	public List<Node> determineMove(List<Node> aListOfEmptySpaces) {
+		List<Node> set = new ArrayList<Node>();
 		List<Block> possibleMoves = new ArrayList<Block>();
-		List<Block> possiblePositions = new ArrayList<Block>();
+		List<Node> possiblePositions = new ArrayList<Node>();
 		possibleMoves.addAll(this.getmHand());
-		possiblePositions.addAll(aFrontier);
+		possiblePositions.addAll(aListOfEmptySpaces);
+		List<Node> copyBoard = new ArrayList<Node>();
+		copyBoard.addAll(mGame.getCopyBoard());
+		
 		Scanner scanner = new Scanner(System.in);
 		int hand;
 		int move;
 		boolean success = false;
 		while (!success) {
 			try {
-				List<Block> copyBoard = new ArrayList<Block>();
-				copyBoard.addAll(mGame.getSetStones());
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
-				Game.boardToString(copyBoard,possiblePositions);
+				Board.boardToString(copyBoard, possiblePositions);
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
-				//printNodeList(possiblePositions);
+				// printNodeList(possiblePositions);
 
 				if (possiblePositions.size() > 0) {
 					for (int i = 0; i < possiblePositions.size(); i++) {
@@ -100,26 +107,38 @@ public class HumanTUIPlayer extends Player {
 								possiblePositions.get(move).getPosition());
 						Block newMove = possibleMoves.get(hand);
 						Node currentNode = possiblePositions.get(move);
-						newMove.setPosition((int) currentNode.getPosition().getX(),
-								(int) currentNode.getPosition().getY());
-						set.add(newMove);
-						Node[] neighbors = currentNode.getNeighborNodes();
-						((Block) currentNode).setBlock(set.get(set.size() - 1).getShape(),
-								set.get(set.size() - 1).getColor());
+						// newMove.setPosition((int)
+						// currentNode.getPosition().getX(),
+						// (int) currentNode.getPosition().getY());
+						/*
+						 * for (int i = 0; i < Node.NEIGHBOR_NODES; i++) {
+						 * newMove.setNeighborNode(currentNode.getNeighborNode(i
+						 * ), i); }
+						 */
 
-						possiblePositions.remove(move);
-						possibleMoves.remove(hand);
-						for (int i = 0; i < neighbors.length; i++) {
-							// System.out.println(Direction.values()[i]);
-							if (neighbors[i] == null) {
-								Block newEmpty = findDuplicateNode(possiblePositions, currentNode.getPosition(),
-										Direction.values()[i]);
-								// System.out.println(newEmpty==null);
-								if (newEmpty == null) {
-									possiblePositions.add(createEmptyNode(Direction.values()[i], currentNode));
-								} else {
-									newEmpty.setNeighborNode(currentNode,
-											getDirection(currentNode.getPosition(), newEmpty.getPosition()));
+						Node[] neighbors = currentNode.getNeighborNodes();
+						currentNode.setBlock(newMove);
+						set.add(currentNode);
+						System.out.println("Size: " +set.size());
+						if (!Board.isValid(set)) {
+							System.err.print("\t Deze zet m" + "ag niet!");
+							currentNode.setBlock(null);
+							set.remove(currentNode);
+						} else {
+							possiblePositions.remove(move);
+							possibleMoves.remove(hand);
+							for (int i = 0; i < neighbors.length; i++) {
+								// System.out.println(Direction.values()[i]);
+								if (neighbors[i] == null) {
+									Node newEmpty = Board.findDuplicateNode(possiblePositions, currentNode.getPosition(),
+											Direction.values()[i]);
+									// System.out.println(newEmpty==null);
+									if (newEmpty == null) {
+										possiblePositions.add(Board.createEmptyNode(Direction.values()[i], currentNode));
+									} else {
+										newEmpty.setNeighborNode(currentNode,
+												Direction.getDirection(currentNode.getPosition(), newEmpty.getPosition()));
+									}
 								}
 							}
 						}
@@ -135,7 +154,9 @@ public class HumanTUIPlayer extends Player {
 					success = true;
 					scanner.reset();
 					// scanner.close();
-					//Deze sowieso niet hier laten zetten
+					// Deze sowieso niet hier laten zetten
+					// TODO Game->Board
+					// TODO STACK OF BOARD
 					mGame.getFrontier().clear();
 					mGame.getFrontier().addAll(possiblePositions);
 					possibleMoves.clear();
@@ -144,30 +165,33 @@ public class HumanTUIPlayer extends Player {
 					possibleMoves.clear();
 					possibleMoves.addAll(this.getmHand());
 					possiblePositions.clear();
-					possiblePositions.addAll(aFrontier);
+					possiblePositions.addAll(aListOfEmptySpaces);
 					System.out.println("Je zet is gereset");
-					System.out.println(
-							"PossiblePositions: " + possiblePositions.size() + " aFrontier: " + aFrontier.size());
+					// TODO CHECK IF HAND < current hand.size()
 				} else if (input.toLowerCase().equals("trade")) {
 					set.clear();
 					possibleMoves.clear();
 					possibleMoves.addAll(this.getmHand());
 					possiblePositions.clear();
-					possiblePositions.addAll(aFrontier);
+					possiblePositions.addAll(aListOfEmptySpaces);
 					boolean trading = true;
 					System.out.println("Select stones to trade");
+					List<Block> blocksToTrade = new ArrayList<Block>();
 					while (trading) {
 						try {
+							
 							System.out.println("Blocks in hand: " + Player.handToString(possibleMoves));
-							System.out.println("Blocks pending for trade: " + Player.handToString(set));
+							System.out.println("Blocks pending for trade: " + Player.handToString(blocksToTrade));
 							hand = scanner.nextInt();
-						//	scanner.nextLine();
-							set.add(possibleMoves.get(hand));
+							// scanner.nextLine();
+							Node emptyNode = new Node();
+							emptyNode.setBlock(possibleMoves.get(hand));
+							blocksToTrade.add(emptyNode.getBlock());
+							set.add(emptyNode);
 							possibleMoves.remove(possibleMoves.get(hand));
 						} catch (java.util.InputMismatchException e1) {
 							String input2 = scanner.next();
 							if (input2.toLowerCase().equals("end")) {
-								set.add(null);
 								System.out.println("Now trading");
 								trading = false;
 								success = true;
@@ -187,69 +211,12 @@ public class HumanTUIPlayer extends Player {
 				}
 			}
 		}
+
+		System.out.println("Size bij return: " +set.size());
 		return set;
 	}
 
-	// TODO DENNIS deze twee in player zetten
-	public static Block createEmptyNode(Direction aDirection, Node aBlock) {
-		Block empty = new Block(null, null);
-		empty.setPosition(aDirection.getX() + (int) (aBlock.getPosition().getX()),
-				aDirection.getY() + (int) (aBlock.getPosition().getY()));
-		empty.setParent(aBlock);
-		empty.setNeighborNode(aBlock, getDirection(aBlock.getPosition(), empty.getPosition()));
-		// TODO: DEZE iets netter omzetten
-		aBlock.setNeighborNode(empty, getDirection(empty.getPosition(), aBlock.getPosition()));
-		Direction d = Direction.values()[getDirection(empty.getPosition(), aBlock.getPosition())];
-		// System.out.println("aBlock: " + d.toString()+ " empty: " +
-		// aDirection.toString());
-		return empty;
-	}
-
-	public static Block findDuplicateNode(List<Block> aNodeList, Vector2 aPosition, Direction aDirection) {
-		Block duplicate = null;
-		Vector2 newNodePosition = new Vector2(aPosition.getX() + aDirection.getX(),
-				aPosition.getY() + aDirection.getY());
-		// System.out.println("");
-		// System.out.println("newNodePosition: "+newNodePosition);
-		for (Block p : aNodeList) {
-			if (p.getPosition().getX() == newNodePosition.getX() && p.getPosition().getY() == newNodePosition.getY()) {
-				// System.out.println("Deze zet bestond al");
-				duplicate = p;
-			}
-		}
-		return duplicate;
-	}
-
-	public static void printNodeList(List<Block> aNodeList) {
-		System.out.println("Frontierlist:");
-		for (Block p : aNodeList) {
-			System.out.println(p.getPosition());
-		}
-	}
-
-	// TODO DENNIS add substraction to Vector
-	// @ensure possiblePositions.contains(aNode) &&
-	// anotherNode==findDuplicateNode()
-	// @ ensure xDiff==1 || xDiff==-1
-	public static int getDirection(Vector2 aNode, Vector2 anotherNode) {
-		int direction = -1;
-		int xDiff = (int) (aNode.getX() - anotherNode.getX());
-		int yDiff = (int) (aNode.getY() - anotherNode.getY());
-
-		if (xDiff == 1) {
-			direction = 1;
-		}
-		if (xDiff == -1) {
-			direction = 3;
-		}
-		if (yDiff == 1) {
-			direction = 0;
-		}
-		if (yDiff == -1) {
-			direction = 2;
-		}
-		return direction;
-	}
+	
 
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
@@ -257,5 +224,20 @@ public class HumanTUIPlayer extends Player {
 			hand += aHand.get(i).getColor().toString().charAt(0) + BlockPrinter.getChar(aHand.get(i));
 		}
 		return hand;
+	}
+
+	public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
+		Node[] neighbors = aNode.getNeighborNodes();
+		for (int i = 0; i < neighbors.length; i++) {
+			if (neighbors[i] == null) {
+				Node newEmpty = Board.findDuplicateNode(aFrontierList, aNode.getPosition(), Direction.values()[i]);
+				// System.out.println(newEmpty==null);
+				if (newEmpty == null) {
+					aFrontierList.add(Board.createEmptyNode(Direction.values()[i], aNode));
+				} else {
+					newEmpty.setNeighborNode(aNode, Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
+				}
+			}
+		}
 	}
 }

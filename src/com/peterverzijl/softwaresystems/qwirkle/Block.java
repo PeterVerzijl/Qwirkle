@@ -5,7 +5,7 @@ package com.peterverzijl.softwaresystems.qwirkle;
  * @author Peter Verzijl
  *
  */
-public class Block extends Node {
+public class Block {
 	/**
 	 * The shape that is on the block.
 	 */

@@ -14,11 +14,11 @@ public class BlockPrinter {
 	private static HashMap<Block.Shape, Character> shapeCharMap;
 	static {
 		shapeCharMap = new HashMap<Block.Shape, Character>();
-		shapeCharMap.put(Block.Shape.CIRCLE, '⏺');
+		shapeCharMap.put(Block.Shape.CIRCLE, 'ഠ');
 		shapeCharMap.put(Block.Shape.CROSS, '✖');
 		shapeCharMap.put(Block.Shape.DIAMOND, '◆');
 		shapeCharMap.put(Block.Shape.PLUS, '➕');
-		shapeCharMap.put(Block.Shape.SQUARE, '⏹');
+		shapeCharMap.put(Block.Shape.SQUARE, '■');
 		shapeCharMap.put(Block.Shape.STAR, '✸');
 	}
 	
