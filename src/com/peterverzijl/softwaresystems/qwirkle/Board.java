@@ -41,6 +41,7 @@ public class Board {
 	public Board() {
 		
 		mRootBlock =new Node();
+		mRootBlock.setPosition(0, 0);
 		mFrontier.add(mRootBlock);
 	}
 
