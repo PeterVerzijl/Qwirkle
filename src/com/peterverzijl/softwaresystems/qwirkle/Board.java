@@ -39,7 +39,9 @@ public class Board {
 	private List<Node> mSetBlocks = new ArrayList<Node>(); // RAGERAGERAGERAGE
 
 	public Board() {
-		Node mRootBlock =new Node();
+		
+		mRootBlock =new Node();
+		mRootBlock.setPosition(0, 0);
 		mFrontier.add(mRootBlock);
 	}
 
@@ -234,13 +236,10 @@ public class Board {
 	 * @param aListOfPlacedBlocks
 	 * @param aListOfPossibleMoves
 	 */
-	public static void boardToString(List<Node> aListOfPlacedBlocks, List<Node> aListOfPossibleMoves) {
+	public static String toString(List<Node> aListOfPlacedBlocks, List<Node> aListOfPossibleMoves) {
+		String boardRep="";
 		int x = (borders[1] - borders[0]);
 		int y = (borders[3] - borders[2]);
-
-		System.out.println("X: " + borders[1] + " - " + borders[0] + " " + x);
-
-		System.out.println("Y: " + y);
 
 		int midX = x / 2 + 1;// (Math.abs(borders[0])+borders[1])/2;
 		int midY = y / 2 + 1;// (Math.abs(borders[2])+borders[3])/2;
@@ -262,10 +261,11 @@ public class Board {
 				if (boardToString[j][i] == null) {
 					boardToString[j][i] = "  ";
 				}
-				System.out.print(boardToString[j][i] + "");
+				boardRep += boardToString[j][i] + "";
 			}
-			System.out.println("");
+			boardRep+="\n";
 		}
+		return boardRep;
 	}
 	
 	public void setFrontier(Node aPlacedNode){
@@ -289,5 +289,10 @@ public class Board {
 				}
 			}
 		}
+	}
+
+	public void setPlacedBlock(Node node) {
+		mSetBlocks.add(node);
+		
 	}
 }

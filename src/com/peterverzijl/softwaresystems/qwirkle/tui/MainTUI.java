@@ -30,7 +30,7 @@ public class MainTUI {
 	
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Qwirkle TUI!");
-		System.out.println("You can now start typing commands.00");
+		System.out.println("You can now start typing commands.");
 		
 		// Do the input wait loop
 		mRunning = true;

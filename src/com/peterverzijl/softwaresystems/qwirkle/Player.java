@@ -18,7 +18,6 @@ public class Player {
 	/**
 	 * The game the player is playing
 	 */
-	protected Game mGame;
 
 	/**
 	 * The blocks that the player has in his/her prosession
@@ -103,9 +102,6 @@ public class Player {
 		return null;
 	}
 
-	public void setGame(Game aGame) {
-		mGame = aGame;
-	}
 
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
@@ -125,10 +121,6 @@ public class Player {
 			Board.borders[2] = (int) aPosition.getY() - 7;
 		if (Board.borders[3] < aPosition.getY())
 			Board.borders[3] = (int) aPosition.getY() + 7;
-	}
-
-	public Game getGame() {
-		return mGame;
 	}
 
 	void resetHand() {

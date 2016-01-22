@@ -58,13 +58,14 @@ public class Game {
 	public void run() {
 		while(!hasEnded()) {
 			try {
+				System.out.println("Board in Game");
+				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
 				doMove(mPlayers.get(mCurrentPlayer).determineMove(mBoard.getEmptySpaces()));
 				addBlocks(mPlayers.get(mCurrentPlayer));
 				mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());
 			} catch (IllegalMoveException e) {
 				System.err.println("Er gaan dingen mis!!!");
 			}
-			
 		}
 		//doe iets als de game klaar is
 	}
@@ -107,21 +108,22 @@ public class Game {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
 		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX()==GameConstants.UNSET_NODE) {
-			playersMove.remove(playersMove.size() - 1);
-			trade = true;
+		//	trade = true;
 		}
 		System.out.println("checking hand!");
+		System.out.println("Trade = " + trade);
 		if (checkHand(playersMove)) {
 			System.out.println("Set in hand");
 			System.out.println(playersMove.size());
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
-				//	boardScale(playersMove.get(i).getPosition());
-					//if (Board.isValid(playersMove)) {
+					//boardScale(playersMove.get(i).getPosition());
+					if (Board.isValid(playersMove)) {
 						System.out.println("if isValid");
 						mBoard.setFrontier(playersMove.get(i));
-						mBoard.getPlacedBlocks().add(playersMove.get(i));
-					//}
+						mBoard.setPlacedBlock(playersMove.get(i));
+					
+					}
 				} else {
 					System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
@@ -163,10 +165,19 @@ public class Game {
 		 */
 	}
 
-	public void addBlocks(Player aPlayer) {
+	/**
+	 * Method that makes sure that the player gets enough stones from the gameBag
+	 * @param aPlayer
+	 * @return
+	 */
+	public List<Block> addBlocks(Player aPlayer) {
+		List<Block> newBlocks= new ArrayList<Block>();
 		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
-			aPlayer.addBlock(mBag.drawBlock());
+			Block blockFromBag=mBag.drawBlock();
+			newBlocks.add(blockFromBag);
+			aPlayer.addBlock(blockFromBag);
 		}
+		return newBlocks;
 	}
 
 	public List<Node> getCopyBoard(){
