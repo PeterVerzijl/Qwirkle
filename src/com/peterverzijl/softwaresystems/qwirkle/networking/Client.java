@@ -39,7 +39,7 @@ public class Client implements Runnable {
 	private ChatView mViewer;
 	
 	// Game stuff
-	private Board mBoard;
+	//private Board mBoard;
 	private Player mPlayer;
 	private HumanTUIPlayer gameTUI;
 	
@@ -167,7 +167,7 @@ public class Client implements Runnable {
 				String[] moves = Arrays.copyOfRange(parameters, 2, parameters.length);
 				for (String move : moves) {
 					Node n = Board.moveStringToNode(move);
-					//mBoard.setPlacedBlock(n);
+					gameTUI.setMove(n);
 				}
 				if (!movingPlayer.equals(username)) {
 					// Message the viewer that a move has been done
@@ -176,14 +176,14 @@ public class Client implements Runnable {
 						// Draw updated board
 						mViewer.displayMessage(nextPlayer + " now has the turn.");
 						if (moves.length > 0) {
-							//mViewer.displayMessage(Board.boardToString(mBoard.getPlacedBlocks(), null);
+							mViewer.displayMessage(gameTUI.displayBoad());
 						}
 					}
 				}
 				// Is it our turn?
 				if (nextPlayer.equals(username)) {
 					// TODO (peter) : Contact PlayerTUI
-					gameTUI.determineMove(mBoard);
+					gameTUI.determineMove();
 				}
 				break;
 			case Protocol.Server.OKWAITFOR:
