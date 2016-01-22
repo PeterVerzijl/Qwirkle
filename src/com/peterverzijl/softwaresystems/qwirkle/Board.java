@@ -75,7 +75,7 @@ public class Board {
 	 * @param aMoveList
 	 * @return
 	 */
-	public static boolean isValid(List<Node> aListOfMoves) {
+	public boolean isValid(List<Node> aListOfMoves) {
 		boolean isLegal = true;
 
 		Node lastMove = aListOfMoves.get(aListOfMoves.size() - 1);
@@ -112,7 +112,7 @@ public class Board {
 	 * @param aBlock
 	 * @return
 	 */
-	public static Node createEmptyNode(Direction aDirection, Node aBlock) {
+	public Node createEmptyNode(Direction aDirection, Node aBlock) {
 		Node empty = new Node();
 		empty.setPosition(aDirection.getX() + (int) (aBlock.getPosition().getX()),
 				aDirection.getY() + (int) (aBlock.getPosition().getY()));
@@ -128,7 +128,7 @@ public class Board {
 	 * @param aDirection
 	 * @return
 	 */
-	public static Node findDuplicateNode(List<Node> aNodeList, Vector2 aPosition, Direction aDirection) {
+	public Node findDuplicateNode(List<Node> aNodeList, Vector2 aPosition, Direction aDirection) {
 		Node duplicate = null;
 		Vector2 newNodePosition = new Vector2(aPosition.getX() + aDirection.getX(),
 				aPosition.getY() + aDirection.getY());
@@ -158,7 +158,7 @@ public class Board {
 	 * @return true if all the neigbors in aDirection are the same && no
 	 *         duplicate char excists in row
 	 */
-	public static boolean isValidColor(Node lastMove, Direction aDirection) {
+	public boolean isValidColor(Node lastMove, Direction aDirection) {
 		boolean isLegal = true;
 		Node block = lastMove;
 		System.out.println("Direction: " + aDirection);
@@ -183,7 +183,7 @@ public class Board {
 		return isLegal;
 	}
 
-	public static boolean isValidShape(Node aMove, Direction aDirection) {
+	public boolean isValidShape(Node aMove, Direction aDirection) {
 		boolean isLegal = true;
 
 		Node block = aMove;
@@ -277,13 +277,13 @@ public class Board {
 	/**
 	 * 
 	 */
-	public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
+	public void addFrontiers(List<Node> aFrontierList, Node aNode) {
 		Node[] neighbors = aNode.getNeighborNodes();
 		for (int i = 0; i < neighbors.length; i++) {
 			if (neighbors[i] == null) {
-				Node newEmpty = Board.findDuplicateNode(aFrontierList, aNode.getPosition(), Direction.values()[i]);
+				Node newEmpty = findDuplicateNode(aFrontierList, aNode.getPosition(), Direction.values()[i]);
 				if (newEmpty == null) {
-					aFrontierList.add(Board.createEmptyNode(Direction.values()[i], aNode));
+					aFrontierList.add(createEmptyNode(Direction.values()[i], aNode));
 				} else {
 					newEmpty.setNeighborNode(aNode, Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
 				}

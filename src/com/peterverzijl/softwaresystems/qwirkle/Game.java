@@ -45,17 +45,18 @@ public class Game {
 		mBag = new BlockBag();
 		mBoard = new Board();
 		// TODO: DENNIS score resetten
-		
+
 		mPlayers = aPlayerList;
 		for (int i = 0; i < mPlayers.size(); i++) {
 			mPlayers.get(i).resetHand();
 			mPlayers.get(i).initHand(mBag, 6);
 		}
 		// Add first possible move
-		}
-	//test unit
+	}
+
+	// test unit
 	public void run() {
-		while(!hasEnded()) {
+		while (!hasEnded()) {
 			try {
 				System.out.println("Board in Game");
 				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
@@ -66,23 +67,23 @@ public class Game {
 				System.err.println("Er gaan dingen mis!!!");
 			}
 		}
-		//doe iets als de game klaar is
+		// doe iets als de game klaar is
 	}
 
 	public boolean hasEnded() {
 		return false;
 	}
-	
 
-	public boolean checkHand(Player player,Block block) {
+	public boolean checkHand(Player player, Block block) {
 		boolean result = false;
-		if(player==mPlayers.get(mCurrentPlayer)){
-		List<Block> playerHand= mPlayers.get(mCurrentPlayer).getHand();
-		for (Block b : playerHand) {
-			if (b.equals(block)) {
-				result = true;
+		if (player == mPlayers.get(mCurrentPlayer)) {
+			List<Block> playerHand = mPlayers.get(mCurrentPlayer).getHand();
+			for (Block b : playerHand) {
+				if (b.equals(block)) {
+					result = true;
+				}
 			}
-		}}
+		}
 		return result;
 	}
 
@@ -96,18 +97,18 @@ public class Game {
 	public boolean checkHand(List<Node> set) {
 		boolean result = true;
 		for (Node n : set) {
-			if (!checkHand(mPlayers.get(mCurrentPlayer),n.getBlock())) {
+			if (!checkHand(mPlayers.get(mCurrentPlayer), n.getBlock())) {
 				result = false;
 			}
 		}
 		return result;
 	}
 
-	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException{
+	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
-		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX()==GameConstants.UNSET_NODE) {
-		//	trade = true;
+		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
+			// trade = true;
 		}
 		System.out.println("checking hand!");
 		System.out.println("Trade = " + trade);
@@ -116,11 +117,11 @@ public class Game {
 			System.out.println(playersMove.size());
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
-					//boardScale(playersMove.get(i).getPosition());
+					// boardScale(playersMove.get(i).getPosition());
 					if (Board.isValid(playersMove)) {
-						System.out.println("if isValid");
 						mBoard.setStone(playersMove.get(i));
-						}
+						notifyPlayer(playersMove);
+					}
 				} else {
 					System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
@@ -132,20 +133,35 @@ public class Game {
 					e.printStackTrace();
 				}
 			}
-		} else {System.out.println("checkHand was false");}
+		} else {
+			System.out.println("checkHand was false");
+		}
 		System.out.println("De zet is gezet");
+	}
+
+	/**
+	 * Debugin method to see if board is updating at player side
+	 * Do not use when there are no human players
+	 * @param aValidMove
+	 */
+	void notifyPlayer(List<Node> aValidMove) {
+		for (Player players : mPlayers) {
+			for (Node n : aValidMove) {
+				((HumanTUIPlayer)players).setMove(n);
+			}
+		}
 	}
 
 	public List<Node> getFrontier() {
 		List<Node> copy = new ArrayList<Node>();
 		List<Node> original = mBoard.getEmptySpaces();
-		for(Node v : original){
+		for (Node v : original) {
 			copy.add(v);
 		}
 		return copy;
 	}
 
-		public List<Player> getPlayers(){
+	public List<Player> getPlayers() {
 		return mPlayers;
 	}
 
@@ -163,24 +179,26 @@ public class Game {
 	}
 
 	/**
-	 * Method that makes sure that the player gets enough stones from the gameBag
+	 * Method that makes sure that the player gets enough stones from the
+	 * gameBag
+	 * 
 	 * @param aPlayer
 	 * @return
 	 */
 	public List<Block> addBlocks(Player aPlayer) {
-		List<Block> newBlocks= new ArrayList<Block>();
+		List<Block> newBlocks = new ArrayList<Block>();
 		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
-			Block blockFromBag=mBag.drawBlock();
+			Block blockFromBag = mBag.drawBlock();
 			newBlocks.add(blockFromBag);
 			aPlayer.addBlock(blockFromBag);
 		}
 		return newBlocks;
 	}
 
-	public List<Node> getCopyBoard(){
+	public List<Node> getCopyBoard() {
 		return mBoard.getPlacedBlocks();
 	}
-	
+
 	public List<Block> addStone(int aAmount) {
 		List<Block> newBlocks = new ArrayList<Block>();
 		for (int i = 0; i < aAmount; i++) {
@@ -192,26 +210,29 @@ public class Game {
 	public void tradeBlocks(Block aBlock) {
 		mBag.blocks.add(aBlock);
 	}
-	
 
-/**
+	/**
 	 * Trades a block with the bag.
-	 * @param player The player who does the trade.
-	 * @param block The block type the player wants to trade.
-	 * @throws NotYourTurnException Thrown if this function is called when the player is not the current player.
-	 * @throws NotYourBlockException Thrown if you try to trade a block that is not yours.
+	 * 
+	 * @param player
+	 *            The player who does the trade.
+	 * @param block
+	 *            The block type the player wants to trade.
+	 * @throws NotYourTurnException
+	 *             Thrown if this function is called when the player is not the
+	 *             current player.
+	 * @throws NotYourBlockException
+	 *             Thrown if you try to trade a block that is not yours.
 	 */
-	public Block tradeBlock(Player player, Block block) 
-			throws NotYourTurnException, 
-			NotYourBlockException {
+	public Block tradeBlock(Player player, Block block) throws NotYourTurnException, NotYourBlockException {
 		// Look if we are the current player
 		if (player == mPlayers.get(mCurrentPlayer)) {
-			if (checkHand(player,block)) {
+			if (checkHand(player, block)) {
 				// Do the trade
 				Block newBlock = mBag.drawBlock();
-				player.removeBlock(block);			// Don't change this order!
-				player.addBlock(newBlock);			// !!
-				mBag.returnBlock(block);			// !!
+				player.removeBlock(block); // Don't change this order!
+				player.addBlock(newBlock); // !!
+				mBag.returnBlock(block); // !!
 				return newBlock;
 			} else {
 				throw new NotYourBlockException();
@@ -221,19 +242,21 @@ public class Game {
 		}
 	}
 
-
 	/**
 	 * Removes a player from the game.
+	 * 
 	 * @param player
 	 */
 	public void removePlayer(Player player) {
-		mPlayers.remove(player);		
+		mPlayers.remove(player);
 	}
 
-/**
+	/**
 	 * Returns the current amount of stones in the stone bag.
+	 * 
 	 * @return The amount of stones left in the bag.
 	 */
 	public int getNumStonesInBag() {
-		return mBag.blocks.size();}
+		return mBag.blocks.size();
+	}
 }
