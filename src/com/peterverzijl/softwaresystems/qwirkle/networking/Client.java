@@ -40,8 +40,7 @@ public class Client implements Runnable {
 	
 	// Game stuff
 	//private Board mBoard;
-	private Player mPlayer;
-	private HumanTUIPlayer gameTUI;
+	private HumanTUIPlayer mPlayer;
 	
 	private boolean mRunning = false;
 
@@ -167,7 +166,7 @@ public class Client implements Runnable {
 				String[] moves = Arrays.copyOfRange(parameters, 2, parameters.length);
 				for (String move : moves) {
 					Node n = Board.moveStringToNode(move);
-					gameTUI.setMove(n);
+					mPlayer.setMove(n);
 				}
 				if (!movingPlayer.equals(username)) {
 					// Message the viewer that a move has been done
@@ -176,14 +175,22 @@ public class Client implements Runnable {
 						// Draw updated board
 						mViewer.displayMessage(nextPlayer + " now has the turn.");
 						if (moves.length > 0) {
-							mViewer.displayMessage(gameTUI.displayBoad());
+							mViewer.displayMessage(mPlayer.boardToString());
 						}
 					}
 				}
 				// Is it our turn?
 				if (nextPlayer.equals(username)) {
 					// TODO (peter) : Contact PlayerTUI
-					gameTUI.determineMove();
+					while (MainTUI.lock.isLocked() && !MainTUI.lock.isHeldByCurrentThread()) {
+						// Do nothing.
+					}
+					MainTUI.lock.lock();
+					try {
+						mPlayer.determineMove();
+					} finally {
+						MainTUI.lock.unlock();
+					}
 				}
 				break;
 			case Protocol.Server.OKWAITFOR:
@@ -367,9 +374,7 @@ public class Client implements Runnable {
 				Protocol.Server.Settings.DELIMITER + 
 				numPlayers);
 		// Init game variables here in case we get blocks before a game start.
-		mPlayer = new Player();
-		mBoard = new Board();
-		gameTUI = new HumanTUIPlayer();
+		mPlayer = new HumanTUIPlayer();
 	}
 
 	/**
