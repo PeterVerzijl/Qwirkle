@@ -161,7 +161,7 @@ public class Board {
 	public boolean isValidColor(Node lastMove, Direction aDirection) {
 		boolean isLegal = true;
 		Node block = lastMove;
-		System.out.println("Direction: " + aDirection);
+		//ystem.out.println("Direction: " + aDirection);
 		while (block.getNeighborNode(aDirection) != null
 				&&  block.getNeighborNode(aDirection).getBlock() != null) {
 			if (lastMove.getBlock().getColor() != block.getNeighborNode(aDirection).getBlock().getColor()
@@ -171,15 +171,15 @@ public class Board {
 				isLegal = false;
 				break;
 			} else {
-				System.out.println("Color check");
-				System.out.println("Neigbor: " + block.getNeighborNode(aDirection).getBlock().getColor().toString() + " "
-						+ block.getNeighborNode(aDirection).getBlock().getShape().toString() + " Move: "
-						+ block.getBlock().getColor().toString());
+		//		System.out.println("Color check");
+		//		System.out.println("Neigbor: " + block.getNeighborNode(aDirection).getBlock().getColor().toString() + " "
+		//				+ block.getNeighborNode(aDirection).getBlock().getShape().toString() + " Move: "
+		//				+ block.getBlock().getColor().toString());
 				block = block.getNeighborNode(aDirection);
 			}
 		}
 
-		System.out.println("Color is valid: " + isLegal);
+	//	System.out.println("Color is valid: " + isLegal);
 		return isLegal;
 	}
 
@@ -187,7 +187,7 @@ public class Board {
 		boolean isLegal = true;
 
 		Node block = aMove;
-		System.out.println("Direction: " + aDirection);
+		//System.out.println("Direction: " + aDirection);
 		while (block.getNeighborNode(aDirection) != null
 				&&  block.getNeighborNode(aDirection).getBlock() != null) {
 			if (aMove.getBlock().getShape() !=  block.getNeighborNode(aDirection).getBlock().getShape()
@@ -195,14 +195,14 @@ public class Board {
 				isLegal = false;
 				break;
 			} else {
-				System.out.println("Shape check");
-				System.out.println("Neigbor: " +  block.getNeighborNode(aDirection).getBlock().getColor().toString() + " "
-						+ block.getNeighborNode(aDirection).getBlock().getShape().toString() + " Move: "
-						+ block.getBlock().getColor().toString());
+				//System.out.println("Shape check");
+				//System.out.println("Neigbor: " +  block.getNeighborNode(aDirection).getBlock().getColor().toString() + " "
+				//		+ block.getNeighborNode(aDirection).getBlock().getShape().toString() + " Move: "
+				//		+ block.getBlock().getColor().toString());
 				block = block.getNeighborNode(aDirection);
 			}
 		}
-		System.out.println("shape is valid: " + isLegal);
+		//System.out.println("shape is valid: " + isLegal);
 		return isLegal;
 	}
 
@@ -217,7 +217,13 @@ public class Board {
 	 * 
 	 */
 	public List<Node> getEmptySpaces() {
-		return mFrontier;
+		List<Node> copyList=new ArrayList<Node>();
+		for(Node n:mFrontier){
+		Node copyNode = new Node();
+		copyNode.setPosition((int)n.getPosition().getX(), (int)n.getPosition().getY());
+		copyList.add(copyNode);
+		}
+		return copyList;
 	}
 
 	public void addFrontier(Node aNode) {
@@ -271,7 +277,7 @@ public class Board {
 	public void setFrontier(Node aPlacedNode){
 			addFrontiers(mFrontier,aPlacedNode);
 			for(Node nodes:mFrontier){
-				System.out.println(nodes.getPosition());
+				System.out.println("In setFrontier:"+nodes.getPosition());
 			}
 	}
 	/**
