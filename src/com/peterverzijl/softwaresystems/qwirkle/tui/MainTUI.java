@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.peterverzijl.softwaresystems.qwirkle.networking.Client;
 
@@ -109,11 +111,11 @@ public class MainTUI {
 			input = input.replace("GAME TRADE ", "");
 			if (mInGame && mClient != null) {
 				String[] blocks = input.split(" ");
-				int[] blockIndexes = new int[blocks.length];
+				List<Integer> indexList = new ArrayList<Integer>();
 				for (int i = 0; i < blocks.length; i++) {
-					blockIndexes[i] = Integer.parseInt(blocks[i]);
+					indexList.add(Integer.parseInt(blocks[i]));
 				}
-				mClient.tradeBlocks(blockIndexes);
+				mClient.tradeBlocks(indexList);
 			} else {
 				System.out.println("You have nothing of value to me.");
 			}

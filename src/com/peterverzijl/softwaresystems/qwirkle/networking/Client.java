@@ -10,11 +10,13 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.peterverzijl.softwaresystems.qwirkle.Block;
 import com.peterverzijl.softwaresystems.qwirkle.Board;
+import com.peterverzijl.softwaresystems.qwirkle.HumanTUIPlayer;
 import com.peterverzijl.softwaresystems.qwirkle.Node;
 import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.tui.MainTUI;
@@ -39,6 +41,7 @@ public class Client implements Runnable {
 	// Game stuff
 	private Board mBoard;
 	private Player mPlayer;
+	private HumanTUIPlayer gameTUI;
 	
 	private boolean mRunning = false;
 
@@ -164,20 +167,23 @@ public class Client implements Runnable {
 				String[] moves = Arrays.copyOfRange(parameters, 2, parameters.length);
 				for (String move : moves) {
 					Node n = Board.moveStringToNode(move);
-					//doMove(n);
+					//mBoard.setPlacedBlock(n);
 				}
-				if (movingPlayer != username) {
+				if (!movingPlayer.equals(username)) {
 					// Message the viewer that a move has been done
 					if (mViewer != null) {
 						mViewer.displayMessage(movingPlayer + " has made a move.");
 						// Draw updated board
 						mViewer.displayMessage(nextPlayer + " now has the turn.");
+						if (moves.length > 0) {
+							//mViewer.displayMessage(Board.boardToString(mBoard.getPlacedBlocks(), null);
+						}
 					}
 				}
 				// Is it our turn?
-				if (nextPlayer == username) {
+				if (nextPlayer.equals(username)) {
 					// TODO (peter) : Contact PlayerTUI
-					// We have the turn now!!! Do something with the game TUI.
+					gameTUI.determineMove(mBoard);
 				}
 				break;
 			case Protocol.Server.OKWAITFOR:
@@ -196,10 +202,7 @@ public class Client implements Runnable {
 					mViewer.displayMessage("Opponents:");
 					for (String name : parameters) {
 						mViewer.displayMessage(name);
-					}
-					mPlayer = new Player();
-					mBoard = new Board();
-					
+					}					
 				}
 				
 				///mGame = new Game();
@@ -363,6 +366,10 @@ public class Client implements Runnable {
 		sendMessage(Protocol.Client.REQUESTGAME + 
 				Protocol.Server.Settings.DELIMITER + 
 				numPlayers);
+		// Init game variables here in case we get blocks before a game start.
+		mPlayer = new Player();
+		mBoard = new Board();
+		gameTUI = new HumanTUIPlayer();
 	}
 
 	/**
@@ -390,16 +397,21 @@ public class Client implements Runnable {
 	
 	/**
 	 * Trades stones with the server given that we think we have them.
-	 * @param blockIndexes indexes of blocks to trade.
+	 * @param indexList indexes of blocks to trade.
 	 */
-	public void tradeBlocks(int[] blockIndexes) {
-		if (blockIndexes.length <= mPlayer.getHand().size()) {
+	public void tradeBlocks(List<Integer> indexList) {
+		// Reverse order such that we don't run into index problems
+		Collections.sort(indexList, Collections.reverseOrder());
+		// Get the blocks
+		if (indexList.size() <= mPlayer.getHand().size()) {
 			List<Block> blocks = new ArrayList<Block>();
-			for (int i : blockIndexes) {
+			for (int i : indexList) {
 				blocks.add(mPlayer.getHand().get(i));
+				// Remove old blocks
 				mPlayer.getHand().remove(i);
 			}
-			tradeBlocks(blocks);
+			// Get new blocks
+			tradeBlocksServer(blocks);
 		} else {
 			if (mViewer != null) {
 				mViewer.displayMessage("You do not have a stone at that index!");
@@ -411,12 +423,12 @@ public class Client implements Runnable {
 	 * Trades stones with the server given that we think we have them.
 	 * @param blocks The blocks to trade.
 	 */
-	void tradeBlocks(List<Block> blocks) {
+	void tradeBlocksServer(List<Block> blocks) {
 		String message = Protocol.Client.CHANGESTONE;
-			for (Block b : blocks) {
-				message += Protocol.Server.Settings.DELIMITER;
-				message += Block.toChars(b);
-			}
+		for (Block b : blocks) {
+			message += Protocol.Server.Settings.DELIMITER;
+			message += Block.toChars(b);
+		}
 		sendMessage(message);		
 	}
 	

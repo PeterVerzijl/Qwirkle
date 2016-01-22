@@ -107,8 +107,8 @@ public class GameServer implements Server {
 						client.sendMessage(Protocol.Server.ERROR + 
 											Protocol.Server.Settings.DELIMITER + 2);
 					}
-					sendBlocksClient(tradedBlocks, client);
 				}
+				sendBlocksClient(tradedBlocks, client);
 			} catch (NotYourTurnException e) {
 				client.sendMessage(Protocol.Server.ERROR + 
 									Protocol.Server.Settings.DELIMITER + 1);
