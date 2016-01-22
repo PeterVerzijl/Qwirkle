@@ -13,13 +13,20 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
  *
  */
 public class HumanTUIPlayer extends Player {
+	private Board mBoard;
 
 	public HumanTUIPlayer() {
-	 super();
+		super();
+		mBoard = new Board();
 	}
-
+	
+	public void setMove(Node aNode){
+		mBoard.setStone(aNode);
+	}
+	
 	public static void main(String[] args) {
 
+	
 		/**
 		 * DEZE INCLUDEN IN EEN TESTCLASSE
 		 */
@@ -74,8 +81,8 @@ public class HumanTUIPlayer extends Player {
 		possibleMoves.addAll(this.getHand());
 		possiblePositions.addAll(aListOfEmptySpaces);
 		List<Node> copyBoard = new ArrayList<Node>();
-		copyBoard.addAll(mGame.getCopyBoard());
-		
+		copyBoard.addAll(mBoard.getPlacedBlocks());
+
 		Scanner scanner = new Scanner(System.in);
 		int hand;
 		int move;
@@ -118,11 +125,12 @@ public class HumanTUIPlayer extends Player {
 
 						Node[] neighbors = currentNode.getNeighborNodes();
 						currentNode.setBlock(newMove);
-						System.out.println("De positie van de huidige move "+currentNode.getPosition());
-						System.out.println("De positie van de huidige move in lijst"+possiblePositions.get(move).getPosition());
-						
+						System.out.println("De positie van de huidige move " + currentNode.getPosition());
+						System.out.println(
+								"De positie van de huidige move in lijst" + possiblePositions.get(move).getPosition());
+
 						set.add(currentNode);
-						System.out.println("Size: " +set.size());
+						System.out.println("Size: " + set.size());
 						if (!Board.isValid(set)) {
 							System.err.print("\t Deze zet m" + "ag niet!");
 							currentNode.setBlock(null);
@@ -133,14 +141,15 @@ public class HumanTUIPlayer extends Player {
 							for (int i = 0; i < neighbors.length; i++) {
 								// System.out.println(Direction.values()[i]);
 								if (neighbors[i] == null) {
-									Node newEmpty = Board.findDuplicateNode(possiblePositions, currentNode.getPosition(),
-											Direction.values()[i]);
+									Node newEmpty = Board.findDuplicateNode(possiblePositions,
+											currentNode.getPosition(), Direction.values()[i]);
 									// System.out.println(newEmpty==null);
 									if (newEmpty == null) {
-										possiblePositions.add(Board.createEmptyNode(Direction.values()[i], currentNode));
+										possiblePositions
+												.add(Board.createEmptyNode(Direction.values()[i], currentNode));
 									} else {
-										newEmpty.setNeighborNode(currentNode,
-												Direction.getDirection(currentNode.getPosition(), newEmpty.getPosition()));
+										newEmpty.setNeighborNode(currentNode, Direction
+												.getDirection(currentNode.getPosition(), newEmpty.getPosition()));
 									}
 								}
 							}
@@ -160,8 +169,8 @@ public class HumanTUIPlayer extends Player {
 					// Deze sowieso niet hier laten zetten
 					// TODO Game->Board
 					// TODO STACK OF BOARD
-					mGame.getFrontier().clear();
-					mGame.getFrontier().addAll(possiblePositions);
+					mBoard.getEmptySpaces().clear();
+					mBoard.getEmptySpaces().addAll(possiblePositions);
 					possibleMoves.clear();
 				} else if (input.toLowerCase().equals("reset")) {
 					set.clear();
@@ -182,7 +191,6 @@ public class HumanTUIPlayer extends Player {
 					List<Block> blocksToTrade = new ArrayList<Block>();
 					while (trading) {
 						try {
-							
 							System.out.println("Blocks in hand: " + Player.handToString(possibleMoves));
 							System.out.println("Blocks pending for trade: " + Player.handToString(blocksToTrade));
 							hand = scanner.nextInt();
@@ -206,7 +214,7 @@ public class HumanTUIPlayer extends Player {
 						}
 					}
 				} else if (input.toLowerCase().equals("player")) {
-					//System.out.println(this.getID());
+					// System.out.println(this.getID());
 				} else {
 					System.err.println("Input was not a valid number or command. Try again");
 					hand = GameConstants.INALID_MOVE;
@@ -215,11 +223,9 @@ public class HumanTUIPlayer extends Player {
 			}
 		}
 
-		System.out.println("Size bij return: " +set.size());
+		System.out.println("Size bij return: " + set.size());
 		return set;
 	}
-
-	
 
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
@@ -238,7 +244,8 @@ public class HumanTUIPlayer extends Player {
 				if (newEmpty == null) {
 					aFrontierList.add(Board.createEmptyNode(Direction.values()[i], aNode));
 				} else {
-					newEmpty.setNeighborNode(aNode, Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
+					newEmpty.setNeighborNode(aNode,
+							Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
 				}
 			}
 		}

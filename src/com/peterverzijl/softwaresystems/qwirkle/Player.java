@@ -23,7 +23,8 @@ public class Player {
 	 * The blocks that the player has in his/her prosession
 	 */
 	private List<Block> mHand = new ArrayList<Block>();
-
+	
+	private Board mBoard;
 	/**
 	 * The constructor for the player
 	 */
@@ -126,4 +127,5 @@ public class Player {
 	void resetHand() {
 		mHand.clear();
 	}
+	
 }

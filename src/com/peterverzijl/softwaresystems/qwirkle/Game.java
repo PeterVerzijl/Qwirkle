@@ -50,7 +50,6 @@ public class Game {
 		for (int i = 0; i < mPlayers.size(); i++) {
 			mPlayers.get(i).resetHand();
 			mPlayers.get(i).initHand(mBag, 6);
-			mPlayers.get(i).setGame(this);
 		}
 		// Add first possible move
 		}
@@ -120,10 +119,8 @@ public class Game {
 					//boardScale(playersMove.get(i).getPosition());
 					if (Board.isValid(playersMove)) {
 						System.out.println("if isValid");
-						mBoard.setFrontier(playersMove.get(i));
-						mBoard.setPlacedBlock(playersMove.get(i));
-					
-					}
+						mBoard.setStone(playersMove.get(i));
+						}
 				} else {
 					System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
