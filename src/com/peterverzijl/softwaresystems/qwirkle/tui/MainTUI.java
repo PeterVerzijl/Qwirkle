@@ -211,7 +211,7 @@ public class MainTUI {
 	 */
 	private static void connectServer(String input) {
 		server = getSettings(input);
-		if (mClient == null) {
+		if (mClient == null && server != null) {
 			try {
 				mClient = createClient();
 				// Now fetch the name of the user
