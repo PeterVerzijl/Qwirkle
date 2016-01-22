@@ -39,7 +39,8 @@ public class Board {
 	private List<Node> mSetBlocks = new ArrayList<Node>(); // RAGERAGERAGERAGE
 
 	public Board() {
-		Node mRootBlock =new Node();
+		
+		mRootBlock =new Node();
 		mFrontier.add(mRootBlock);
 	}
 
@@ -289,5 +290,10 @@ public class Board {
 				}
 			}
 		}
+	}
+
+	public void setPlacedBlock(Node node) {
+		mSetBlocks.add(node);
+		
 	}
 }

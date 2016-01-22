@@ -58,6 +58,8 @@ public class Game {
 	public void run() {
 		while(!hasEnded()) {
 			try {
+				System.out.println("Board in Game");
+				Board.boardToString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
 				doMove(mPlayers.get(mCurrentPlayer).determineMove(mBoard.getEmptySpaces()));
 				addBlocks(mPlayers.get(mCurrentPlayer));
 				mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());
@@ -106,7 +108,7 @@ public class Game {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
 		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX()==GameConstants.UNSET_NODE) {
-			trade = true;
+		//	trade = true;
 		}
 		System.out.println("checking hand!");
 		System.out.println("Trade = " + trade);
@@ -119,7 +121,8 @@ public class Game {
 					if (Board.isValid(playersMove)) {
 						System.out.println("if isValid");
 						mBoard.setFrontier(playersMove.get(i));
-						mBoard.getPlacedBlocks().add(playersMove.get(i));
+						mBoard.setPlacedBlock(playersMove.get(i));
+					
 					}
 				} else {
 					System.out.println("Now trading");

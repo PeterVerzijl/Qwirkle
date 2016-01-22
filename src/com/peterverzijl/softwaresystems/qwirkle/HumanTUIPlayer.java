@@ -118,6 +118,7 @@ public class HumanTUIPlayer extends Player {
 
 						Node[] neighbors = currentNode.getNeighborNodes();
 						currentNode.setBlock(newMove);
+						System.out.println("De positie van de huidige move "+currentNode.getPosition());
 						set.add(currentNode);
 						System.out.println("Size: " +set.size());
 						if (!Board.isValid(set)) {
