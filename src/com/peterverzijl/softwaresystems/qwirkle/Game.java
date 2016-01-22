@@ -162,10 +162,19 @@ public class Game {
 		 */
 	}
 
-	public void addBlocks(Player aPlayer) {
+	/**
+	 * Method that makes sure that the player gets enough stones from the gameBag
+	 * @param aPlayer
+	 * @return
+	 */
+	public List<Block> addBlocks(Player aPlayer) {
+		List<Block> newBlocks= new ArrayList<Block>();
 		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
-			aPlayer.addBlock(mBag.drawBlock());
+			Block blockFromBag=mBag.drawBlock();
+			newBlocks.add(blockFromBag);
+			aPlayer.addBlock(blockFromBag);
 		}
+		return newBlocks;
 	}
 
 	public List<Node> getCopyBoard(){
