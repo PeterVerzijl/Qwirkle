@@ -1,16 +1,19 @@
 package com.peterverzijl.softwaresystems.qwirkle.gui;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -49,6 +52,18 @@ public class MainWindow {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
+		
+		/* Create the layout here */
+		JPanel topPanel = new JPanel();
+		JButton createServerButton = new JButton("Create Server");
+		createServerButton.addActionListener(new CreateServerAction());
+		topPanel.add(createServerButton);
+		
+		JPanel bottomPanel = new JPanel();
+		JButton joinServerButton = new JButton("Join Server");
+		joinServerButton.addActionListener(new ConnectToServerAction());
+		bottomPanel.add(joinServerButton);
+		
 		
 		// Define the menu
 		JMenuBar mMenuBar = new JMenuBar();
@@ -99,6 +114,11 @@ public class MainWindow {
 			public void run() {
 				JFrame frame = new JFrame("Qwirkle Manager");
 				frame.setJMenuBar(mMenuBar);
+				
+				frame.setLayout(new BorderLayout());
+				frame.add(topPanel, BorderLayout.PAGE_START);
+				frame.add(bottomPanel, BorderLayout.PAGE_END);
+				
 				frame.setSize(300, 300);
 				frame.setVisible(true);
 			}
@@ -198,5 +218,22 @@ class CreateServerAction extends AbstractAction {
 				}
 			}
 		});
+	}
+}
+
+/**
+ * Connects to a server.
+ * @author Peter Verzijl
+ */
+@SuppressWarnings("serial")
+class ConnectToServerAction extends AbstractAction {
+	
+	public ConnectToServerAction() {
+		super("Connect to Server");
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 	}
 }
