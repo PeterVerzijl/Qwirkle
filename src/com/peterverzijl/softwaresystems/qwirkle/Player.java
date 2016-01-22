@@ -99,7 +99,7 @@ public class Player {
 		return mHand;
 	}
 
-	public List<Node> determineMove(List<Node> aFrontier) {
+	public List<Node> determineMove() {
 		return null;
 	}
 

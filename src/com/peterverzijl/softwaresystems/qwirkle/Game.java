@@ -60,7 +60,7 @@ public class Game {
 			try {
 				System.out.println("Board in Game");
 				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
-				doMove(mPlayers.get(mCurrentPlayer).determineMove(mBoard.getEmptySpaces()));
+				doMove(mPlayers.get(mCurrentPlayer).determineMove());
 				addBlocks(mPlayers.get(mCurrentPlayer));
 				mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());
 			} catch (IllegalMoveException e) {
@@ -118,7 +118,7 @@ public class Game {
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
 					// boardScale(playersMove.get(i).getPosition());
-					if (Board.isValid(playersMove)) {
+					if (mBoard.isValid(playersMove)) {
 						mBoard.setStone(playersMove.get(i));
 						notifyPlayer(playersMove);
 					}

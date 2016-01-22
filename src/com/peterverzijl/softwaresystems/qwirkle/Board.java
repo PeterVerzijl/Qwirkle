@@ -269,7 +269,7 @@ public class Board {
 	}
 	
 	public void setFrontier(Node aPlacedNode){
-			Board.addFrontiers(mFrontier,aPlacedNode);
+			addFrontiers(mFrontier,aPlacedNode);
 			for(Node nodes:mFrontier){
 				System.out.println(nodes.getPosition());
 			}
