@@ -64,7 +64,6 @@ public class Game {
 			} catch (IllegalMoveException e) {
 				System.err.println("Er gaan dingen mis!!!");
 			}
-			
 		}
 		//doe iets als de game klaar is
 	}
@@ -107,21 +106,21 @@ public class Game {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
 		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX()==GameConstants.UNSET_NODE) {
-			playersMove.remove(playersMove.size() - 1);
 			trade = true;
 		}
 		System.out.println("checking hand!");
+		System.out.println("Trade = " + trade);
 		if (checkHand(playersMove)) {
 			System.out.println("Set in hand");
 			System.out.println(playersMove.size());
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
-				//	boardScale(playersMove.get(i).getPosition());
-					//if (Board.isValid(playersMove)) {
+					//boardScale(playersMove.get(i).getPosition());
+					if (Board.isValid(playersMove)) {
 						System.out.println("if isValid");
 						mBoard.setFrontier(playersMove.get(i));
 						mBoard.getPlacedBlocks().add(playersMove.get(i));
-					//}
+					}
 				} else {
 					System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
