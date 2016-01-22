@@ -59,7 +59,7 @@ public class Game {
 		while(!hasEnded()) {
 			try {
 				System.out.println("Board in Game");
-				Board.boardToString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
+				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
 				doMove(mPlayers.get(mCurrentPlayer).determineMove(mBoard.getEmptySpaces()));
 				addBlocks(mPlayers.get(mCurrentPlayer));
 				mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());

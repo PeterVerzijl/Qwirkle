@@ -84,7 +84,7 @@ public class HumanTUIPlayer extends Player {
 			try {
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
-				Board.boardToString(copyBoard, possiblePositions);
+				System.out.println(Board.toString(copyBoard, possiblePositions));
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
 				// printNodeList(possiblePositions);
@@ -119,6 +119,8 @@ public class HumanTUIPlayer extends Player {
 						Node[] neighbors = currentNode.getNeighborNodes();
 						currentNode.setBlock(newMove);
 						System.out.println("De positie van de huidige move "+currentNode.getPosition());
+						System.out.println("De positie van de huidige move in lijst"+possiblePositions.get(move).getPosition());
+						
 						set.add(currentNode);
 						System.out.println("Size: " +set.size());
 						if (!Board.isValid(set)) {
