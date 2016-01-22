@@ -7,28 +7,29 @@ import java.util.Random;
 
 /**
  * The bag that contains the blocks we can draw from
+ * 
  * @author User
  *
  */
 public class BlockBag {
-	
+
 	/**
 	 * How many same blocks do we have of each type (default 3)
 	 */
 	private static final int blocksPerType = 3;
-	
+
 	/**
 	 * All the blocks in the bag
 	 */
 	public List<Block> blocks = new ArrayList<Block>();
-	
+
 	/**
 	 * Creates and initializes the bag with blocks
 	 */
 	public BlockBag() {
 		InitBag();
 	}
-	
+
 	/**
 	 * Initializes the bag with the time as seed
 	 */
@@ -44,26 +45,27 @@ public class BlockBag {
 				for (int k = 0; k < blocksPerType; k++) {
 					Block b = new Block(blockShapes[i], blockColors[j]);
 					blocks.add(b);
-//					System.out.println("Block: " + b.getShape().toString() + ", " + b.getColor().toString() + ".");
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Draws a random block from the bag of blocks
+	 * 
 	 * @return A random drawn block
 	 */
 	public Block drawBlock() {
 		return drawBlock(new Random().nextLong());
 	}
-	
+
 	/**
 	 * Draws a seeded random block from the bag of blocks
+	 * 
 	 * @return A seeded random drawn block
 	 */
 	public Block drawBlock(long seed) {
-		Random r =  new Random(seed);
+		Random r = new Random(seed);
 		ArrayList<Block> newList = new ArrayList<Block>(blocks);
 		Collections.shuffle(newList, r);
 		Block b = newList.get(r.nextInt(newList.size()));
@@ -71,10 +73,12 @@ public class BlockBag {
 		blocks.remove(b);
 		return b;
 	}
-	
+
 	/**
 	 * Adds the block to the block bag.
-	 * @param block The block to add to the bag.
+	 * 
+	 * @param block
+	 *            The block to add to the bag.
 	 */
 	public void returnBlock(Block block) {
 		blocks.add(block);

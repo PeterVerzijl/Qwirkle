@@ -34,8 +34,7 @@ public class Game {
 
 	private Camera mMainCamera;
 
-	// TODO (dennis) : Change this to a reference to the player object, please!
-	private int mCurrentPlayer = 0;
+	private Player mCurrentPlayer;
 
 	private Board mBoard;
 
@@ -45,24 +44,27 @@ public class Game {
 		mBag = new BlockBag();
 		mBoard = new Board();
 		// TODO: DENNIS score resetten
-
+		
 		mPlayers = aPlayerList;
 		for (int i = 0; i < mPlayers.size(); i++) {
 			mPlayers.get(i).resetHand();
 			mPlayers.get(i).initHand(mBag, 6);
 		}
-		// Add first possible move
+		
+		mCurrentPlayer=startingPlayer();
 	}
-
+	public Player startingPlayer(){
+		return mPlayers.get(0);
+	}
 	// test unit
 	public void run() {
 		while (!hasEnded()) {
 			try {
 				System.out.println("Board in Game");
-				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
-				doMove(mPlayers.get(mCurrentPlayer).determineMove(mBoard.getEmptySpaces()));
-				addBlocks(mPlayers.get(mCurrentPlayer));
-				mCurrentPlayer = ((mCurrentPlayer + 1) % mPlayers.size());
+				//System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
+				doMove(mCurrentPlayer.determineMove());
+				addBlocks(mCurrentPlayer);
+				mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
 			} catch (IllegalMoveException e) {
 				System.err.println("Er gaan dingen mis!!!");
 			}
@@ -76,8 +78,8 @@ public class Game {
 
 	public boolean checkHand(Player player, Block block) {
 		boolean result = false;
-		if (player == mPlayers.get(mCurrentPlayer)) {
-			List<Block> playerHand = mPlayers.get(mCurrentPlayer).getHand();
+		if (player == mCurrentPlayer) {
+			List<Block> playerHand = mCurrentPlayer.getHand();
 			for (Block b : playerHand) {
 				if (b.equals(block)) {
 					result = true;
@@ -97,7 +99,7 @@ public class Game {
 	public boolean checkHand(List<Node> set) {
 		boolean result = true;
 		for (Node n : set) {
-			if (!checkHand(mPlayers.get(mCurrentPlayer), n.getBlock())) {
+			if (!checkHand(mCurrentPlayer, n.getBlock())) {
 				result = false;
 			}
 		}
@@ -107,34 +109,35 @@ public class Game {
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
-		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
-			// trade = true;
+		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == -999 ){//GameConstants.UNSET_NODE) {
+			 trade = true;
 		}
-		System.out.println("checking hand!");
-		System.out.println("Trade = " + trade);
+		//System.out.println("checking hand!");
+		//System.out.println("Trade = " + trade);
 		if (checkHand(playersMove)) {
-			System.out.println("Set in hand");
-			System.out.println(playersMove.size());
+			//System.out.println("Set in hand");
+			//System.out.println(playersMove.size());
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
 					// boardScale(playersMove.get(i).getPosition());
-					if (Board.isValid(playersMove)) {
+				//	System.out.println(playersMove.get(i).getBlock().getShape() + " " +playersMove.get(i).getBlock().getColor()+"");
+					if (mBoard.isValid(playersMove)) {
 						mBoard.setStone(playersMove.get(i));
 						notifyPlayer(playersMove);
 					}
 				} else {
-					System.out.println("Now trading");
+				//	System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
 				}
 				try {
-					mPlayers.get(mCurrentPlayer).removeBlock(playersMove.get(i).getBlock());
+					mCurrentPlayer.removeBlock(playersMove.get(i).getBlock());
 				} catch (NotYourBlockException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		} else {
-			System.out.println("checkHand was false");
+			//System.out.println("checkHand was false");
 		}
 		System.out.println("De zet is gezet");
 	}
@@ -226,7 +229,7 @@ public class Game {
 	 */
 	public Block tradeBlock(Player player, Block block) throws NotYourTurnException, NotYourBlockException {
 		// Look if we are the current player
-		if (player == mPlayers.get(mCurrentPlayer)) {
+		if (player == mCurrentPlayer) {
 			if (checkHand(player, block)) {
 				// Do the trade
 				Block newBlock = mBag.drawBlock();

@@ -21,7 +21,7 @@ public class HumanTUIPlayer extends Player {
 	}
 
 	public void setMove(Node aNode) {
-		System.out.println("Hallo alles spelers");
+		//System.out.println("Hallo alles spelers");
 		mBoard.setStone(aNode);
 	}
 
@@ -95,7 +95,7 @@ public class HumanTUIPlayer extends Player {
 			try {
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
-				System.out.println(Board.toString(copyBoard, possiblePositions));
+				System.out.println(mBoard.toString(copyBoard, possiblePositions));
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
 				// printNodeList(possiblePositions);
@@ -217,8 +217,6 @@ public class HumanTUIPlayer extends Player {
 							}
 						}
 					}
-				} else if (input.toLowerCase().equals("player")) {
-					// System.out.println(this.getID());
 				} else {
 					System.err.println("Input was not a valid number or command. Try again");
 					hand = GameConstants.INALID_MOVE;
@@ -226,8 +224,6 @@ public class HumanTUIPlayer extends Player {
 				}
 			}
 		}
-
-		System.out.println("Size bij return: " + set.size());
 		return set;
 	}
 
@@ -238,6 +234,7 @@ public class HumanTUIPlayer extends Player {
 		}
 		return hand;
 	}
+	
 	/*
 	 * public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
 	 * Node[] neighbors = aNode.getNeighborNodes(); for (int i = 0; i <

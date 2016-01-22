@@ -39,27 +39,28 @@ public class Board {
 	private List<Node> mSetBlocks = new ArrayList<Node>(); // RAGERAGERAGERAGE
 
 	public Board() {
-		
-		mRootBlock =new Node();
+
+		mRootBlock = new Node();
 		mRootBlock.setPosition(0, 0);
 		mFrontier.add(mRootBlock);
 	}
 
 	/**
 	 * Reads a move string
+	 * 
 	 * @return
 	 */
 	public static Node moveStringToNode(String s) {
 		String[] move = s.split("" + Protocol.Server.Settings.DELIMITER2);
 		String stone = move[0];
 		int x = Integer.parseInt(move[1]);
-		int y = Integer.parseInt(move[2]); 
+		int y = Integer.parseInt(move[2]);
 		Node n = new Node();
 		n.setPosition(x, y);
 		n.setBlock(Block.getBlockFromCharPair(stone));
 		return n;
-		}
-	
+	}
+
 	public boolean placeBlock() {
 		return false;
 	}
@@ -161,25 +162,29 @@ public class Board {
 	public boolean isValidColor(Node lastMove, Direction aDirection) {
 		boolean isLegal = true;
 		Node block = lastMove;
-		System.out.println("Direction: " + aDirection);
-		while (block.getNeighborNode(aDirection) != null
-				&&  block.getNeighborNode(aDirection).getBlock() != null) {
+		// System.out.println("Direction: " + aDirection);
+		while (block.getNeighborNode(aDirection) != null && block.getNeighborNode(aDirection).getBlock() != null) {
 			if (lastMove.getBlock().getColor() != block.getNeighborNode(aDirection).getBlock().getColor()
 					|| lastMove.getBlock().getShape() == block.getNeighborNode(aDirection).getBlock().getShape()) {
-				System.out.println(
-						block.getBlock().getColor().toString() + " aMove color: " + lastMove.getBlock().getColor().toString());
+				// System.out.println(
+				// block.getBlock().getColor().toString() + " aMove color: " +
+				// lastMove.getBlock().getColor().toString());
 				isLegal = false;
 				break;
 			} else {
-				System.out.println("Color check");
-				System.out.println("Neigbor: " + block.getNeighborNode(aDirection).getBlock().getColor().toString() + " "
-						+ block.getNeighborNode(aDirection).getBlock().getShape().toString() + " Move: "
-						+ block.getBlock().getColor().toString());
+				// System.out.println("Color check");
+				// System.out.println("Neigbor: " +
+				// block.getNeighborNode(aDirection).getBlock().getColor().toString()
+				// + " "
+				// +
+				// block.getNeighborNode(aDirection).getBlock().getShape().toString()
+				// + " Move: "
+				// + block.getBlock().getColor().toString());
 				block = block.getNeighborNode(aDirection);
 			}
 		}
 
-		System.out.println("Color is valid: " + isLegal);
+		// System.out.println("Color is valid: " + isLegal);
 		return isLegal;
 	}
 
@@ -187,22 +192,25 @@ public class Board {
 		boolean isLegal = true;
 
 		Node block = aMove;
-		System.out.println("Direction: " + aDirection);
-		while (block.getNeighborNode(aDirection) != null
-				&&  block.getNeighborNode(aDirection).getBlock() != null) {
-			if (aMove.getBlock().getShape() !=  block.getNeighborNode(aDirection).getBlock().getShape()
-					|| aMove.getBlock().getColor() ==  block.getNeighborNode(aDirection).getBlock().getColor()) {
+		// System.out.println("Direction: " + aDirection);
+		while (block.getNeighborNode(aDirection) != null && block.getNeighborNode(aDirection).getBlock() != null) {
+			if (aMove.getBlock().getShape() != block.getNeighborNode(aDirection).getBlock().getShape()
+					|| aMove.getBlock().getColor() == block.getNeighborNode(aDirection).getBlock().getColor()) {
 				isLegal = false;
 				break;
 			} else {
-				System.out.println("Shape check");
-				System.out.println("Neigbor: " +  block.getNeighborNode(aDirection).getBlock().getColor().toString() + " "
-						+ block.getNeighborNode(aDirection).getBlock().getShape().toString() + " Move: "
-						+ block.getBlock().getColor().toString());
+				// System.out.println("Shape check");
+				// System.out.println("Neigbor: " +
+				// block.getNeighborNode(aDirection).getBlock().getColor().toString()
+				// + " "
+				// +
+				// block.getNeighborNode(aDirection).getBlock().getShape().toString()
+				// + " Move: "
+				// + block.getBlock().getColor().toString());
 				block = block.getNeighborNode(aDirection);
 			}
 		}
-		System.out.println("shape is valid: " + isLegal);
+		// System.out.println("shape is valid: " + isLegal);
 		return isLegal;
 	}
 
@@ -217,7 +225,13 @@ public class Board {
 	 * 
 	 */
 	public List<Node> getEmptySpaces() {
-		return mFrontier;
+		List<Node> copyList = new ArrayList<Node>();
+		for (Node n : mFrontier) {
+			Node copyNode = new Node();
+			copyNode.setPosition((int) n.getPosition().getX(), (int) n.getPosition().getY());
+			copyList.add(copyNode);
+		}
+		return copyList;
 	}
 
 	public void addFrontier(Node aNode) {
@@ -237,7 +251,7 @@ public class Board {
 	 * @param aListOfPossibleMoves
 	 */
 	public static String toString(List<Node> aListOfPlacedBlocks, List<Node> aListOfPossibleMoves) {
-		String boardRep="";
+		String boardRep = "";
 		int x = (borders[1] - borders[0]);
 		int y = (borders[3] - borders[2]);
 
@@ -248,7 +262,9 @@ public class Board {
 
 		for (int i = 0; i < aListOfPlacedBlocks.size(); i++) {
 			boardToString[(int) aListOfPlacedBlocks.get(i).getPosition().getX()
-					+ midX][-(int) aListOfPlacedBlocks.get(i).getPosition().getY() + midY] = aListOfPlacedBlocks.get(i).getBlock().getColor().toString().charAt(0) + "" + BlockPrinter.getChar(aListOfPlacedBlocks.get(i).getBlock());
+					+ midX][-(int) aListOfPlacedBlocks.get(i).getPosition().getY() + midY] = aListOfPlacedBlocks.get(i)
+							.getBlock().getColor().toString().charAt(0) + ""
+							+ BlockPrinter.getChar(aListOfPlacedBlocks.get(i).getBlock());
 		}
 
 		for (int i = 0; i < aListOfPossibleMoves.size(); i++) {
@@ -263,17 +279,19 @@ public class Board {
 				}
 				boardRep += boardToString[j][i] + "";
 			}
-			boardRep+="\n";
+			boardRep += "\n";
 		}
 		return boardRep;
 	}
-	
-	public void setFrontier(Node aPlacedNode){
-			Board.addFrontiers(mFrontier,aPlacedNode);
-			for(Node nodes:mFrontier){
-				System.out.println(nodes.getPosition());
-			}
+
+	public void setFrontier(Node aPlacedNode) {
+		addFrontiers(mFrontier, aPlacedNode);
+		
+		for (Node nodes : mFrontier) {
+			//System.out.println("In setFrontier:" + nodes.getPosition());
+		}
 	}
+
 	/**
 	 * 
 	 */
@@ -284,8 +302,11 @@ public class Board {
 				Node newEmpty = findDuplicateNode(aFrontierList, aNode.getPosition(), Direction.values()[i]);
 				if (newEmpty == null) {
 					aFrontierList.add(createEmptyNode(Direction.values()[i], aNode));
+					addFrontier(createEmptyNode(Direction.values()[i], aNode));
+					System.out.println("Hallo");
 				} else {
-					newEmpty.setNeighborNode(aNode, Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
+					newEmpty.setNeighborNode(aNode,
+							Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
 				}
 			}
 		}
@@ -293,11 +314,11 @@ public class Board {
 
 	public void setPlacedBlock(Node node) {
 		mSetBlocks.add(node);
-		
+		System.out.println("Amount of stones placed on board: " + mSetBlocks.size());
 	}
 
 	public void setStone(Node node) {
-		mSetBlocks.add(node);
+		setPlacedBlock(node);
 		setFrontier(node);
 	}
 }
