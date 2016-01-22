@@ -44,21 +44,24 @@ public class Game {
 		mBag = new BlockBag();
 		mBoard = new Board();
 		// TODO: DENNIS score resetten
-
+		
 		mPlayers = aPlayerList;
 		for (int i = 0; i < mPlayers.size(); i++) {
 			mPlayers.get(i).resetHand();
 			mPlayers.get(i).initHand(mBag, 6);
 		}
-		// Add first possible move
+		
+		mCurrentPlayer=startingPlayer();
 	}
-
+	public Player startingPlayer(){
+		return mPlayers.get(0);
+	}
 	// test unit
 	public void run() {
 		while (!hasEnded()) {
 			try {
 				System.out.println("Board in Game");
-				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
+				//System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
 				doMove(mCurrentPlayer.determineMove());
 				addBlocks(mCurrentPlayer);
 				mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
@@ -109,20 +112,21 @@ public class Game {
 		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == -999 ){//GameConstants.UNSET_NODE) {
 			 trade = true;
 		}
-		System.out.println("checking hand!");
-		System.out.println("Trade = " + trade);
+		//System.out.println("checking hand!");
+		//System.out.println("Trade = " + trade);
 		if (checkHand(playersMove)) {
-			System.out.println("Set in hand");
+			//System.out.println("Set in hand");
 			//System.out.println(playersMove.size());
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
 					// boardScale(playersMove.get(i).getPosition());
+				//	System.out.println(playersMove.get(i).getBlock().getShape() + " " +playersMove.get(i).getBlock().getColor()+"");
 					if (mBoard.isValid(playersMove)) {
 						mBoard.setStone(playersMove.get(i));
 						notifyPlayer(playersMove);
 					}
 				} else {
-					System.out.println("Now trading");
+				//	System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
 				}
 				try {
@@ -133,7 +137,7 @@ public class Game {
 				}
 			}
 		} else {
-			System.out.println("checkHand was false");
+			//System.out.println("checkHand was false");
 		}
 		System.out.println("De zet is gezet");
 	}

@@ -21,7 +21,7 @@ public class HumanTUIPlayer extends Player {
 	}
 
 	public void setMove(Node aNode) {
-		System.out.println("Hallo alles spelers");
+		//System.out.println("Hallo alles spelers");
 		mBoard.setStone(aNode);
 	}
 
@@ -234,6 +234,7 @@ public class HumanTUIPlayer extends Player {
 		}
 		return hand;
 	}
+	
 	/*
 	 * public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
 	 * Node[] neighbors = aNode.getNeighborNodes(); for (int i = 0; i <
