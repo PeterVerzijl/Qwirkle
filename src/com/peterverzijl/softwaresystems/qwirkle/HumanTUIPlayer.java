@@ -19,14 +19,14 @@ public class HumanTUIPlayer extends Player {
 		super();
 		mBoard = new Board();
 	}
-	
-	public void setMove(Node aNode){
+
+	public void setMove(Node aNode) {
+		System.out.println("Hallo alles spelers");
 		mBoard.setStone(aNode);
 	}
-	
+
 	public static void main(String[] args) {
 
-	
 		/**
 		 * DEZE INCLUDEN IN EEN TESTCLASSE
 		 */
@@ -68,18 +68,22 @@ public class HumanTUIPlayer extends Player {
 		}
 	}
 
+	public String boardToString() {
+		return mBoard.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
+	}
+
 	/**
 	 * Let a HumanPlayer do a move based on an input and output
 	 * 
 	 * @param aListOfEmptySpaces
 	 * @return
 	 */
-	public List<Node> determineMove(List<Node> aListOfEmptySpaces) {
+	public List<Node> determineMove() {
 		List<Node> set = new ArrayList<Node>();
 		List<Block> possibleMoves = new ArrayList<Block>();
 		List<Node> possiblePositions = new ArrayList<Node>();
 		possibleMoves.addAll(this.getHand());
-		possiblePositions.addAll(aListOfEmptySpaces);
+		possiblePositions.addAll(mBoard.getEmptySpaces());
 		List<Node> copyBoard = new ArrayList<Node>();
 		copyBoard.addAll(mBoard.getPlacedBlocks());
 
@@ -131,7 +135,7 @@ public class HumanTUIPlayer extends Player {
 
 						set.add(currentNode);
 						System.out.println("Size: " + set.size());
-						if (!Board.isValid(set)) {
+						if (!mBoard.isValid(set)) {
 							System.err.print("\t Deze zet m" + "ag niet!");
 							currentNode.setBlock(null);
 							set.remove(currentNode);
@@ -141,12 +145,12 @@ public class HumanTUIPlayer extends Player {
 							for (int i = 0; i < neighbors.length; i++) {
 								// System.out.println(Direction.values()[i]);
 								if (neighbors[i] == null) {
-									Node newEmpty = Board.findDuplicateNode(possiblePositions,
+									Node newEmpty = mBoard.findDuplicateNode(possiblePositions,
 											currentNode.getPosition(), Direction.values()[i]);
 									// System.out.println(newEmpty==null);
 									if (newEmpty == null) {
 										possiblePositions
-												.add(Board.createEmptyNode(Direction.values()[i], currentNode));
+												.add(mBoard.createEmptyNode(Direction.values()[i], currentNode));
 									} else {
 										newEmpty.setNeighborNode(currentNode, Direction
 												.getDirection(currentNode.getPosition(), newEmpty.getPosition()));
@@ -177,7 +181,7 @@ public class HumanTUIPlayer extends Player {
 					possibleMoves.clear();
 					possibleMoves.addAll(this.getHand());
 					possiblePositions.clear();
-					possiblePositions.addAll(aListOfEmptySpaces);
+					possiblePositions.addAll(mBoard.getEmptySpaces());
 					System.out.println("Je zet is gereset");
 					// TODO CHECK IF HAND < current hand.size()
 				} else if (input.toLowerCase().equals("trade")) {
@@ -185,7 +189,7 @@ public class HumanTUIPlayer extends Player {
 					possibleMoves.clear();
 					possibleMoves.addAll(this.getHand());
 					possiblePositions.clear();
-					possiblePositions.addAll(aListOfEmptySpaces);
+					possiblePositions.addAll(mBoard.getEmptySpaces());
 					boolean trading = true;
 					System.out.println("Select stones to trade");
 					List<Block> blocksToTrade = new ArrayList<Block>();
@@ -234,20 +238,16 @@ public class HumanTUIPlayer extends Player {
 		}
 		return hand;
 	}
-
-	public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
-		Node[] neighbors = aNode.getNeighborNodes();
-		for (int i = 0; i < neighbors.length; i++) {
-			if (neighbors[i] == null) {
-				Node newEmpty = Board.findDuplicateNode(aFrontierList, aNode.getPosition(), Direction.values()[i]);
-				// System.out.println(newEmpty==null);
-				if (newEmpty == null) {
-					aFrontierList.add(Board.createEmptyNode(Direction.values()[i], aNode));
-				} else {
-					newEmpty.setNeighborNode(aNode,
-							Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
-				}
-			}
-		}
-	}
+	/*
+	 * public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
+	 * Node[] neighbors = aNode.getNeighborNodes(); for (int i = 0; i <
+	 * neighbors.length; i++) { if (neighbors[i] == null) { Node newEmpty =
+	 * findDuplicateNode(aFrontierList, aNode.getPosition(),
+	 * Direction.values()[i]); // System.out.println(newEmpty==null); if
+	 * (newEmpty == null) {
+	 * aFrontierList.add(createEmptyNode(Direction.values()[i], aNode)); } else
+	 * { newEmpty.setNeighborNode(aNode,
+	 * Direction.getDirection(aNode.getPosition(), newEmpty.getPosition())); } }
+	 * } }
+	 */
 }

@@ -26,7 +26,6 @@ public class PlayerGUI {
 	//TODO: PLAYER OOK ALS ARGUMENT MEEGEVEN
 	PlayerGUI(Player aPlayer){
 		mPlayer=aPlayer;
-		mGame=mPlayer.getGame();
 		
 	/*	GameEngineComponent game = new GameEngineComponent(this);
 		JFrame frame = new JFrame("Game Engine");
