@@ -103,6 +103,8 @@ public class Board {
 		} else {
 			isLegal = false;
 		}
+		if (isLegal && aListOfMoves.size() > 0)
+			calcScore(aListOfMoves.get(aListOfMoves.size() - 1));
 		// System.out.println("Move is legal?: " + isLegal);
 		return isLegal;
 	}
@@ -129,13 +131,13 @@ public class Board {
 	 * @param aDirection
 	 * @return
 	 */
-	public Node findDuplicateNode(List<Node> aNodeList, Vector2 aPosition, Direction aDirection) {
+	public Node findDuplicateNode(Vector2 aPosition, Direction aDirection) {
 		Node duplicate = null;
 		Vector2 newNodePosition = new Vector2(aPosition.getX() + aDirection.getX(),
 				aPosition.getY() + aDirection.getY());
 		// System.out.println("");
 		// System.out.println("newNodePosition: "+newNodePosition);
-		for (Node p : aNodeList) {
+		for (Node p : mFrontier) {
 			if (p.getPosition().getX() == newNodePosition.getX() && p.getPosition().getY() == newNodePosition.getY()) {
 				// System.out.println("Deze zet bestond al");
 				duplicate = p;
@@ -224,11 +226,19 @@ public class Board {
 	/**
 	 * 
 	 */
+	public void setEmptySpaces(List<Node> aNewEmptySpaceList) {
+		mFrontier.clear();
+		mFrontier.addAll(aNewEmptySpaceList);
+	}
+
 	public List<Node> getEmptySpaces() {
 		List<Node> copyList = new ArrayList<Node>();
 		for (Node n : mFrontier) {
 			Node copyNode = new Node();
 			copyNode.setPosition((int) n.getPosition().getX(), (int) n.getPosition().getY());
+			for (int i = 0; i < n.getNeighborNodes().length; i++) {
+				copyNode.setNeighborNode(n.getNeighborNode(i), i);
+			}
 			copyList.add(copyNode);
 		}
 		return copyList;
@@ -238,9 +248,19 @@ public class Board {
 		mFrontier.add(aNode);
 	}
 
-	public void removeFrontier(Block aBlock) {
-		if (mFrontier.contains(aBlock)) {
-			mFrontier.remove(aBlock);
+	/**
+	 * Searches for the node in the list with possible moves and removes it.
+	 * 
+	 * @param aBlock
+	 */
+	public void removeFrontier(Node aBlock) {
+		// List<Node> removeList = new ArrayList<Node>();
+		for (Node n : mFrontier) {
+			if (n.getPosition().equals(aBlock.getPosition())) {
+				System.out.println(n.getPosition() + " aBlock? " + aBlock.getPosition());
+				mFrontier.remove(n);
+				break;
+			}
 		}
 	}
 
@@ -285,25 +305,27 @@ public class Board {
 	}
 
 	public void setFrontier(Node aPlacedNode) {
-		addFrontiers(mFrontier, aPlacedNode);
-		
-		for (Node nodes : mFrontier) {
-			//System.out.println("In setFrontier:" + nodes.getPosition());
-		}
+		addFrontiers(aPlacedNode);
+		// StackTraceElement[] elem = Thread.currentThread().getStackTrace();
+		// for (Node nodes : mFrontier) {
+		// System.out.println(elem[1] + ": " + "In setFrontier:" +
+		// nodes.getPosition());
+		// }
 	}
 
 	/**
 	 * 
 	 */
-	public void addFrontiers(List<Node> aFrontierList, Node aNode) {
+	public void addFrontiers(Node aNode) {
 		Node[] neighbors = aNode.getNeighborNodes();
 		for (int i = 0; i < neighbors.length; i++) {
+
 			if (neighbors[i] == null) {
-				Node newEmpty = findDuplicateNode(aFrontierList, aNode.getPosition(), Direction.values()[i]);
+				Node newEmpty = findDuplicateNode(aNode.getPosition(), Direction.values()[i]);
 				if (newEmpty == null) {
-					aFrontierList.add(createEmptyNode(Direction.values()[i], aNode));
-					addFrontier(createEmptyNode(Direction.values()[i], aNode));
-					System.out.println("Hallo");
+					mFrontier.add(createEmptyNode(Direction.values()[i], aNode));
+					// addFrontier(createEmptyNode(Direction.values()[i],
+					// aNode));
 				} else {
 					newEmpty.setNeighborNode(aNode,
 							Direction.getDirection(aNode.getPosition(), newEmpty.getPosition()));
@@ -313,12 +335,41 @@ public class Board {
 	}
 
 	public void setPlacedBlock(Node node) {
-		mSetBlocks.add(node);
+		for (Node n : mFrontier) {
+			if (n.getPosition().equals(node.getPosition())) {
+				n.setBlock(node.getBlock());
+				mSetBlocks.add(n);
+				mFrontier.remove(n);
+				break;
+			}
+		}
+
 		System.out.println("Amount of stones placed on board: " + mSetBlocks.size());
 	}
 
 	public void setStone(Node node) {
 		setPlacedBlock(node);
-		setFrontier(node);
+		setFrontier(mSetBlocks.get(mSetBlocks.size() - 1));
+	}
+
+	public int calcScore(Node aBlock) {
+		int scoreX = 0;
+		int scoreY = 0;
+		Node block = aBlock;
+		for (int i = 0; i < Direction.values().length; i++) {
+			Direction aDirection = Direction.values()[i];
+			while (block.getNeighborNode(aDirection) != null && block.getNeighborNode(aDirection).getBlock() != null) {
+				if (i % 2 == 0) {
+					scoreY = ((scoreY += 1) == 6) ? scoreY = 12 : scoreY + 1;
+
+				} else {
+					scoreX = (scoreX + 1 == 6) ? scoreX = 12 : scoreX + 1;
+				}
+				block = block.getNeighborNode(aDirection);
+			}
+			System.out.printf("scoreX: %d scoreY: %d", scoreX, scoreY);
+		}
+		System.out.println("Score of zet:" +(scoreX+scoreY));
+		return scoreX + scoreY;
 	}
 }

@@ -21,7 +21,7 @@ public class HumanTUIPlayer extends Player {
 	}
 
 	public void setMove(Node aNode) {
-		//System.out.println("Hallo alles spelers");
+		// System.out.println("Hallo alles spelers");
 		mBoard.setStone(aNode);
 	}
 
@@ -118,14 +118,6 @@ public class HumanTUIPlayer extends Player {
 								possiblePositions.get(move).getPosition());
 						Block newMove = possibleMoves.get(hand);
 						Node currentNode = possiblePositions.get(move);
-						// newMove.setPosition((int)
-						// currentNode.getPosition().getX(),
-						// (int) currentNode.getPosition().getY());
-						/*
-						 * for (int i = 0; i < Node.NEIGHBOR_NODES; i++) {
-						 * newMove.setNeighborNode(currentNode.getNeighborNode(i
-						 * ), i); }
-						 */
 
 						Node[] neighbors = currentNode.getNeighborNodes();
 						currentNode.setBlock(newMove);
@@ -145,7 +137,7 @@ public class HumanTUIPlayer extends Player {
 							for (int i = 0; i < neighbors.length; i++) {
 								// System.out.println(Direction.values()[i]);
 								if (neighbors[i] == null) {
-									Node newEmpty = mBoard.findDuplicateNode(possiblePositions,
+									Node newEmpty = mBoard.findDuplicateNode(/*possiblePositions,*/
 											currentNode.getPosition(), Direction.values()[i]);
 									// System.out.println(newEmpty==null);
 									if (newEmpty == null) {
@@ -173,9 +165,10 @@ public class HumanTUIPlayer extends Player {
 					// Deze sowieso niet hier laten zetten
 					// TODO Game->Board
 					// TODO STACK OF BOARD
-					mBoard.getEmptySpaces().clear();
-					mBoard.getEmptySpaces().addAll(possiblePositions);
+	//				mBoard.getEmptySpaces().clear();
+	//				mBoard.getEmptySpaces().addAll(possiblePositions);
 					possibleMoves.clear();
+
 				} else if (input.toLowerCase().equals("reset")) {
 					set.clear();
 					possibleMoves.clear();
@@ -224,6 +217,25 @@ public class HumanTUIPlayer extends Player {
 				}
 			}
 		}
+		
+		//added freshNode to make sure copy is empty
+		//TODO find out if still needed
+		List<Node> setCopy=new ArrayList<Node>();
+		setCopy.addAll(set);
+		set.clear();
+		for(Node n: setCopy){
+			Node freshNode=new Node();
+			freshNode.setBlock(n.getBlock());
+			freshNode.setPosition((int)n.getPosition().getX(), (int)n.getPosition().getY());
+/*			for(int i = 0; i < n.getNeighborNodes().length;i++){
+
+				if(n.getNeighborNode(i).getBlock()!=null){
+					freshNode.setNeighborNode(n.getNeighborNode(i), i);
+				}
+			}*/
+			setMove(freshNode);
+			set.add(freshNode);
+		}
 		return set;
 	}
 
@@ -234,7 +246,7 @@ public class HumanTUIPlayer extends Player {
 		}
 		return hand;
 	}
-	
+
 	/*
 	 * public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
 	 * Node[] neighbors = aNode.getNeighborNodes(); for (int i = 0; i <

@@ -29,10 +29,6 @@ public class Game {
 	private BlockBag mBag;
 
 	private List<Player> mPlayers = new ArrayList<Player>();
-	private Bitmap mTilemap;
-	private Sprite tileSprite;
-
-	private Camera mMainCamera;
 
 	private Player mCurrentPlayer;
 
@@ -61,7 +57,7 @@ public class Game {
 		while (!hasEnded()) {
 			try {
 				System.out.println("Board in Game");
-				//System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
+				System.out.println(mBoard.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
 				doMove(mCurrentPlayer.determineMove());
 				addBlocks(mCurrentPlayer);
 				mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
@@ -109,7 +105,7 @@ public class Game {
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
-		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == -999 ){//GameConstants.UNSET_NODE) {
+		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
 			 trade = true;
 		}
 		//System.out.println("checking hand!");
@@ -120,7 +116,7 @@ public class Game {
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
 					// boardScale(playersMove.get(i).getPosition());
-				//	System.out.println(playersMove.get(i).getBlock().getShape() + " " +playersMove.get(i).getBlock().getColor()+"");
+					System.out.println(playersMove.get(i).getBlock().getShape() + " " +playersMove.get(i).getBlock().getColor()+"");
 					if (mBoard.isValid(playersMove)) {
 						mBoard.setStone(playersMove.get(i));
 						notifyPlayer(playersMove);
@@ -150,7 +146,8 @@ public class Game {
 	void notifyPlayer(List<Node> aValidMove) {
 		for (Player players : mPlayers) {
 			for (Node n : aValidMove) {
-				((HumanTUIPlayer)players).setMove(n);
+			if(!players.equals(mCurrentPlayer)){	((HumanTUIPlayer)players).setMove(n);
+				}
 			}
 		}
 	}
