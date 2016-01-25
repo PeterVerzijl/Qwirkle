@@ -40,18 +40,20 @@ public class Game {
 		mBag = new BlockBag();
 		mBoard = new Board();
 		// TODO: DENNIS score resetten
-		
+
 		mPlayers = aPlayerList;
 		for (int i = 0; i < mPlayers.size(); i++) {
 			mPlayers.get(i).resetHand();
 			mPlayers.get(i).initHand(mBag, 6);
 		}
-		
-		mCurrentPlayer=startingPlayer();
+
+		mCurrentPlayer = startingPlayer();
 	}
-	public Player startingPlayer(){
+
+	public Player startingPlayer() {
 		return mPlayers.get(0);
 	}
+
 	// test unit
 	public void run() {
 		while (!hasEnded()) {
@@ -105,24 +107,35 @@ public class Game {
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
-		if (playersMove.size() > 0 && playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
-			 trade = true;
+		
+		if (!(playersMove.size() > 0)) {
+			if (mBag.blocks.size() > 0) {
+				throw new IllegalMoveException();
+			} else {
+				return;
+			}
 		}
-		//System.out.println("checking hand!");
-		//System.out.println("Trade = " + trade);
+		
+		if (playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
+			trade = true;
+		}
+		// System.out.println("checking hand!");
+		// System.out.println("Trade = " + trade);
 		if (checkHand(playersMove)) {
-			//System.out.println("Set in hand");
-			//System.out.println(playersMove.size());
+			System.out.println("Set in hand");
+			// System.out.println(playersMove.size());
+			// mBoard.newSet();
+			mBoard.setStones(playersMove);
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
 					// boardScale(playersMove.get(i).getPosition());
-					System.out.println(playersMove.get(i).getBlock().getShape() + " " +playersMove.get(i).getBlock().getColor()+"");
-					if (mBoard.isValid(playersMove)) {
-						mBoard.setStone(playersMove.get(i));
-						notifyPlayer(playersMove);
-					}
+					/*
+					 * System.out.println(playersMove.get(i).getBlock().getShape
+					 * () + " " + playersMove.get(i).getBlock().getColor() +
+					 * ""); mBoard.setStone(playersMove.get(i));
+					 */
 				} else {
-				//	System.out.println("Now trading");
+					// System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
 				}
 				try {
@@ -132,22 +145,28 @@ public class Game {
 					e.printStackTrace();
 				}
 			}
+			if (true) {
+				// mBoard.doMove();
+				notifyPlayer(playersMove);
+			}
 		} else {
-			//System.out.println("checkHand was false");
+			// System.out.println("checkHand was false");
 		}
 		System.out.println("De zet is gezet");
 	}
 
 	/**
-	 * Debugin method to see if board is updating at player side
-	 * Do not use when there are no human players
+	 * Debugin method to see if board is updating at player side Do not use when
+	 * there are no human players
+	 * 
 	 * @param aValidMove
 	 */
 	void notifyPlayer(List<Node> aValidMove) {
 		for (Player players : mPlayers) {
-			for (Node n : aValidMove) {
-			if(!players.equals(mCurrentPlayer)){	((HumanTUIPlayer)players).setMove(n);
-				}
+			// for (Node n : aValidMove) {
+			if (!players.equals(mCurrentPlayer)) {
+				((HumanTUIPlayer) players).setMove(aValidMove);
+				// }
 			}
 		}
 	}

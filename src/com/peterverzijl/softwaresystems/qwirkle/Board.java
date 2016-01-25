@@ -352,6 +352,35 @@ public class Board {
 		setFrontier(mSetBlocks.get(mSetBlocks.size() - 1));
 	}
 
+	public void setStones(List<Node> aNodeList) {
+		List<Node> copySetBlocks = new ArrayList<Node>();
+		List<Node> copyFrontiers = new ArrayList<Node>();
+		copySetBlocks.addAll(mSetBlocks);
+		copyFrontiers = getEmptySpaces();
+		for (Node aNode : aNodeList) {
+			setStone(aNode);
+		}
+		List<Node> lastSet = new ArrayList<Node>();
+		for (int i = aNodeList.size() - 1; i > -1; i--) {
+			lastSet.add(mSetBlocks.get(mSetBlocks.size() - (i + 1)));
+		}
+
+		if (isValid(lastSet)) {
+			System.out.println("BLIJHEID");
+		} else {
+			System.out.println("Alles gaat stuk");
+			mSetBlocks.clear();
+			mSetBlocks.addAll(copySetBlocks);
+			mFrontier.clear();
+			mFrontier.addAll(copyFrontiers);
+		}
+	}
+
+	// TODO DENNIS BUILD OUT THIS FUNCTION!
+	public List<Node> GiveHint(List<Node> possibleMoves, Node aNode) {
+		return null;
+	}
+
 	public int calcScore(Node aBlock) {
 		int scoreX = 0;
 		int scoreY = 0;
@@ -369,7 +398,7 @@ public class Board {
 			}
 			System.out.printf("scoreX: %d scoreY: %d", scoreX, scoreY);
 		}
-		System.out.println("Score of zet:" +(scoreX+scoreY));
+		System.out.println("Score of zet:" + (scoreX + scoreY));
 		return scoreX + scoreY;
 	}
 }

@@ -20,9 +20,9 @@ public class HumanTUIPlayer extends Player {
 		mBoard = new Board();
 	}
 
-	public void setMove(Node aNode) {
+	public void setMove(List<Node> aNode) {
 		// System.out.println("Hallo alles spelers");
-		mBoard.setStone(aNode);
+		mBoard.setStones(aNode);
 	}
 
 	public static void main(String[] args) {
@@ -127,7 +127,7 @@ public class HumanTUIPlayer extends Player {
 
 						set.add(currentNode);
 						System.out.println("Size: " + set.size());
-						if (!mBoard.isValid(set)) {
+						if (!mBoard.isValid(set)){//.get(set.size()-1))) {
 							System.err.print("\t Deze zet m" + "ag niet!");
 							currentNode.setBlock(null);
 							set.remove(currentNode);
@@ -223,6 +223,7 @@ public class HumanTUIPlayer extends Player {
 		List<Node> setCopy=new ArrayList<Node>();
 		setCopy.addAll(set);
 		set.clear();
+		//mBoard.newSet();
 		for(Node n: setCopy){
 			Node freshNode=new Node();
 			freshNode.setBlock(n.getBlock());
@@ -233,9 +234,9 @@ public class HumanTUIPlayer extends Player {
 					freshNode.setNeighborNode(n.getNeighborNode(i), i);
 				}
 			}*/
-			setMove(freshNode);
 			set.add(freshNode);
 		}
+		if(set.get(0).getBlock()!=null)setMove(set);
 		return set;
 	}
 

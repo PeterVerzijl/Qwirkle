@@ -108,7 +108,7 @@ public class Player {
 		String hand = "";
 		for (int i = 0; i < aHand.size(); i++) {
 			Block b = aHand.get(i);
-			hand += b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ";
+			hand += i +": " + b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ";
 		}
 		return hand;
 	}
