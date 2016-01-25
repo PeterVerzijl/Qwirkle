@@ -111,12 +111,12 @@ public class HumanTUIPlayer extends Player {
 					}
 				}
 				hand = scanner.nextInt();
-				for(Node n: mBoard.GiveHint(possiblePositions, possibleMoves.get(hand))){
+				for(Node n: mBoard.GiveHint(possiblePositions,set,possibleMoves.get(hand))){
 					System.out.println(n.getPosition());
 				}
 				move = scanner.nextInt();
 				scanner.nextLine();
-
+ 
 				if (hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
 					if (move < possiblePositions.size()) {
 						System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c op positie %s \n", hand, move,

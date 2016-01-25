@@ -373,16 +373,19 @@ public class Board {
 	}
 
 	// TODO DENNIS BUILD OUT THIS FUNCTION!
-	public List<Node> GiveHint(List<Node> possibleMoves, Block aBlock) {
+	public List<Node> GiveHint(List<Node> possibleMoves, List<Node> currentSet, Block aBlock) {
 		List<Node> validMoves=new ArrayList<Node>();
 		List<Node> testMove=new ArrayList<Node>();
+		if(currentSet!=null){
+			testMove.addAll(currentSet);
+		}
 		for(Node m: possibleMoves){
 			m.setBlock(aBlock);
 			testMove.add(m);
 			if(isValid(testMove)){
 				validMoves.add(m);
 			}
-			testMove.clear();
+			testMove.remove(m);
 			m.setBlock(null);
 		}
 		return validMoves;

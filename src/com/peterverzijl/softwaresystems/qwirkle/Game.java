@@ -79,7 +79,7 @@ public class Game {
 		if (!(getNumStonesInBag() > 0)) {
 			for (Player p : mPlayers) {
 				for (Block s : p.getHand()) {
-					if ((mBoard.GiveHint(mBoard.getEmptySpaces(), s)).size() > 0) {
+					if ((mBoard.GiveHint(mBoard.getEmptySpaces(),null, s)).size() > 0) {
 						return false;
 					}
 
