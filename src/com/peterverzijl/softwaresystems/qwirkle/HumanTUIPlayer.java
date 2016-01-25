@@ -22,7 +22,11 @@ public class HumanTUIPlayer extends Player {
 
 	public void setMove(List<Node> aNode) {
 		// System.out.println("Hallo alles spelers");
-		mBoard.setStones(aNode);
+		try {
+			mBoard.setStones(aNode);
+		} catch (IllegalMoveException e) {
+			System.err.println("The Server send an INVALID MOVE");
+		}
 	}
 
 	public static void main(String[] args) {
@@ -107,6 +111,9 @@ public class HumanTUIPlayer extends Player {
 					}
 				}
 				hand = scanner.nextInt();
+				for(Node n: mBoard.GiveHint(possiblePositions, possibleMoves.get(hand))){
+					System.out.println(n.getPosition());
+				}
 				move = scanner.nextInt();
 				scanner.nextLine();
 

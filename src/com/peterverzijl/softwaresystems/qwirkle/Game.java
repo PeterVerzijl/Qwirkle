@@ -70,7 +70,23 @@ public class Game {
 		// doe iets als de game klaar is
 	}
 
+	/**
+	 * If there are no more stones in the bag
+	 * Loop through all players and their hand till it finds a vallid move
+	 * @return true if a valid move is found or if there are stones in the bag of stones
+	 */
 	public boolean hasEnded() {
+		if (!(getNumStonesInBag() > 0)) {
+			for (Player p : mPlayers) {
+				for (Block s : p.getHand()) {
+					if ((mBoard.GiveHint(mBoard.getEmptySpaces(), s)).size() > 0) {
+						return false;
+					}
+
+				}
+			}
+			return true;
+		}
 		return false;
 	}
 
@@ -107,7 +123,7 @@ public class Game {
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
-		
+
 		if (!(playersMove.size() > 0)) {
 			if (mBag.blocks.size() > 0) {
 				throw new IllegalMoveException();
@@ -115,7 +131,7 @@ public class Game {
 				return;
 			}
 		}
-		
+
 		if (playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
 			trade = true;
 		}
