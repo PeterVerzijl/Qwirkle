@@ -61,14 +61,6 @@ public class Board {
 		return n;
 	}
 
-	public boolean placeBlock() {
-		return false;
-	}
-
-	public boolean validMove() {
-		return false;
-	}
-
 	/**
 	 * Checks if a move a Player does is valid by checking if all blocks of a
 	 * move are placed in the same row if
@@ -82,8 +74,11 @@ public class Board {
 		Node lastMove = aListOfMoves.get(aListOfMoves.size() - 1);
 		boolean sameXPos = true;
 		boolean sameYPos = true;
+
 		// TODO Dennis: Dit omzetten naar neigbor check check left right if
 		// stones==set.size()-2
+
+		// TODO check if set is not already in setblocks;
 		for (Node b : aListOfMoves) {
 			if (!(b.getPosition().getX() == lastMove.getPosition().getX())) {
 				sameXPos = false;
@@ -101,13 +96,15 @@ public class Board {
 				}
 			}
 		} else {
-			isLegal = false;
+			isLegal = false; 
 		}
 		if (isLegal && aListOfMoves.size() > 0)
 			calcScore(aListOfMoves.get(aListOfMoves.size() - 1));
 		// System.out.println("Move is legal?: " + isLegal);
 		return isLegal;
 	}
+
+	
 
 	/**
 	 * 
@@ -185,7 +182,6 @@ public class Board {
 				block = block.getNeighborNode(aDirection);
 			}
 		}
-
 		// System.out.println("Color is valid: " + isLegal);
 		return isLegal;
 	}
@@ -243,11 +239,7 @@ public class Board {
 		}
 		return copyList;
 	}
-
-	public void addFrontier(Node aNode) {
-		mFrontier.add(aNode);
-	}
-
+	
 	/**
 	 * Searches for the node in the list with possible moves and removes it.
 	 * 
@@ -287,10 +279,11 @@ public class Board {
 							+ BlockPrinter.getChar(aListOfPlacedBlocks.get(i).getBlock());
 		}
 
+		if(aListOfPossibleMoves!=null){
 		for (int i = 0; i < aListOfPossibleMoves.size(); i++) {
 			boardToString[(int) aListOfPossibleMoves.get(i).getPosition().getX()
 					+ midX][-(int) aListOfPossibleMoves.get(i).getPosition().getY() + midY] = " " + i + " ";
-		}
+		}}
 
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
@@ -334,31 +327,34 @@ public class Board {
 		}
 	}
 
-	public void setPlacedBlock(Node node) {
+	public boolean setPlacedBlock(Node node){
 		for (Node n : mFrontier) {
 			if (n.getPosition().equals(node.getPosition())) {
 				n.setBlock(node.getBlock());
 				mSetBlocks.add(n);
 				mFrontier.remove(n);
-				break;
+
+				System.out.println("Amount of stones placed on board: " + mSetBlocks.size());
+				
+				return true;
 			}
 		}
-
-		System.out.println("Amount of stones placed on board: " + mSetBlocks.size());
+			return false;
 	}
 
-	public void setStone(Node node) {
-		setPlacedBlock(node);
-		setFrontier(mSetBlocks.get(mSetBlocks.size() - 1));
+	public boolean setStone(Node node) {
+			boolean set = setPlacedBlock(node);
+			if(set)setFrontier(mSetBlocks.get(mSetBlocks.size() - 1));
+			return set;
 	}
 
-	public void setStones(List<Node> aNodeList) {
+	public void setStones(List<Node> aNodeList) throws IllegalMoveException {
 		List<Node> copySetBlocks = new ArrayList<Node>();
 		List<Node> copyFrontiers = new ArrayList<Node>();
 		copySetBlocks.addAll(mSetBlocks);
 		copyFrontiers = getEmptySpaces();
 		for (Node aNode : aNodeList) {
-			setStone(aNode);
+			if(!setStone(aNode))throw new IllegalMoveException();
 		}
 		List<Node> lastSet = new ArrayList<Node>();
 		for (int i = aNodeList.size() - 1; i > -1; i--) {
@@ -396,9 +392,9 @@ public class Board {
 				}
 				block = block.getNeighborNode(aDirection);
 			}
-			System.out.printf("scoreX: %d scoreY: %d", scoreX, scoreY);
+			//System.out.printf("scoreX: %d scoreY: %d", scoreX, scoreY);
 		}
-		System.out.println("Score of zet:" + (scoreX + scoreY));
+		//System.out.println("Score of zet:" + (scoreX + scoreY));
 		return scoreX + scoreY;
 	}
 }
