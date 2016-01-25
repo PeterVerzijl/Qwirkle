@@ -383,6 +383,7 @@ public class Board {
 				validMoves.add(m);
 			}
 			testMove.clear();
+			m.setBlock(null);
 		}
 		return validMoves;
 	}
