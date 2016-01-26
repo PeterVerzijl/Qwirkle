@@ -39,6 +39,7 @@ public class ComputerPlayer extends Player {
 				possibleMoves.remove(block);
 				for (Node n : possiblePositions) {
 					n.setBlock(block);
+					mBoard.setStone(n);
 					set.add(n);
 					map.putAll(determineBestMove(possibleMoves, possiblePositions, set));
 				}

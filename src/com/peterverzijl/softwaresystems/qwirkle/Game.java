@@ -52,7 +52,7 @@ public class Game {
 		mCurrentPlayer = mPlayers.get(0);
 	}
 
-	public void setFirstPlayer(HashMap<Player, List<Node>> firstSet) {
+	public void setFirstPlayer(Map<Player, List<Node>> firstSet) {
 		HashMap.Entry<Player, List<Node>> entry = firstSet.entrySet().iterator().next();
 		mCurrentPlayer = entry.getKey();
 		try {
@@ -82,7 +82,9 @@ public class Game {
 			}
 
 			mBoard = new Board();
+			System.out.println(mPlayers.indexOf(playerHelper)+" "+aMapWithFirstMoves.get(playerHelper).size());
 			firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
+			setFirstPlayer(firstPlayerSet);
 		} catch (IllegalMoveException e) {
 			e.printStackTrace();
 		}
@@ -222,7 +224,7 @@ public class Game {
 	 * 
 	 * @param aValidMove
 	 */
-	/*void notifyPlayer(List<Node> aValidMove) {
+	void notifyPlayer(List<Node> aValidMove) {
 		for (Player players : mPlayers) {
 			// for (Node n : aValidMove) {
 			if (!players.equals(mCurrentPlayer)) {
@@ -233,7 +235,7 @@ public class Game {
 				// }
 			}
 		}
-	}*/
+	}
 
 	public List<Node> getFrontier() {
 		List<Node> copy = new ArrayList<Node>();
