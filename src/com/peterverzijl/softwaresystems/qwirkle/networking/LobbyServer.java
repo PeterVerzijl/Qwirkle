@@ -169,7 +169,7 @@ public class LobbyServer implements Server, Runnable {
 			}
 		}
 		// Make new game with same target players
-		GameServer newGame = new GameServer((numPlayers == 0)?2:numPlayers);
+		GameServer newGame = new GameServer((numPlayers == 0)?2:numPlayers, this);
 		try {
 			newGame.addPlayer(client);
 			mGameServers.add(newGame);
@@ -238,7 +238,10 @@ public class LobbyServer implements Server, Runnable {
 			mClients.remove(client);
 		}
 	}
-
+	
+	/**
+	 * Shuts down all the clients and the server.
+	 */
 	public void shutdown() {
 		for (ClientHandler client : mClients) {
 			client.shutdown();
@@ -257,5 +260,15 @@ public class LobbyServer implements Server, Runnable {
 	 */
 	public int getNumClients() {
 		return mClients.size();
+	}
+	
+	/**
+	 * Removes a game server from the game server list.
+	 * @param gameServer The game server to remove.
+	 */
+	public void removeGame(GameServer gameServer) {
+		if (mGameServers.contains(gameServer)) {
+			mGameServers.remove(gameServer);
+		}
 	}
 }

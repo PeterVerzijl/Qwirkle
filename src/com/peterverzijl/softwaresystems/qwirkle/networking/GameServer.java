@@ -29,6 +29,9 @@ public class GameServer implements Server {
 
 	private int mTargetPlayerCount; // The amount of players wanted in this
 									// game.
+	
+	private LobbyServer mMasterServer;
+	
 	private Game mGame; // The game played
 	private List<ClientHandler> mClients; // The client handlers
 
@@ -40,8 +43,9 @@ public class GameServer implements Server {
 	 * @param targetPlayerCount
 	 *            The amount of wanted players on this server.
 	 */
-	public GameServer(int targetPlayerCount) {
+	public GameServer(int targetPlayerCount, LobbyServer lobbyServer) {
 		mTargetPlayerCount = targetPlayerCount;
+		mMasterServer = lobbyServer;
 
 		mClients = new ArrayList<ClientHandler>();
 		playerClientMap = new HashMap<ClientHandler, Player>();
@@ -155,11 +159,22 @@ public class GameServer implements Server {
 							// Do moves
 							try {
 								mGame.doMove(moves);
-								// Give turn to next player
-								Player p = mGame.nextPlayer();
-								ClientHandler ch = getClientFromPlayer(p);								
-								// Now broadcast to next player a do move thing...
-								broadcast(getMoveMessage(client.getName(), ch.getName(), parameters));
+								
+								// Add stones to our hand
+								List<Block> newBlocks = mGame.addBlocks(clientPlayer);
+								// Send new blocks
+								sendBlocksClient(newBlocks, client);
+								
+								// Check if the game has ended
+								if (!mGame.hasEnded()) {
+									// Give turn to next player
+									Player p = mGame.nextPlayer();
+									ClientHandler ch = getClientFromPlayer(p);
+									// Now broadcast to next player a do move thing...
+									broadcast(getMoveMessage(client.getName(), ch.getName(), parameters));
+								} else {
+									stopGame();
+								}
 							} catch (IllegalMoveException e) {
 								// NOTE: Invalid move
 								client.sendMessage(Protocol.Server.ERROR + 
@@ -274,16 +289,6 @@ public class GameServer implements Server {
 	 * Start the game.
 	 */
 	private void startGame() {
-		// Send start game message
-		String message = Protocol.Server.STARTGAME;
-		for (ClientHandler client : mClients) {
-			message += Protocol.Server.Settings.DELIMITER;
-			message += client.getName();
-		}
-		broadcast(message);
-
-		hasGameStarted = true;
-
 		// Create a new player for every client.
 		List<Player> players = new ArrayList<Player>();
 		for (ClientHandler client : mClients) {
@@ -296,9 +301,16 @@ public class GameServer implements Server {
 		// Send blocks to the clients
 		for (ClientHandler client : mClients) {
 			sendBlocksClient(playerClientMap.get(client).getHand(), client);
-			// Ask all players to submit the first move
-			client.sendMessage(getMoveMessage(client.getName(), client.getName(), null));
 		}
+		
+		// Send start game message
+		String message = Protocol.Server.STARTGAME;
+		for (ClientHandler client : mClients) {
+			message += Protocol.Server.Settings.DELIMITER;
+			message += client.getName();
+		}
+		broadcast(message);
+		hasGameStarted = true;
 		
 		// Init the first move...
 	}
@@ -307,9 +319,19 @@ public class GameServer implements Server {
 	 * Called by the game. This shuts down everything.
 	 */
 	public void stopGame() {
-		// TODO (peter) : Destroy everything and return the client handlers,
-		// to the 
+		// Send all players back to the lobby server
+		broadcast(Protocol.Server.GAME_END);
+		for (ClientHandler c : mClients) {
+			c.setServer(mMasterServer);
+		}
 		
+		// Set everyting to null
+		this.mClients = null;
+		this.playerClientMap = null;
+		this.mGame = null;
+		this.hasGameStarted = false;
+		// Remove reference to object.
+		mMasterServer.removeGame(this);
 	}
 	
 	/*
