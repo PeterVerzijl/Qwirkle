@@ -53,7 +53,10 @@ public class Game {
 	public Player startingPlayer() {
 		return mPlayers.get(0);
 	}
-
+	
+	public void nextPlayer(){
+		mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
+	}
 	// test unit
 	public void run() {
 		while (!hasEnded()) {
