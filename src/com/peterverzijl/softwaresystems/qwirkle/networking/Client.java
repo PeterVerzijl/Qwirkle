@@ -166,8 +166,8 @@ public class Client implements Runnable {
 				for (String move : moves) {
 					nodes.add(Board.moveStringToNode(move));
 				}
-				mPlayer.setMove(nodes);
 				if (!movingPlayer.equals(username)) {
+					mPlayer.setMove(nodes);
 					// Message the viewer that a move has been done
 					if (mViewer != null) {
 						mViewer.displayMessage(movingPlayer + " has made a move.");
@@ -180,20 +180,7 @@ public class Client implements Runnable {
 				}
 				// Is it our turn?
 				if (nextPlayer.equals(username)) {
-					if (mViewer != null) {
-						mViewer.displayMessage("It is our turn now... press ENTER");
-					}
-					// TODO (peter) : Contact PlayerTUI
-					while (MainTUI.lock.isLocked() && !MainTUI.lock.isHeldByCurrentThread()) {
-						// Do nothing.
-					}
-					MainTUI.lock.lock();
-					try {
-						List<Node> resultMoves = mPlayer.determineMove();
-						sendMoves(resultMoves);
-					} finally {
-						MainTUI.lock.unlock();
-					}
+					doMove();
 				}
 				break;
 			case Protocol.Server.OKWAITFOR:
@@ -212,7 +199,9 @@ public class Client implements Runnable {
 					mViewer.displayMessage("Opponents:");
 					for (String name : parameters) {
 						mViewer.displayMessage(name);
-					}					
+					}
+					// Ask the player to do a move
+					doMove();
 				}
 				
 				///mGame = new Game();
@@ -236,6 +225,26 @@ public class Client implements Runnable {
 		}
 	}
 	
+	/**
+	 * Asks the player to do a move.
+	 */
+	private void doMove() {
+		if (mViewer != null) {
+			mViewer.displayMessage("It is our turn now... press ENTER");
+		}
+		// TODO (peter) : Contact PlayerTUI
+		while (MainTUI.lock.isLocked() && !MainTUI.lock.isHeldByCurrentThread()) {
+			// Do nothing.
+		}
+		MainTUI.lock.lock();
+		try {
+			List<Node> resultMoves = mPlayer.determineMove();
+			sendMoves(resultMoves);
+		} finally {
+			MainTUI.lock.unlock();
+		}
+	}
+
 	/**
 	 * Sends a move message with all the move's.
 	 * @param nodes All moves that the player makes.
