@@ -19,6 +19,7 @@ import com.peterverzijl.softwaresystems.qwirkle.Board;
 import com.peterverzijl.softwaresystems.qwirkle.HumanTUIPlayer;
 import com.peterverzijl.softwaresystems.qwirkle.Node;
 import com.peterverzijl.softwaresystems.qwirkle.Player;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
 import com.peterverzijl.softwaresystems.qwirkle.tui.MainTUI;
 import com.peterverzijl.softwaresystems.qwirkle.ui.ChatView;
 
@@ -182,7 +183,14 @@ public class Client implements Runnable {
 					}
 				} else {
 					// We were the moving player
-					// mPlayer.removeBlocksFromHand(nodes);
+					for (Node n : nodes) {
+						try {
+							mPlayer.removeBlock(n.getBlock());
+						} catch (NotYourBlockException e) {
+							System.err.println("It seems that we have gotten out of sync with the server.\n" + 
+												"It tries to delete blocks in our hand that we didn't poses.");
+						}
+					}
 				}
 				// Is it our turn?
 				if (nextPlayer.equals(username)) {

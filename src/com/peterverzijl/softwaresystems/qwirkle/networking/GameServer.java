@@ -118,6 +118,9 @@ public class GameServer implements Server {
 							// Check if the current player has this block.
 							Block newBlock = mGame.tradeBlock(playerClientMap.get(client), b);
 							tradedBlocks.add(newBlock);
+							// Pass on the turn
+							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
+							nextPlayer.sendMessage(getMoveMessage(client.getName(), nextPlayer.getName(), null));
 						} else {
 							client.sendMessage(Protocol.Server.ERROR + 
 												Protocol.Server.Settings.DELIMITER + 2);
@@ -167,6 +170,9 @@ public class GameServer implements Server {
 							Map.Entry<Player, List<Node>> entry = startingMove.entrySet().iterator().next();
 							ClientHandler curPlayer = getClientFromPlayer(entry.getKey());
 							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
+							
+							// Add and send new blocks to the winners hand
+							sendBlocksClient(mGame.addBlocks(entry.getKey()), curPlayer);
 							
 							// Translate moves to text
 							String[] newMoves = new String[entry.getValue().size()];
@@ -227,11 +233,15 @@ public class GameServer implements Server {
 								// NOTE: Invalid move
 								client.sendMessage(Protocol.Server.ERROR + 
 										Protocol.Server.Settings.DELIMITER + 7);
+							} catch (NotYourBlockException e) {
+								e.printStackTrace();
 							}
 						} else {
-							// NOTE: Invalid move (can't move 0 stones!)
-							client.sendMessage(Protocol.Server.ERROR + 
-									Protocol.Server.Settings.DELIMITER + 7);
+							// NOTE: This is not an invalid move, this means the player wants to skip a turn.
+							// Which is fine by the server :P
+							// Pass on the turn
+							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
+							nextPlayer.sendMessage(getMoveMessage(client.getName(), nextPlayer.getName(), null));
 						}
 					} else {
 						// NOTE: Not your turn!

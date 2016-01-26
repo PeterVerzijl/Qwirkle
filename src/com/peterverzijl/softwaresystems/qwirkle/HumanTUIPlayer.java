@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
+import com.peterverzijl.softwaresystems.qwirkle.networking.Client;
 
 /**
  * Player class for the Qwirkle game, contains all the player information.
@@ -70,7 +69,7 @@ public class HumanTUIPlayer extends Player {
 	 */
 
 	public String boardToString() {
-		return mBoard.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
+		return Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
 	}
 
 	/**
@@ -96,7 +95,7 @@ public class HumanTUIPlayer extends Player {
 			try {
 				copyBoard.addAll(set);
 				System.out.println("Huidige spel");
-				System.out.println(mBoard.toString(copyBoard, possiblePositions));
+				System.out.println(Board.toString(copyBoard, possiblePositions));
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
 				// printNodeList(possiblePositions);
@@ -210,6 +209,8 @@ public class HumanTUIPlayer extends Player {
 								System.out.println("Now trading");
 								trading = false;
 								success = true;
+								// TODO (dennis) : How does trading work exactly?
+								// Is the trading even happening here??
 							}
 							if (input2.toLowerCase().equals("cancel")) {
 								System.out.println("Trading canceled");
@@ -241,11 +242,14 @@ public class HumanTUIPlayer extends Player {
 			 * if(n.getNeighborNode(i).getBlock()!=null){
 			 * freshNode.setNeighborNode(n.getNeighborNode(i), i); } }
 			 */
+			/**
+			 * Don't remove blocks from your hand, we do that when we get our own move back from the server.
 			try {
 				removeBlock(freshNode.getBlock());
 			} catch (NotYourBlockException e) {
 				System.err.println("The stone was not your");
 			}
+			*/
 			set.add(freshNode);
 		}
 		//if (set.get(0).getBlock() != null)

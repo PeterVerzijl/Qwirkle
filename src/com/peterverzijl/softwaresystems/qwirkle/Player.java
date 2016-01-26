@@ -139,4 +139,16 @@ public class Player {
 		mHand.clear();
 	}
 
+	
+	/**
+	 * Sets the hand of the player to a block list.
+	 * NOTE: This should NEVER be used other then to reset it to the previous state.
+	 * @param handBackup The backup of the hand to reset the hand to.
+	 */
+	public void setHand(List<Block> handBackup) {
+		if (handBackup.size() <= 6) {
+			mHand = handBackup;		
+		}
+	}
+
 }

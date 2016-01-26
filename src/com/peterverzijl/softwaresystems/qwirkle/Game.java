@@ -5,17 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
 import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.GameObject;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
-import com.peterverzijl.softwaresystems.qwirkle.gameengine.Transform;
-import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
-import com.peterverzijl.softwaresystems.qwirkle.graphics.Camera;
-import com.peterverzijl.softwaresystems.qwirkle.graphics.SpriteRenderer;
-import com.peterverzijl.softwaresystems.qwirkle.scripts.MoveOnMouse;
 
 /**
  * Master class for the game, this handles the setting up and running of the
@@ -35,8 +26,6 @@ public class Game {
 	private Player mCurrentPlayer;
 
 	private Board mBoard;
-
-	public GameObject currentBlock;
 
 	public Game(List<Player> aPlayerList) {
 		mBag = new BlockBag();
@@ -59,6 +48,8 @@ public class Game {
 			doMove(entry.getValue());
 		} catch (IllegalMoveException e) {
 			System.err.println("How the fuck did you mess this up!");
+		} catch (NotYourBlockException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -67,26 +58,31 @@ public class Game {
 		Map<Player, List<Node>> firstPlayerSet = new HashMap<Player, List<Node>>();
 		Player playerHelper = mPlayers.get(0);
 		int highestScore = 0;
-		try {
-			for (Map.Entry<Player, List<Node>> e : aMapWithFirstMoves.entrySet()) {
+		for (Map.Entry<Player, List<Node>> e : aMapWithFirstMoves.entrySet()) {
+			mCurrentPlayer = e.getKey();	// Set the currently 'winning'player, since the checkHand in doMove uses this
+			List<Block> handBackup = new ArrayList<Block>(mCurrentPlayer.getHand());
+			try {
 				doMove(e.getValue());
-				int score = 0;
-				for (Node n : e.getValue()) {
-					score += mBoard.calcScore(n);
-
-				}
-				if (score > highestScore) {
-					playerHelper = e.getKey();
-					highestScore = score;
-				}
+			} catch (NotYourBlockException | IllegalMoveException e1) {
+				// This could happen, if so, just skip that person.
+				// NOTE: This happens for example if you send and empty initial node.
+				continue;
 			}
-
-			mBoard = new Board();
+			int score = 0;
+			for (int i=0; i< e.getValue().size(); i++) {
+                score += mBoard.calcScore(mBoard.getPlacedBlocks().get(i));
+            }
+            if (score > highestScore) {
+                playerHelper = e.getKey();
+                highestScore = score;
+            }
+			
+            e.getKey().setHand(handBackup);
+			mBoard = new Board();			// Clear the board for the next try or for setting the move.
+				
 			System.out.println(mPlayers.indexOf(playerHelper)+" "+aMapWithFirstMoves.get(playerHelper).size());
 			firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
 			setFirstPlayer(firstPlayerSet);
-		} catch (IllegalMoveException e) {
-			e.printStackTrace();
 		}
 
 		return firstPlayerSet;
@@ -103,11 +99,11 @@ public class Game {
 		while (!hasEnded()) {
 			try {
 				System.out.println("Board in Game");
-				System.out.println(mBoard.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
+				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
 				doMove(mCurrentPlayer.determineMove());
 				addBlocks(mCurrentPlayer);
 				mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
-			} catch (IllegalMoveException e) {
+			} catch (IllegalMoveException | NotYourBlockException e) {
 				System.err.println("Er gaan dingen mis!!!");
 			}
 		}
@@ -135,12 +131,17 @@ public class Game {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Checks if a similar block, exists in the hand of the player.
+	 * @param player The player to check for.
+	 * @param block The block to check.
+	 * @return
+	 */
 	public boolean checkHand(Player player, Block block) {
 		boolean result = false;
 		if (player == mCurrentPlayer) {
-			List<Block> playerHand = mCurrentPlayer.getHand();
-			for (Block b : playerHand) {
+			for (Block b : mCurrentPlayer.getHand()) {
 				if (b.equals(block)) {
 					result = true;
 				}
@@ -167,7 +168,7 @@ public class Game {
 	}
 
 	// public setScore();
-	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
+	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException, NotYourBlockException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
 
@@ -213,7 +214,7 @@ public class Game {
 				// notifyPlayer(playersMove);
 			}
 		} else {
-			// System.out.println("checkHand was false");
+			throw new NotYourBlockException();
 		}
 		System.out.println("De zet is gezet");
 	}

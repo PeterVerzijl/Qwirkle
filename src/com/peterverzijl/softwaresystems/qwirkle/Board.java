@@ -280,10 +280,11 @@ public class Board {
 		}
 
 		if(aListOfPossibleMoves!=null){
-		for (int i = 0; i < aListOfPossibleMoves.size(); i++) {
-			boardToString[(int) aListOfPossibleMoves.get(i).getPosition().getX()
-					+ midX][-(int) aListOfPossibleMoves.get(i).getPosition().getY() + midY] = " " + i + " ";
-		}}
+			for (int i = 0; i < aListOfPossibleMoves.size(); i++) {
+				boardToString[(int) aListOfPossibleMoves.get(i).getPosition().getX()
+						+ midX][-(int) aListOfPossibleMoves.get(i).getPosition().getY() + midY] = " " + i + ((i>9)?"":" ");
+			}
+		}
 
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
