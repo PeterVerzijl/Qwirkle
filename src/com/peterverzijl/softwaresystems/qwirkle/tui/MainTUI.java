@@ -165,7 +165,6 @@ public class MainTUI {
 		try {
 			int numPlayers = Integer.parseInt(param[0]);
 			mClient.joinGame(numPlayers);
-			System.out.println("Waiting for other players...");
 		} catch (NumberFormatException e) {
 			System.out.println("Do you even know what a number is?!");
 			return;
