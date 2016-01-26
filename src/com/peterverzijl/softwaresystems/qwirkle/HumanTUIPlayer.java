@@ -23,7 +23,7 @@ public class HumanTUIPlayer extends Player {
 
 	public void setMove(List<Node> aNode) {
 		// System.out.println("Hallo alles spelers");
-		if(aNode.size()<1){
+		if (aNode.size() < 1) {
 			return;
 		}
 		try {
@@ -32,51 +32,42 @@ public class HumanTUIPlayer extends Player {
 			System.err.println("The Server send an INVALID MOVE");
 		}
 	}
-	
-	
 
-	/*public static void main(String[] args) {
-
-		/**
-		 * DEZE INCLUDEN IN EEN TESTCLASSE
-		 */
-		/*
-		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
-		 * new Vector2(0, 1))]);
-		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
-		 * new Vector2(0, -1))]);
-		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
-		 * new Vector2(1, 0))]);
-		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
-		 *new Vector2(-1, 0))]);
-		 
-		Game game = new Game(null);
-		Player player = new HumanTUIPlayer();
-		player.initHand(new BlockBag(), 6);
-		Player player2 = new HumanTUIPlayer();
-		player2.initHand(new BlockBag(), 6);
-		// System.out.println("Start zet");
-		List<Block> frontierTest = new ArrayList<Block>();
-		// mGame.getFrontier().add(new Node(null, null));
-		// mGame.getFrontier().get(0).setPosition(0, 0);
-		// System.out.println("game." + game.mFrontier.size());
-
-		
-		 * frontierTest.add(new Block(null, null));
-		 * frontierTest.get(1).setPosition(1, 0); frontierTest.add(new
-		 * Block(null, null)); frontierTest.get(2).setPosition(2, 0);
-		 * frontierTest.add(new Block(null, null));
-		 * frontierTest.get(3).setPosition(3, 0); frontierTest.add(new
-		 * Block(null, null)); frontierTest.get(4).setPosition(4, 0);
-		
-
-		while (true) {
-			// Game.boardToString(Game.setBlocks);
-			// player.setMove(mGame.getFrontier());
-			// Game.boardToString(Game.setBlocks);
-			// player2.setMove(mGame.getFrontier());
-		}
-	}*/
+	/*
+	 * public static void main(String[] args) {
+	 * 
+	 * /** DEZE INCLUDEN IN EEN TESTCLASSE
+	 */
+	/*
+	 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0), new
+	 * Vector2(0, 1))]); System.out.println(Direction.values()[getDirection(new
+	 * Vector2(0, 0), new Vector2(0, -1))]);
+	 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0), new
+	 * Vector2(1, 0))]); System.out.println(Direction.values()[getDirection(new
+	 * Vector2(0, 0), new Vector2(-1, 0))]);
+	 * 
+	 * Game game = new Game(null); Player player = new HumanTUIPlayer();
+	 * player.initHand(new BlockBag(), 6); Player player2 = new
+	 * HumanTUIPlayer(); player2.initHand(new BlockBag(), 6); //
+	 * System.out.println("Start zet"); List<Block> frontierTest = new
+	 * ArrayList<Block>(); // mGame.getFrontier().add(new Node(null, null)); //
+	 * mGame.getFrontier().get(0).setPosition(0, 0); //
+	 * System.out.println("game." + game.mFrontier.size());
+	 * 
+	 * 
+	 * frontierTest.add(new Block(null, null));
+	 * frontierTest.get(1).setPosition(1, 0); frontierTest.add(new Block(null,
+	 * null)); frontierTest.get(2).setPosition(2, 0); frontierTest.add(new
+	 * Block(null, null)); frontierTest.get(3).setPosition(3, 0);
+	 * frontierTest.add(new Block(null, null));
+	 * frontierTest.get(4).setPosition(4, 0);
+	 * 
+	 * 
+	 * while (true) { // Game.boardToString(Game.setBlocks); //
+	 * player.setMove(mGame.getFrontier()); //
+	 * Game.boardToString(Game.setBlocks); //
+	 * player2.setMove(mGame.getFrontier()); } }
+	 */
 
 	public String boardToString() {
 		return mBoard.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
@@ -117,12 +108,12 @@ public class HumanTUIPlayer extends Player {
 					}
 				}
 				hand = scanner.nextInt();
-				for(Node n: mBoard.GiveHint(possiblePositions,set,possibleMoves.get(hand))){
+				for (Node n : mBoard.GiveHint(possiblePositions, set, possibleMoves.get(hand))) {
 					System.out.println(n.getPosition());
 				}
 				move = scanner.nextInt();
 				scanner.nextLine();
- 
+
 				if (hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
 					if (move < possiblePositions.size()) {
 						System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c op positie %s \n", hand, move,
@@ -140,7 +131,7 @@ public class HumanTUIPlayer extends Player {
 
 						set.add(currentNode);
 						System.out.println("Size: " + set.size());
-						if (!mBoard.isValid(set)){//.get(set.size()-1))) {
+						if (!mBoard.isValid(set)) {// .get(set.size()-1))) {
 							System.err.print("\t Deze zet m" + "ag niet!");
 							currentNode.setBlock(null);
 							set.remove(currentNode);
@@ -150,7 +141,7 @@ public class HumanTUIPlayer extends Player {
 							for (int i = 0; i < neighbors.length; i++) {
 								// System.out.println(Direction.values()[i]);
 								if (neighbors[i] == null) {
-									Node newEmpty = mBoard.findDuplicateNode(/*possiblePositions,*/
+									Node newEmpty = mBoard.findDuplicateNode(/* possiblePositions, */
 											currentNode.getPosition(), Direction.values()[i]);
 									// System.out.println(newEmpty==null);
 									if (newEmpty == null) {
@@ -178,8 +169,8 @@ public class HumanTUIPlayer extends Player {
 					// Deze sowieso niet hier laten zetten
 					// TODO Game->Board
 					// TODO STACK OF BOARD
-	//				mBoard.getEmptySpaces().clear();
-	//				mBoard.getEmptySpaces().addAll(possiblePositions);
+					// mBoard.getEmptySpaces().clear();
+					// mBoard.getEmptySpaces().addAll(possiblePositions);
 					possibleMoves.clear();
 
 				} else if (input.toLowerCase().equals("reset")) {
@@ -204,8 +195,8 @@ public class HumanTUIPlayer extends Player {
 							System.out.println("Blocks in hand: " + Player.handToString(possibleMoves));
 							System.out.println("Blocks pending for trade: " + Player.handToString(blocksToTrade));
 							hand = scanner.nextInt();
-							if(hand>possibleMoves.size()-1){
-								System.err.println("Deze steen zit niet in je hand"); 
+							if (hand > possibleMoves.size() - 1) {
+								System.err.println("Deze steen zit niet in je hand");
 							}
 							// scanner.nextLine();
 							Node emptyNode = new Node();
@@ -233,23 +224,23 @@ public class HumanTUIPlayer extends Player {
 				}
 			}
 		}
-		
-		//added freshNode to make sure copy is empty
-		//TODO find out if still needed
-		List<Node> setCopy=new ArrayList<Node>();
+
+		// added freshNode to make sure copy is empty
+		// TODO find out if still needed
+		List<Node> setCopy = new ArrayList<Node>();
 		setCopy.addAll(set);
 		set.clear();
-		//mBoard.newSet();
-		for(Node n: setCopy){
-			Node freshNode=new Node();
+		// mBoard.newSet();
+		for (Node n : setCopy) {
+			Node freshNode = new Node();
 			freshNode.setBlock(n.getBlock());
-			freshNode.setPosition((int)n.getPosition().getX(), (int)n.getPosition().getY());
-/*			for(int i = 0; i < n.getNeighborNodes().length;i++){
-
-				if(n.getNeighborNode(i).getBlock()!=null){
-					freshNode.setNeighborNode(n.getNeighborNode(i), i);
-				}
-			}*/
+			freshNode.setPosition((int) n.getPosition().getX(), (int) n.getPosition().getY());
+			/*
+			 * for(int i = 0; i < n.getNeighborNodes().length;i++){
+			 * 
+			 * if(n.getNeighborNode(i).getBlock()!=null){
+			 * freshNode.setNeighborNode(n.getNeighborNode(i), i); } }
+			 */
 			try {
 				removeBlock(freshNode.getBlock());
 			} catch (NotYourBlockException e) {
@@ -257,7 +248,8 @@ public class HumanTUIPlayer extends Player {
 			}
 			set.add(freshNode);
 		}
-	if(set.get(0).getBlock()!=null)setMove(set);
+		if (set.get(0).getBlock() != null)
+			setMove(set);
 		return set;
 	}
 
@@ -269,6 +261,9 @@ public class HumanTUIPlayer extends Player {
 		return hand;
 	}
 
+	public void resetBoard() {
+		mBoard = new Board();
+	}
 	/*
 	 * public static void addFrontiers(List<Node> aFrontierList, Node aNode) {
 	 * Node[] neighbors = aNode.getNeighborNodes(); for (int i = 0; i <

@@ -67,28 +67,26 @@ public class Game {
 		Map<Player, List<Node>> firstPlayerSet = new HashMap<Player, List<Node>>();
 		Player playerHelper = mPlayers.get(0);
 		int highestScore = 0;
-		for (Player player : mPlayers) {
-			try {
-				for (Map.Entry<Player, List<Node>> e : aMapWithFirstMoves.entrySet()) {
-					doMove(e.getValue());
-					int score = 0;
-					for (Node n : e.getValue()) {
-						score += mBoard.calcScore(n);
+		try {
+			for (Map.Entry<Player, List<Node>> e : aMapWithFirstMoves.entrySet()) {
+				doMove(e.getValue());
+				int score = 0;
+				for (Node n : e.getValue()) {
+					score += mBoard.calcScore(n);
 
-					}
-					if (score > highestScore) {
-						playerHelper = e.getKey();
-						highestScore = score;
-					}
 				}
-
-				mBoard = new Board();
-				firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
-			} catch (IllegalMoveException e) {
-				e.printStackTrace();
+				if (score > highestScore) {
+					playerHelper = e.getKey();
+					highestScore = score;
+				}
 			}
 
+			mBoard = new Board();
+			firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
+		} catch (IllegalMoveException e) {
+			e.printStackTrace();
 		}
+
 		return firstPlayerSet;
 
 	}
@@ -210,7 +208,7 @@ public class Game {
 			}
 			if (true) {
 				// mBoard.doMove();
-			//	notifyPlayer(playersMove);
+				// notifyPlayer(playersMove);
 			}
 		} else {
 			// System.out.println("checkHand was false");
@@ -228,10 +226,10 @@ public class Game {
 		for (Player players : mPlayers) {
 			// for (Node n : aValidMove) {
 			if (!players.equals(mCurrentPlayer)) {
-			//	if (players instanceof HumanTUIPlayer)
-					((HumanTUIPlayer) players).setMove(aValidMove);
-			//	else
-				//	((ComputerPlayer) players).setMove(aValidMove);
+				// if (players instanceof HumanTUIPlayer)
+				((HumanTUIPlayer) players).setMove(aValidMove);
+				// else
+				// ((ComputerPlayer) players).setMove(aValidMove);
 				// }
 			}
 		}
