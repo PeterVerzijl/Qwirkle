@@ -69,6 +69,10 @@ public class MainTUI {
 	 *            The command to execute.
 	 */
 	private static void handleCommand(String input) {
+		if (input.trim().length() == 0 || input.equals(System.lineSeparator())) {
+			return;
+		}
+		
 		if (input.contains("help")) {
 			System.out.println("Perhaps you need HELP.");
 			return;
@@ -253,8 +257,12 @@ public class MainTUI {
 			do {
 				 System.out.println("Enter your name: ");
 				 name = readInput();
+				 name = name.trim();
 				 if (name.length() < 2) {
 					 System.out.println("Enter a longer name!");
+				 }
+				 if (name.equals("dave")) {
+					 System.out.println("I am sorry dave, but I can't let you do that.");
 				 }
 			} while (name.length() < 2);
 			mClient.setPlayerName(name);
