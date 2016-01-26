@@ -51,10 +51,10 @@ public class Board {
 	 * @return
 	 */
 	public static Node moveStringToNode(String s) {
-		String[] move = s.split("" + Protocol.Server.Settings.DELIMITER2);
+		String[] move = s.split("" + '\\' + Protocol.Server.Settings.DELIMITER2);
 		String stone = move[0];
-		int x = Integer.parseInt(move[1]);
-		int y = Integer.parseInt(move[2]);
+		int x = (int)Float.parseFloat(move[1]);
+		int y = (int)Float.parseFloat(move[2]);
 		Node n = new Node();
 		n.setPosition(x, y);
 		n.setBlock(Block.getBlockFromCharPair(stone));
