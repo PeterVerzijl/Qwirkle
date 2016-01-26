@@ -248,14 +248,14 @@ public class HumanTUIPlayer extends Player {
 					freshNode.setNeighborNode(n.getNeighborNode(i), i);
 				}
 			}*/
-			/*try {
+			try {
 				removeBlock(freshNode.getBlock());
 			} catch (NotYourBlockException e) {
 				System.err.println("The stone was not your");
-			}*/
+			}
 			set.add(freshNode);
 		}
-		//if(set.get(0).getBlock()!=null)setMove(set);
+		if(set.get(0).getBlock()!=null)setMove(set);
 		return set;
 	}
 
