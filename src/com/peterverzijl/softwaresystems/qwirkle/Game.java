@@ -55,7 +55,8 @@ public class Game {
 	}
 	
 	public Player nextPlayer(){
-		return mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
+		mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
+		return mCurrentPlayer;
 	}
 	// test unit
 	public void run() {

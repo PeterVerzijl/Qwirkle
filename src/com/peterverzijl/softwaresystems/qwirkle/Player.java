@@ -69,7 +69,7 @@ public class Player {
 				return;
 			}
 		}
-		throw new NotYourBlockException();
+		throw new NotYourBlockException("This block: "+block.getColor().toString() +""+block.getShape().toString() +" was not in your hand");
 	}
 
 	/**
