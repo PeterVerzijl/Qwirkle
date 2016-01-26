@@ -22,6 +22,9 @@ public class HumanTUIPlayer extends Player {
 
 	public void setMove(List<Node> aNode) {
 		// System.out.println("Hallo alles spelers");
+		if(aNode.size()<1){
+			return;
+		}
 		try {
 			mBoard.setStones(aNode);
 		} catch (IllegalMoveException e) {
@@ -29,7 +32,7 @@ public class HumanTUIPlayer extends Player {
 		}
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 
 		/**
 		 * DEZE INCLUDEN IN EEN TESTCLASSE
@@ -42,8 +45,8 @@ public class HumanTUIPlayer extends Player {
 		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
 		 * new Vector2(1, 0))]);
 		 * System.out.println(Direction.values()[getDirection(new Vector2(0, 0),
-		 * new Vector2(-1, 0))]);
-		 */
+		 *new Vector2(-1, 0))]);
+		 
 		Game game = new Game(null);
 		Player player = new HumanTUIPlayer();
 		player.initHand(new BlockBag(), 6);
@@ -55,14 +58,14 @@ public class HumanTUIPlayer extends Player {
 		// mGame.getFrontier().get(0).setPosition(0, 0);
 		// System.out.println("game." + game.mFrontier.size());
 
-		/*
+		
 		 * frontierTest.add(new Block(null, null));
 		 * frontierTest.get(1).setPosition(1, 0); frontierTest.add(new
 		 * Block(null, null)); frontierTest.get(2).setPosition(2, 0);
 		 * frontierTest.add(new Block(null, null));
 		 * frontierTest.get(3).setPosition(3, 0); frontierTest.add(new
 		 * Block(null, null)); frontierTest.get(4).setPosition(4, 0);
-		 */
+		
 
 		while (true) {
 			// Game.boardToString(Game.setBlocks);
@@ -70,7 +73,7 @@ public class HumanTUIPlayer extends Player {
 			// Game.boardToString(Game.setBlocks);
 			// player2.setMove(mGame.getFrontier());
 		}
-	}
+	}*/
 
 	public String boardToString() {
 		return mBoard.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());

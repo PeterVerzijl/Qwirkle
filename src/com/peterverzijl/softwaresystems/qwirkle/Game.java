@@ -277,6 +277,9 @@ public class Game {
 		}
 	}
 
+	public Player getCurrentPlayer() {
+		return mCurrentPlayer;
+	}
 	/**
 	 * Removes a player from the game.
 	 * 
