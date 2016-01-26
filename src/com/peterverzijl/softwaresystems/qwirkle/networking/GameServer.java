@@ -26,6 +26,7 @@ import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 public class GameServer implements Server {
 
 	private boolean hasGameStarted = false; // If the game has started
+	private boolean isFirstMove = true;		// Check first move
 
 	private int mTargetPlayerCount; // The amount of players wanted in this
 									// game.
@@ -36,6 +37,8 @@ public class GameServer implements Server {
 	private List<ClientHandler> mClients; // The client handlers
 
 	private Map<ClientHandler, Player> playerClientMap;
+	
+	private Map<Player, List<Node>> firstMoveMap = new HashMap<Player, List<Node>>();
 
 	/**
 	 * Constructor
@@ -146,7 +149,52 @@ public class GameServer implements Server {
 				}
 				break;
 			case Protocol.Client.MAKEMOVE:
-				if (hasGameStarted) {
+				// Do we have all the player's initial moves?
+				if (hasGameStarted && isFirstMove) {
+					Player player = playerClientMap.get(client);
+					if (!firstMoveMap.containsKey(player)) {
+						List<Node> moves = new ArrayList<Node>();
+						for (String move : parameters) {
+							moves.add(Board.moveStringToNode(move));
+						}
+						// Add this move to the moves list
+						firstMoveMap.put(player, moves);
+						
+						// Check if everyone has done the first move
+						if (firstMoveMap.keySet().size() == mClients.size()) {
+							// Do the stuff!
+							Map<Player, List<Node>> startingMove = mGame.startingPlayer(firstMoveMap);
+							Map.Entry<Player, List<Node>> entry = startingMove.entrySet().iterator().next();
+							ClientHandler curPlayer = getClientFromPlayer(entry.getKey());
+							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
+							
+							// Translate moves to text
+							String[] newMoves = new String[entry.getValue().size()];
+							int index = 0;
+							for (Node n : entry.getValue()) {
+								String s = "";
+								s += Block.toChars(n.getBlock());
+								s += Protocol.Server.Settings.DELIMITER2;
+								s += n.getPosition().getX();
+								s += Protocol.Server.Settings.DELIMITER2;
+								s += n.getPosition().getY();
+								newMoves[index++] = s;
+							}
+							
+							// Set the first move done
+							isFirstMove = false;
+							// Broadcast the new move
+							broadcast(getMoveMessage(curPlayer.getName(), 
+													nextPlayer.getName(), 
+													newMoves));
+						}
+					} else {
+						// ignore move
+						// NOTE: Not your turn!
+						client.sendMessage(Protocol.Server.ERROR + 
+								Protocol.Server.Settings.DELIMITER + 1);
+					}					
+				} else if (hasGameStarted) {
 					// Is it our turn?
 					Player clientPlayer = playerClientMap.get(client);
 					if (clientPlayer == mGame.getCurrentPlayer()) {
@@ -311,6 +359,14 @@ public class GameServer implements Server {
 		}
 		broadcast(message);
 		hasGameStarted = true;
+		isFirstMove = true;
+		
+		// Ask all players to do a move
+		for (ClientHandler client : mClients) {
+			client.sendMessage(getMoveMessage(client.getName(), 
+											client.getName(), 
+											null));
+		}
 		
 		// Init the first move...
 	}

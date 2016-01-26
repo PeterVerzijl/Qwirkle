@@ -52,7 +52,7 @@ public class Game {
 		mCurrentPlayer = mPlayers.get(0);
 	}
 
-	public Map<Player, List<Node>> startingPlayer() {
+	public Map<Player, List<Node>> startingPlayer(Map<Player, List<Node>> firstPlays) {
 		Map<Player, List<Node>> firstPlayerSet = new HashMap<Player, List<Node>>();
 		for(Player player: mPlayers){
 			try {
