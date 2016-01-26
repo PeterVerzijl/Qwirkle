@@ -1,7 +1,9 @@
 package com.peterverzijl.softwaresystems.qwirkle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //import com.peterverzijl.softwaresystems.qwirkle.collision.RectangleCollider;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
@@ -47,17 +49,30 @@ public class Game {
 			mPlayers.get(i).initHand(mBag, 6);
 		}
 
-		mCurrentPlayer = startingPlayer();
+		mCurrentPlayer = mPlayers.get(0);
 	}
 
-	public Player startingPlayer() {
-		return mPlayers.get(0);
+	public Map<Player, List<Node>> startingPlayer() {
+		Map<Player, List<Node>> firstPlayerSet = new HashMap<Player, List<Node>>();
+		for(Player player: mPlayers){
+			try {
+				List<Node> firstSet = player.determineMove();
+				doMove(firstSet);
+				mBoard=new Board();
+				
+			} catch (IllegalMoveException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		return firstPlayerSet;
 	}
-	
-	public Player nextPlayer(){
+
+	public Player nextPlayer() {
 		mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
 		return mCurrentPlayer;
 	}
+
 	// test unit
 	public void run() {
 		while (!hasEnded()) {
@@ -75,15 +90,17 @@ public class Game {
 	}
 
 	/**
-	 * If there are no more stones in the bag
-	 * Loop through all players and their hand till it finds a vallid move
-	 * @return true if a valid move is found or if there are stones in the bag of stones
+	 * If there are no more stones in the bag Loop through all players and their
+	 * hand till it finds a vallid move
+	 * 
+	 * @return true if a valid move is found or if there are stones in the bag
+	 *         of stones
 	 */
 	public boolean hasEnded() {
 		if (!(getNumStonesInBag() > 0)) {
 			for (Player p : mPlayers) {
 				for (Block s : p.getHand()) {
-					if ((mBoard.GiveHint(mBoard.getEmptySpaces(),null, s)).size() > 0) {
+					if ((mBoard.GiveHint(mBoard.getEmptySpaces(), null, s)).size() > 0) {
 						return false;
 					}
 
@@ -123,7 +140,8 @@ public class Game {
 		}
 		return result;
 	}
-
+	
+	//public setScore();
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
@@ -185,8 +203,10 @@ public class Game {
 		for (Player players : mPlayers) {
 			// for (Node n : aValidMove) {
 			if (!players.equals(mCurrentPlayer)) {
-				if(players instanceof HumanTUIPlayer) ((HumanTUIPlayer)players).setMove(aValidMove);
-				else ((ComputerPlayer)players).setMove(aValidMove);
+				if (players instanceof HumanTUIPlayer)
+					((HumanTUIPlayer) players).setMove(aValidMove);
+				else
+					((ComputerPlayer) players).setMove(aValidMove);
 				// }
 			}
 		}
@@ -285,6 +305,7 @@ public class Game {
 	public Player getCurrentPlayer() {
 		return mCurrentPlayer;
 	}
+
 	/**
 	 * Removes a player from the game.
 	 * 

@@ -32,6 +32,7 @@ public class Player {
 		mHand.clear();
 	}
 	
+	
 	/**
 	 * Draws the blocks from the bag at the start of the game
 	 * 
@@ -56,6 +57,16 @@ public class Player {
 		mHand.add(block);
 	}
 
+	public void removeBlocksFromHand(List<Node> aList){
+		for(Node n: aList){
+			try {
+				removeBlock(n.getBlock());
+			} catch (NotYourBlockException e) {
+				System.err.println(e.getMessage());
+			}
+		}
+	}
+	
 	/**
 	 * Removes a block of the same kind from the players hand.
 	 * @param block The block to remove
