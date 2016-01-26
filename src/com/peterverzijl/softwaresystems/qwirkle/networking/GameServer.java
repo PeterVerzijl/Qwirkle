@@ -84,7 +84,7 @@ public class GameServer implements Server {
 	 *            The client handler that send the message.
 	 */
 	@Override
-	public void sendMessage(String message, ClientHandler client) {
+	public synchronized void sendMessage(String message, ClientHandler client) {
 		if (message.length() < 1) {
 			return;
 		}
