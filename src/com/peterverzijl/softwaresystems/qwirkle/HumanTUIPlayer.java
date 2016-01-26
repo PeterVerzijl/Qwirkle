@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 
 /**
@@ -244,6 +245,11 @@ public class HumanTUIPlayer extends Player {
 					freshNode.setNeighborNode(n.getNeighborNode(i), i);
 				}
 			}*/
+			try {
+				removeBlock(freshNode.getBlock());
+			} catch (NotYourBlockException e) {
+				System.err.println("The stone was not your");
+			}
 			set.add(freshNode);
 		}
 		if(set.get(0).getBlock()!=null)setMove(set);
