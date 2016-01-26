@@ -52,20 +52,45 @@ public class Game {
 		mCurrentPlayer = mPlayers.get(0);
 	}
 
-	public Map<Player, List<Node>> startingPlayer() {
+	public void setFirstPlayer(HashMap<Player, List<Node>> firstSet) {
+		HashMap.Entry<Player, List<Node>> entry = firstSet.entrySet().iterator().next();
+		mCurrentPlayer = entry.getKey();
+		try {
+			doMove(entry.getValue());
+		} catch (IllegalMoveException e) {
+			System.err.println("How the fuck did you mess this up!");
+		}
+
+	}
+
+	public Map<Player, List<Node>> startingPlayer(Map<Player, List<Node>> aMapWithFirstMoves) {
 		Map<Player, List<Node>> firstPlayerSet = new HashMap<Player, List<Node>>();
-		for(Player player: mPlayers){
+		Player playerHelper = mPlayers.get(0);
+		int highestScore = 0;
+		for (Player player : mPlayers) {
 			try {
-				List<Node> firstSet = player.determineMove();
-				doMove(firstSet);
-				mBoard=new Board();
-				
+				for (Map.Entry<Player, List<Node>> e : aMapWithFirstMoves.entrySet()) {
+					doMove(e.getValue());
+					int score = 0;
+					for (Node n : e.getValue()) {
+						score += mBoard.calcScore(n);
+
+					}
+					if (score > highestScore) {
+						playerHelper = e.getKey();
+						highestScore = score;
+					}
+				}
+
+				mBoard = new Board();
+				firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
 			} catch (IllegalMoveException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 		return firstPlayerSet;
+
 	}
 
 	public Player nextPlayer() {
@@ -140,8 +165,8 @@ public class Game {
 		}
 		return result;
 	}
-	
-	//public setScore();
+
+	// public setScore();
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
