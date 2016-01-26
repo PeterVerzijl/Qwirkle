@@ -166,8 +166,11 @@ public class Client implements Runnable {
 				for (String move : moves) {
 					nodes.add(Board.moveStringToNode(move));
 				}
+				
+				// This updates board
+				mPlayer.setMove(nodes);
+				
 				if (!movingPlayer.equals(username)) {
-					mPlayer.setMove(nodes);
 					// Message the viewer that a move has been done
 					if (mViewer != null) {
 						mViewer.displayMessage(movingPlayer + " has made a move.");
@@ -177,6 +180,9 @@ public class Client implements Runnable {
 							mViewer.displayMessage(mPlayer.boardToString());
 						}
 					}
+				} else {
+					// We were the moving player
+					// mPlayer.removeBlocksFromHand(nodes);
 				}
 				// Is it our turn?
 				if (nextPlayer.equals(username)) {
@@ -200,8 +206,6 @@ public class Client implements Runnable {
 					for (String name : parameters) {
 						mViewer.displayMessage(name);
 					}
-					// Ask the player to do a move
-					doMove();
 				}
 				
 				///mGame = new Game();
@@ -333,6 +337,7 @@ public class Client implements Runnable {
 				if (mViewer != null) {
 					mViewer.displayMessage("Invalid move.");
 				}
+				doMove();
 				break;
 			case 8:			// General error ??
 				if (mViewer != null) {
