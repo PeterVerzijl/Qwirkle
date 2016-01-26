@@ -34,8 +34,6 @@ public class Client implements Runnable {
 	private BufferedReader in;
 	private BufferedWriter out;
 	
-	private Map<String, Player> mPlayerNameMap;
-	
 	private ChatView mViewer;
 	
 	// Game stuff
@@ -187,7 +185,8 @@ public class Client implements Runnable {
 					}
 					MainTUI.lock.lock();
 					try {
-						mPlayer.determineMove();
+						List<Node> nodes = mPlayer.determineMove();
+						sendMoves(nodes);
 					} finally {
 						MainTUI.lock.unlock();
 					}
@@ -233,6 +232,36 @@ public class Client implements Runnable {
 		}
 	}
 	
+	/**
+	 * Sends a move message with all the move's.
+	 * @param nodes All moves that the player makes.
+	 */
+	private void sendMoves(List<Node> nodes) {
+		String message = "";
+		message += Protocol.Client.MAKEMOVE;
+		for (Node n : nodes) {
+			message += Protocol.Server.Settings.DELIMITER;
+			message += getStringMove(n);
+		}
+		sendMessage(message);
+	}
+
+	/**
+	 * Gets the move string for the protocol from the node.
+	 * CharChar*x*y
+	 * @param node The move in the node.
+	 * @return The string representation of the move.
+	 */
+	private String getStringMove(Node node) {
+		String message = "";
+		message += Block.toChars(node.getBlock());
+		message += Protocol.Server.Settings.DELIMITER2;
+		message += node.getPosition().getX();
+		message += Protocol.Server.Settings.DELIMITER2;
+		message += node.getPosition().getY();
+		return message;
+	}
+
 	/**
 	 * Show the viewer that the game has stopped.
 	 */
@@ -331,9 +360,9 @@ public class Client implements Runnable {
 		System.out.println("Closing socket connection...");
 		sendMessage(username + " left the chat.");
 		try {
+			sock.close();
 			in.close();
 			out.close();
-			sock.close();
 		} catch (IOException e) {
 			if(mViewer != null) mViewer.displayMessage("Left chat.");
 		}

@@ -85,68 +85,79 @@ public class GameServer implements Server {
 		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
 
 		switch (command) {
-		case Protocol.Client.CHANGESTONE:
-			// Get stones from command
-			try {
-				List<Block> tradedBlocks = new ArrayList<Block>();
-				for (String stone : parameters) {
-					// TODO (Peter) : Change the way we get a stone from the player hand.
-					Block b = Block.getBlockFromCharPair(stone);
-					
-					for (Block handBlock : playerClientMap.get(client).getHand()) {
-						if (b.equals(handBlock)) {
-							b = handBlock;
+			case Protocol.Client.CHANGESTONE:
+				if (!hasGameStarted) {
+					client.sendMessage(Protocol.Server.ERROR + 
+							Protocol.Server.Settings.DELIMITER + 1);
+					return;
+				}
+				// Get stones from command
+				try {
+					List<Block> tradedBlocks = new ArrayList<Block>();
+					for (String stone : parameters) {
+						// TODO (Peter) : Change the way we get a stone from the player hand.
+						Block b = Block.getBlockFromCharPair(stone);
+						
+						for (Block handBlock : playerClientMap.get(client).getHand()) {
+							if (b.equals(handBlock)) {
+								b = handBlock;
+							}
+						}
+						
+						if (b != null) {
+							// Check if the current player has this block.
+							Block newBlock = mGame.tradeBlock(playerClientMap.get(client), b);
+							tradedBlocks.add(newBlock);
+						} else {
+							client.sendMessage(Protocol.Server.ERROR + 
+												Protocol.Server.Settings.DELIMITER + 2);
 						}
 					}
-					
-					if (b != null) {
-						// Check if the current player has this block.
-						Block newBlock = mGame.tradeBlock(playerClientMap.get(client), b);
-						tradedBlocks.add(newBlock);
-					} else {
-						client.sendMessage(Protocol.Server.ERROR + 
-											Protocol.Server.Settings.DELIMITER + 2);
-					}
+					sendBlocksClient(tradedBlocks, client);
+				} catch (NotYourTurnException e) {
+					client.sendMessage(Protocol.Server.ERROR + 
+										Protocol.Server.Settings.DELIMITER + 1);
+				} catch (NotYourBlockException e) {
+					client.sendMessage(Protocol.Server.ERROR + 
+										Protocol.Server.Settings.DELIMITER + 2);
 				}
-				sendBlocksClient(tradedBlocks, client);
-			} catch (NotYourTurnException e) {
-				client.sendMessage(Protocol.Server.ERROR + 
-									Protocol.Server.Settings.DELIMITER + 1);
-			} catch (NotYourBlockException e) {
-				client.sendMessage(Protocol.Server.ERROR + 
-									Protocol.Server.Settings.DELIMITER + 2);
-			}
-			break;
-		case Protocol.Client.CHAT:
-			broadcast(Protocol.Server.CHAT + 
-						Protocol.Server.Settings.DELIMITER + 
-						client.getName() + ": "
-						+ parameters[0]); // The first parameter is the text.
-			break;
-		case Protocol.Client.GETSTONESINBAG:
-			if (hasGameStarted) {
-				client.sendMessage(Protocol.Server.CHAT + 
-									Protocol.Server.Settings.DELIMITER + 
-									mGame.getNumStonesInBag());
-			} else {
+				break;
+			case Protocol.Client.CHAT:
+				broadcast(Protocol.Server.CHAT + 
+							Protocol.Server.Settings.DELIMITER + 
+							client.getName() + ": "
+							+ parameters[0]); // The first parameter is the text.
+				break;
+			case Protocol.Client.GETSTONESINBAG:
+				if (hasGameStarted) {
+					client.sendMessage(Protocol.Server.CHAT + 
+										Protocol.Server.Settings.DELIMITER + 
+										mGame.getNumStonesInBag());
+				} else {
+					client.sendMessage(Protocol.Server.ERROR + 
+										Protocol.Server.Settings.DELIMITER + 8);
+				}
+				break;
+			case Protocol.Client.MAKEMOVE:
+				if (hasGameStarted) {
+					// MAKEMOVE_<CharChar*int*int>_<CharChar*int*int>					
+				} else {
+					client.sendMessage(Protocol.Server.ERROR + 
+							Protocol.Server.Settings.DELIMITER + 1);
+				}
+				break;
+			case Protocol.Client.QUIT:
+				// Ok doei lol
+				mClients.remove(client);
+				mGame.removePlayer(playerClientMap.get(client));
+				playerClientMap.remove(client);
+				client.shutdown();
+				// TODO (peter) : Check if this player had the turn, if so, pass on.
+				break;
+			default:
 				client.sendMessage(Protocol.Server.ERROR + 
 									Protocol.Server.Settings.DELIMITER + 8);
-			}
-			break;
-		case Protocol.Client.MAKEMOVE:
-			
-			// MAKEMOVE_<CharChar*int*int>_<CharChar*int*int>
-			break;
-		case Protocol.Client.QUIT:
-			// Ok doei lol
-			mClients.remove(client);
-			mGame.removePlayer(playerClientMap.get(client));
-			client.shutdown();
-			break;
-		default:
-			client.sendMessage(Protocol.Server.ERROR + 
-								Protocol.Server.Settings.DELIMITER + 8);
-			break;
+				break;
 		}
 	}
 	
@@ -248,6 +259,15 @@ public class GameServer implements Server {
 		}
 		
 		// Init the first move...
+	}
+	
+	/**
+	 * Called by the game. This shuts down everything.
+	 */
+	public void stopGame() {
+		// TODO (peter) : Destroy everything and return the client handlers,
+		// to the 
+		
 	}
 
 	/**

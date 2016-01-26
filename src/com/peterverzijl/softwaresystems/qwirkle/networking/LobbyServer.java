@@ -95,9 +95,15 @@ public class LobbyServer implements Server, Runnable {
 				// TODO (peter) : Implement challenging
 				break;
 			case Protocol.Client.CHAT:
-				broadcast(Protocol.Server.CHAT + 
-						Protocol.Server.Settings.DELIMITER + 
-						client.getName() + ": " + parameters[0]);	// The first parameter is the text.
+				if (client.getName() != null) {
+					broadcast(Protocol.Server.CHAT + 
+							Protocol.Server.Settings.DELIMITER + 
+							client.getName() + ": " + parameters[0]);	// The first parameter is the text.
+				} else {
+					// Send a general error.
+					client.sendMessage(Protocol.Server.ERROR + 
+							Protocol.Server.Settings.DELIMITER + 8);
+				}
 				break;
 			case Protocol.Client.DECLINEINVITE:
 				// TODO (peter) : Implement challenging
@@ -120,14 +126,20 @@ public class LobbyServer implements Server, Runnable {
 				// TODO (everyone) : No messages from the client supported in the protocol yet.
 				break;
 			case Protocol.Client.REQUESTGAME:
-				try {
-					int numPlayers = Integer.parseInt(parameters[0]);
-					if (numPlayers < 0) {
-						throw new NumberFormatException();
+				if (client.getName() != null) {
+					try {
+						int numPlayers = Integer.parseInt(parameters[0]);
+						if (numPlayers < 0) {
+							throw new NumberFormatException();
+						}
+						assignPlayerToGame(numPlayers, client);
+					} catch (NumberFormatException e) {
+						// Errors! this is not a number
+						client.sendMessage(Protocol.Server.ERROR + 
+								Protocol.Server.Settings.DELIMITER + 8);
 					}
-					assignPlayerToGame(numPlayers, client);
-				} catch (NumberFormatException e) {
-					// Errors! this is not a number
+				} else {
+					// Send a general error.
 					client.sendMessage(Protocol.Server.ERROR + 
 							Protocol.Server.Settings.DELIMITER + 8);
 				}
