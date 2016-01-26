@@ -222,7 +222,7 @@ public class Game {
 	 * 
 	 * @param aValidMove
 	 */
-	void notifyPlayer(List<Node> aValidMove) {
+	/*void notifyPlayer(List<Node> aValidMove) {
 		for (Player players : mPlayers) {
 			// for (Node n : aValidMove) {
 			if (!players.equals(mCurrentPlayer)) {
@@ -233,7 +233,7 @@ public class Game {
 				// }
 			}
 		}
-	}
+	}*/
 
 	public List<Node> getFrontier() {
 		List<Node> copy = new ArrayList<Node>();

@@ -248,8 +248,8 @@ public class HumanTUIPlayer extends Player {
 			}
 			set.add(freshNode);
 		}
-		if (set.get(0).getBlock() != null)
-			setMove(set);
+		//if (set.get(0).getBlock() != null)
+			//setMove(set);
 		return set;
 	}
 
