@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.peterverzijl.softwaresystems.qwirkle.Block;
+import com.peterverzijl.softwaresystems.qwirkle.Board;
 import com.peterverzijl.softwaresystems.qwirkle.Game;
+import com.peterverzijl.softwaresystems.qwirkle.IllegalMoveException;
+import com.peterverzijl.softwaresystems.qwirkle.Node;
 import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.AddPlayerToGameException;
 import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.GameFullException;
@@ -140,7 +143,38 @@ public class GameServer implements Server {
 				break;
 			case Protocol.Client.MAKEMOVE:
 				if (hasGameStarted) {
-					// MAKEMOVE_<CharChar*int*int>_<CharChar*int*int>					
+					// Is it our turn?
+					Player clientPlayer = playerClientMap.get(client);
+					if (clientPlayer == mGame.getCurrentPlayer()) {
+						if (parameters.length > 0) {
+							// Get moves
+							List<Node> moves = new ArrayList<Node>();
+							for (String move : parameters) {
+								moves.add(Board.moveStringToNode(move));
+							}
+							// Do moves
+							try {
+								mGame.doMove(moves);
+								// Give turn to next player
+								Player p = mGame.nextPlayer();
+								ClientHandler ch = getClientFromPlayer(p);								
+								// Now broadcast to next player a do move thing...
+								broadcast(getMoveMessage(client.getName(), ch.getName(), parameters));
+							} catch (IllegalMoveException e) {
+								// NOTE: Invalid move
+								client.sendMessage(Protocol.Server.ERROR + 
+										Protocol.Server.Settings.DELIMITER + 7);
+							}
+						} else {
+							// NOTE: Invalid move (can't move 0 stones!)
+							client.sendMessage(Protocol.Server.ERROR + 
+									Protocol.Server.Settings.DELIMITER + 7);
+						}
+					} else {
+						// NOTE: Not your turn!
+						client.sendMessage(Protocol.Server.ERROR + 
+								Protocol.Server.Settings.DELIMITER + 1);
+					}
 				} else {
 					client.sendMessage(Protocol.Server.ERROR + 
 							Protocol.Server.Settings.DELIMITER + 1);
@@ -161,6 +195,21 @@ public class GameServer implements Server {
 		}
 	}
 	
+	/**
+	 * Returns the first found client handler that is mapped to this player.
+	 * @param player The player to get the client from.
+	 * @return The client found that belongs to the given player.
+	 */
+	private ClientHandler getClientFromPlayer(Player player) {
+		ClientHandler result = null;
+		for (ClientHandler ch : playerClientMap.keySet()) {
+			if (playerClientMap.get(ch) == player) {
+				result = ch;
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Sends an ADDTOHAND message to the client.
 	 * @param blocks The blocks to send to the client.
@@ -247,15 +296,8 @@ public class GameServer implements Server {
 		// Send blocks to the clients
 		for (ClientHandler client : mClients) {
 			sendBlocksClient(playerClientMap.get(client).getHand(), client);
-			
-			// Ask all players to send their initial move.
-			String initMoveMessage = "";
-			initMoveMessage += Protocol.Server.MOVE;
-			initMoveMessage += Protocol.Server.Settings.DELIMITER;
-			initMoveMessage += client.getName();
-			initMoveMessage += Protocol.Server.Settings.DELIMITER;
-			initMoveMessage += client.getName();
-			client.sendMessage(initMoveMessage);
+			// Ask all players to submit the first move
+			client.sendMessage(getMoveMessage(client.getName(), client.getName(), null));
 		}
 		
 		// Init the first move...
@@ -268,6 +310,25 @@ public class GameServer implements Server {
 		// TODO (peter) : Destroy everything and return the client handlers,
 		// to the 
 		
+	}
+	
+	/*
+	 * Sends the move to the clients.
+	 */
+	private String getMoveMessage(String playerName, String nextPlayerName, String[] moves) {
+		String message = "";
+		message += Protocol.Server.MOVE;
+		message += Protocol.Server.Settings.DELIMITER;
+		message += playerName;
+		message += Protocol.Server.Settings.DELIMITER;
+		message += nextPlayerName;
+		if (moves != null) {
+			for (String move : moves) {
+				message += Protocol.Server.Settings.DELIMITER;
+				message += move;
+			}
+		}
+		return message;
 	}
 
 	/**

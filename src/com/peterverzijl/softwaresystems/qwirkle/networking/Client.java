@@ -162,10 +162,11 @@ public class Client implements Runnable {
 				String movingPlayer = parameters[0];
 				String nextPlayer = parameters[1];
 				String[] moves = Arrays.copyOfRange(parameters, 2, parameters.length);
+				List<Node> nodes = new ArrayList<Node>();
 				for (String move : moves) {
-					Node n = Board.moveStringToNode(move);
-					mPlayer.setMove(n);
+					nodes.add(Board.moveStringToNode(move));
 				}
+				mPlayer.setMove(nodes);
 				if (!movingPlayer.equals(username)) {
 					// Message the viewer that a move has been done
 					if (mViewer != null) {
@@ -179,14 +180,17 @@ public class Client implements Runnable {
 				}
 				// Is it our turn?
 				if (nextPlayer.equals(username)) {
+					if (mViewer != null) {
+						mViewer.displayMessage("It is our turn now... press ENTER");
+					}
 					// TODO (peter) : Contact PlayerTUI
 					while (MainTUI.lock.isLocked() && !MainTUI.lock.isHeldByCurrentThread()) {
 						// Do nothing.
 					}
 					MainTUI.lock.lock();
 					try {
-						List<Node> nodes = mPlayer.determineMove();
-						sendMoves(nodes);
+						List<Node> resultMoves = mPlayer.determineMove();
+						sendMoves(resultMoves);
 					} finally {
 						MainTUI.lock.unlock();
 					}
