@@ -185,7 +185,8 @@ public class Game {
 		for (Player players : mPlayers) {
 			// for (Node n : aValidMove) {
 			if (!players.equals(mCurrentPlayer)) {
-				((HumanTUIPlayer) players).setMove(aValidMove);
+				if(players instanceof HumanTUIPlayer) ((HumanTUIPlayer)players).setMove(aValidMove);
+				else ((ComputerPlayer)players).setMove(aValidMove);
 				// }
 			}
 		}

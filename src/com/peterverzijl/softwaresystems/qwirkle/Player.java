@@ -31,7 +31,7 @@ public class Player {
 	public Player() {
 		mHand.clear();
 	}
-
+	
 	/**
 	 * Draws the blocks from the bag at the start of the game
 	 * 
@@ -127,5 +127,5 @@ public class Player {
 	void resetHand() {
 		mHand.clear();
 	}
-	
+
 }

@@ -202,6 +202,9 @@ public class HumanTUIPlayer extends Player {
 							System.out.println("Blocks in hand: " + Player.handToString(possibleMoves));
 							System.out.println("Blocks pending for trade: " + Player.handToString(blocksToTrade));
 							hand = scanner.nextInt();
+							if(hand>possibleMoves.size()-1){
+								System.err.println("Deze steen zit niet in je hand"); 
+							}
 							// scanner.nextLine();
 							Node emptyNode = new Node();
 							emptyNode.setBlock(possibleMoves.get(hand));
@@ -245,14 +248,14 @@ public class HumanTUIPlayer extends Player {
 					freshNode.setNeighborNode(n.getNeighborNode(i), i);
 				}
 			}*/
-			try {
+			/*try {
 				removeBlock(freshNode.getBlock());
 			} catch (NotYourBlockException e) {
 				System.err.println("The stone was not your");
-			}
+			}*/
 			set.add(freshNode);
 		}
-		if(set.get(0).getBlock()!=null)setMove(set);
+		//if(set.get(0).getBlock()!=null)setMove(set);
 		return set;
 	}
 
