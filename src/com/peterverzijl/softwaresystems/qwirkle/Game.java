@@ -27,10 +27,14 @@ public class Game {
 
 	private Board mBoard;
 
+	/**
+	 * constructor that creates a game based on the amount of players
+	 * 
+	 * @param aPlayerList
+	 */
 	public Game(List<Player> aPlayerList) {
 		mBag = new BlockBag();
 		mBoard = new Board();
-		// TODO: DENNIS score resetten
 
 		mPlayers = aPlayerList;
 		for (int i = 0; i < mPlayers.size(); i++) {
@@ -41,11 +45,17 @@ public class Game {
 		mCurrentPlayer = mPlayers.get(0);
 	}
 
+	/**
+	 * Sets the first player and does the move that was worth the most points
+	 * 
+	 * @param firstSet
+	 */
 	public void setFirstPlayer(Map<Player, List<Node>> firstSet) {
 		HashMap.Entry<Player, List<Node>> entry = firstSet.entrySet().iterator().next();
 		mCurrentPlayer = entry.getKey();
 		try {
 			doMove(entry.getValue());
+			// mCurrentPlayer = nextPlayer();
 		} catch (IllegalMoveException e) {
 			System.err.println("How the fuck did you mess this up!");
 		} catch (NotYourBlockException e) {
@@ -54,33 +64,45 @@ public class Game {
 
 	}
 
+	/**
+	 * Receives the first move of all the players and determine which player
+	 * should start by calculation the scores of each move. The player with the
+	 * highest scoring moves wins
+	 * 
+	 * @param aMapWithFirstMoves
+	 * @return map with the best move and the player that did the move
+	 */
 	public Map<Player, List<Node>> startingPlayer(Map<Player, List<Node>> aMapWithFirstMoves) {
 		Map<Player, List<Node>> firstPlayerSet = new HashMap<Player, List<Node>>();
 		Player playerHelper = mPlayers.get(0);
 		int highestScore = 0;
 		for (Map.Entry<Player, List<Node>> e : aMapWithFirstMoves.entrySet()) {
-			mCurrentPlayer = e.getKey();	// Set the currently 'winning'player, since the checkHand in doMove uses this
+			mCurrentPlayer = e.getKey(); // Set the currently 'winning'player,
+											// since the checkHand in doMove
+											// uses this
 			List<Block> handBackup = new ArrayList<Block>(mCurrentPlayer.getHand());
 			try {
 				doMove(e.getValue());
 			} catch (NotYourBlockException | IllegalMoveException e1) {
 				// This could happen, if so, just skip that person.
-				// NOTE: This happens for example if you send and empty initial node.
+				// NOTE: This happens for example if you send and empty initial
+				// node.
 				continue;
 			}
 			int score = 0;
-			for (int i=0; i< e.getValue().size(); i++) {
-                score += mBoard.calcScore(mBoard.getPlacedBlocks().get(i));
-            }
-            if (score > highestScore) {
-                playerHelper = e.getKey();
-                highestScore = score;
-            }
-			
-            e.getKey().setHand(handBackup);
-			mBoard = new Board();			// Clear the board for the next try or for setting the move.
-				
-			System.out.println(mPlayers.indexOf(playerHelper)+" "+aMapWithFirstMoves.get(playerHelper).size());
+			for (int i = 0; i < e.getValue().size(); i++) {
+				score += mBoard.calcScore(mBoard.getPlacedBlocks().get(i));
+			}
+			if (score > highestScore) {
+				playerHelper = e.getKey();
+				highestScore = score;
+			}
+
+			e.getKey().setHand(handBackup);
+			mBoard = new Board(); // Clear the board for the next try or for
+									// setting the move.
+
+			System.out.println(mPlayers.indexOf(playerHelper) + " " + aMapWithFirstMoves.get(playerHelper).size());
 			firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
 			setFirstPlayer(firstPlayerSet);
 		}
@@ -89,25 +111,14 @@ public class Game {
 
 	}
 
+	/**
+	 * sets the next player
+	 * 
+	 * @return
+	 */
 	public Player nextPlayer() {
 		mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
 		return mCurrentPlayer;
-	}
-
-	// test unit
-	public void run() {
-		while (!hasEnded()) {
-			try {
-				System.out.println("Board in Game");
-				System.out.println(Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces()));
-				doMove(mCurrentPlayer.determineMove());
-				addBlocks(mCurrentPlayer);
-				mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
-			} catch (IllegalMoveException | NotYourBlockException e) {
-				System.err.println("Er gaan dingen mis!!!");
-			}
-		}
-		// doe iets als de game klaar is
 	}
 
 	/**
@@ -131,11 +142,14 @@ public class Game {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks if a similar block, exists in the hand of the player.
-	 * @param player The player to check for.
-	 * @param block The block to check.
+	 * 
+	 * @param player
+	 *            The player to check for.
+	 * @param block
+	 *            The block to check.
 	 * @return
 	 */
 	public boolean checkHand(Player player, Block block) {
@@ -167,7 +181,15 @@ public class Game {
 		return result;
 	}
 
-	// public setScore();
+	/**
+	 * Checks if the list of blocks received are in the hand of the player
+	 * checks if the player wants to trade checks with the board if the move is
+	 * valid removes the blocks from the hand if the move is valid
+	 * 
+	 * @param aPlayerMove
+	 * @throws IllegalMoveException
+	 * @throws NotYourBlockException
+	 */
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException, NotYourBlockException {
 		List<Node> playersMove = aPlayerMove;
 		boolean trade = false;
@@ -183,40 +205,23 @@ public class Game {
 		if (playersMove.get(0).getPosition().getX() == GameConstants.UNSET_NODE) {
 			trade = true;
 		}
-		// System.out.println("checking hand!");
-		// System.out.println("Trade = " + trade);
 		if (checkHand(playersMove)) {
 			System.out.println("Set in hand");
-			// System.out.println(playersMove.size());
-			// mBoard.newSet();
 			mBoard.setStones(playersMove);
 			for (int i = 0; i < playersMove.size(); i++) {
 				if (!trade) {
-					// boardScale(playersMove.get(i).getPosition());
-					/*
-					 * System.out.println(playersMove.get(i).getBlock().getShape
-					 * () + " " + playersMove.get(i).getBlock().getColor() +
-					 * ""); mBoard.setStone(playersMove.get(i));
-					 */
 				} else {
-					// System.out.println("Now trading");
 					tradeBlocks(playersMove.get(i).getBlock());
 				}
 				try {
 					mCurrentPlayer.removeBlock(playersMove.get(i).getBlock());
 				} catch (NotYourBlockException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			if (true) {
-				// mBoard.doMove();
-				// notifyPlayer(playersMove);
 			}
 		} else {
 			throw new NotYourBlockException();
 		}
-		System.out.println("De zet is gezet");
 	}
 
 	/**
@@ -227,17 +232,17 @@ public class Game {
 	 */
 	void notifyPlayer(List<Node> aValidMove) {
 		for (Player players : mPlayers) {
-			// for (Node n : aValidMove) {
 			if (!players.equals(mCurrentPlayer)) {
-				// if (players instanceof HumanTUIPlayer)
 				((HumanTUIPlayer) players).setMove(aValidMove);
-				// else
-				// ((ComputerPlayer) players).setMove(aValidMove);
-				// }
 			}
 		}
 	}
 
+	/**
+	 * returns a copy of the board
+	 * 
+	 * @return
+	 */
 	public List<Node> getFrontier() {
 		List<Node> copy = new ArrayList<Node>();
 		List<Node> original = mBoard.getEmptySpaces();
@@ -247,21 +252,13 @@ public class Game {
 		return copy;
 	}
 
+	/**
+	 * Returns the players that are currently in the game
+	 * 
+	 * @return
+	 */
 	public List<Player> getPlayers() {
 		return mPlayers;
-	}
-
-	/**
-	 * Function gets called every frame.
-	 */
-	public void tick() {
-		/*
-		 * renderHand(mPlayers.get(mCurrentPlayer));
-		 * mPlayers.get(mCurrentPlayer).setMove(mFrontier); mCurrentPlayer =
-		 * (mCurrentPlayer + 1) % mPlayers.size();
-		 * addBlocks(mPlayers.get(mCurrentPlayer)); System.out.println(
-		 * "Now the new board will get rendered"); renderBlocks();
-		 */
 	}
 
 	/**
@@ -281,10 +278,21 @@ public class Game {
 		return newBlocks;
 	}
 
+	/**
+	 * gets the placed nodes of the unit
+	 * 
+	 * @return
+	 */
 	public List<Node> getCopyBoard() {
 		return mBoard.getPlacedBlocks();
 	}
 
+	/**
+	 * adds stones to the hand of the player
+	 * 
+	 * @param aAmount
+	 * @return
+	 */
 	public List<Block> addStone(int aAmount) {
 		List<Block> newBlocks = new ArrayList<Block>();
 		for (int i = 0; i < aAmount; i++) {
@@ -293,6 +301,11 @@ public class Game {
 		return newBlocks;
 	}
 
+	/**
+	 * adds the blocks back to the bag
+	 * 
+	 * @param aBlock
+	 */
 	public void tradeBlocks(Block aBlock) {
 		mBag.blocks.add(aBlock);
 	}

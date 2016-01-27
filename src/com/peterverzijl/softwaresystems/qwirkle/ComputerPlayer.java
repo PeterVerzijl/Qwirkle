@@ -17,42 +17,56 @@ public class ComputerPlayer extends Player {
 		List<Block> possibleMoves = new ArrayList<Block>(getHand());
 		List<Node> possiblePositions = new ArrayList<Node>(mBoard.getEmptySpaces());
 		List<Node> set = new ArrayList<Node>();
-		Map<Integer,List<Node>> possibleSets=new HashMap<Integer, List<Node>>(determineBestMove(possibleMoves,possiblePositions,set));
+		Map<Integer, List<Node>> possibleSets = new HashMap<Integer, List<Node>>(
+				determineBestMove(possibleMoves, possiblePositions, set));
 		int longestSet = 0;
-		for(int i: possibleSets.keySet()){
-			
-			if(i>longestSet){
-				longestSet=i;
+
+		for (Map.Entry<Integer, List<Node>> e : possibleSets.entrySet()) {
+			System.out.print(e.getKey());
+			System.out.print(" " + e.getValue() + "\n");
+		}
+
+		for (int i : possibleSets.keySet()) {
+
+			if (i > longestSet) {
+				longestSet = i;
 			}
 		}
+		
 		return possibleSets.get(longestSet);
 	}
 
 	public Map<Integer, List<Node>> determineBestMove(List<Block> aPossibleMoves, List<Node> aPossiblePositions,
 			List<Node> aSet) {
-		Map<Integer,List<Node>> map = new HashMap<Integer,List<Node>>();
+		Map<Integer, List<Node>> map = new HashMap<Integer, List<Node>>();
 		for (Block block : aPossibleMoves) {
-			List<Node> possiblePositions = new ArrayList<Node>(mBoard.GiveHint(aPossiblePositions, aSet, block).size());
+			List<Node> possiblePositions = new ArrayList<Node>(mBoard.GiveHint(aPossiblePositions, aSet, block));
 			List<Block> possibleMoves = new ArrayList<Block>(aPossibleMoves);
 			List<Node> set = new ArrayList<Node>(aSet);
 			if (possiblePositions.size() > 0) {
 				possibleMoves.remove(block);
 				for (Node n : possiblePositions) {
-					n.setBlock(block);
-					mBoard.setStone(n);
-					set.add(n);
-					map.putAll(determineBestMove(possibleMoves, possiblePositions, set));
+					Node newNode= new Node();
+					newNode.setBlock(block);
+					newNode.setPosition((int)n.getPosition().getX(), (int)n.getPosition().getY());
+					mBoard.setStone(newNode);
+					set.add(newNode);
+					if (mBoard.isValid(set)) {
+						map.putAll(determineBestMove(possibleMoves, possiblePositions, set));
+					}else {set.remove(n);
+					 map.put(set.size(), set);
+					}
 				}
-			} else{
+			} else {
 				map.put(set.size(), set);
 			}
-			
+
 		}
 		return map;
 	}
+
 	public void setMove(List<Node> aNode) {
-		// System.out.println("Hallo alles spelers");
-		if(aNode.size()<1){
+		if (aNode.size() < 1) {
 			return;
 		}
 		try {
@@ -61,5 +75,5 @@ public class ComputerPlayer extends Player {
 			System.err.println("The Server send an INVALID MOVE");
 		}
 	}
-	
+
 }

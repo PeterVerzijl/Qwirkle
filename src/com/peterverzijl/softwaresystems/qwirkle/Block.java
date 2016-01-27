@@ -2,7 +2,7 @@ package com.peterverzijl.softwaresystems.qwirkle;
 
 /**
  * The block class that contains all the block's info.
- * @author Peter Verzijl
+ * @author Peter Verzijl en Dennis Vinke
  *
  */
 public class Block {
@@ -72,6 +72,11 @@ public class Block {
 		return result;
 	}
 	
+	/**
+	 * Sets the Block.Shape and Block.Color of a block
+	 * @param shape
+	 * @param color
+	 */
 	public void setBlock(Block.Shape shape, Block.Color color){
 		mShape = shape;
 		mColor = color;

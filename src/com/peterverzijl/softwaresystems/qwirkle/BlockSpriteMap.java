@@ -4,8 +4,18 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.ui.Sprite;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Rect;
 import com.peterverzijl.softwaresystems.qwirkle.graphics.Bitmap;
 
+/**
+ * Block sprite map maps a block to it's corresponding sprite in the spritesheet
+ * @author Dennis Vinke en Peter Verzijl
+ *
+ */
 public class BlockSpriteMap {
 	
+	/**
+	 * Converts a block into it's corresponding sprite
+	 * @param block
+	 * @return a sprite of the block
+	 */
 	public static Sprite getSprite(Block block) {
 		Sprite result;
 		

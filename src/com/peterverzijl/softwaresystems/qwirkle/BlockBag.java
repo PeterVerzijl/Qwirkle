@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * The bag that contains the blocks we can draw from
  * 
- * @author User
+ * @author Dennis en Peter
  *
  */
 public class BlockBag {

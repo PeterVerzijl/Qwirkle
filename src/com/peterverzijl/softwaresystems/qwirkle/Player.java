@@ -9,12 +9,11 @@ import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 /**
  * Player class for the Qwirkle game, contains all the player information.
  * 
- * @author Peter Verzijl
+ * @author Peter Verzijl en Dennis Vinke
  *
  */
 public class Player {
 
-	
 	/**
 	 * The game the player is playing
 	 */
@@ -23,16 +22,16 @@ public class Player {
 	 * The blocks that the player has in his/her prosession
 	 */
 	private List<Block> mHand = new ArrayList<Block>();
-	
+
 	private Board mBoard;
+
 	/**
 	 * The constructor for the player
 	 */
 	public Player() {
 		mHand.clear();
 	}
-	
-	
+
 	/**
 	 * Draws the blocks from the bag at the start of the game
 	 * 
@@ -57,8 +56,12 @@ public class Player {
 		mHand.add(block);
 	}
 
-	public void removeBlocksFromHand(List<Node> aList){
-		for(Node n: aList){
+	/**
+	 * Removes a block from a players hand
+	 * @param aList
+	 */
+	public void removeBlocksFromHand(List<Node> aList) {
+		for (Node n : aList) {
 			try {
 				removeBlock(n.getBlock());
 			} catch (NotYourBlockException e) {
@@ -66,21 +69,23 @@ public class Player {
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes a block of the same kind from the players hand.
-	 * @param block The block to remove
-	 * @throws NotYourBlockException 
+	 * 
+	 * @param block
+	 *            The block to remove
+	 * @throws NotYourBlockException
 	 */
-	public void removeBlock(Block block) 
-			throws NotYourBlockException {
+	public void removeBlock(Block block) throws NotYourBlockException {
 		for (Block b : mHand) {
 			if (b.equals(block)) {
 				mHand.remove(b);
 				return;
 			}
 		}
-		throw new NotYourBlockException("This block: "+block.getColor().toString() +""+block.getShape().toString() +" was not in your hand");
+		throw new NotYourBlockException("This block: " + block.getColor().toString() + "" + block.getShape().toString()
+				+ " was not in your hand");
 	}
 
 	/**
@@ -100,7 +105,6 @@ public class Player {
 
 	/* --- Getters and setters --- */
 
-
 	/**
 	 * Returns the current hand of the player
 	 * 
@@ -110,44 +114,45 @@ public class Player {
 		return mHand;
 	}
 
+	/**
+	 * Class used by the child classes that extend this player class
+	 * @return a move made by the player  
+	 */
 	public List<Node> determineMove() {
 		return null;
 	}
 
-
+	/**
+	 * Makes a string representation of the hand
+	 * @param aHand
+	 * @return
+	 */
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
 		for (int i = 0; i < aHand.size(); i++) {
 			Block b = aHand.get(i);
-			hand += i +": " + b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ";
+			hand += i + ": " + b.getColor().toString().charAt(0) + " " + BlockPrinter.getChar(b) + ", ";
 		}
 		return hand;
 	}
 
-	void boardScale(Vector2 aPosition) {
-		if (Board.borders[0] > aPosition.getX())
-			Board.borders[0] = (int) aPosition.getX() - 7;
-		if (Board.borders[1] < aPosition.getX())
-			Board.borders[1] = (int) aPosition.getX() + 7;
-		if (Board.borders[2] > aPosition.getY())
-			Board.borders[2] = (int) aPosition.getY() - 7;
-		if (Board.borders[3] < aPosition.getY())
-			Board.borders[3] = (int) aPosition.getY() + 7;
-	}
-
+	/**
+	 * Removes all the stones of a hand
+	 */
 	void resetHand() {
 		mHand.clear();
 	}
 
-	
 	/**
-	 * Sets the hand of the player to a block list.
-	 * NOTE: This should NEVER be used other then to reset it to the previous state.
-	 * @param handBackup The backup of the hand to reset the hand to.
+	 * Sets the hand of the player to a block list. NOTE: This should NEVER be
+	 * used other then to reset it to the previous state.
+	 * 
+	 * @param handBackup
+	 *            The backup of the hand to reset the hand to.
 	 */
 	public void setHand(List<Block> handBackup) {
 		if (handBackup.size() <= 6) {
-			mHand = handBackup;		
+			mHand = handBackup;
 		}
 	}
 

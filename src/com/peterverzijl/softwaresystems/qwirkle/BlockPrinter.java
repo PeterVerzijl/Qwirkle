@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 /**
  * Block printer prints out a block by its shape and color.
- * @author Peter Verzijl
+ * @author Peter Verzijl en Dennis Vinke
  *
  */
 public class BlockPrinter {

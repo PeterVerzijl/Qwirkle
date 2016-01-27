@@ -22,6 +22,5 @@ public class HumanGUIPlayer extends Player{
 		List<Player> players = new ArrayList<Player>();
 		players.add(new HumanGUIPlayer(0));
 		Game newGame = new Game(players);
-		newGame.run();
 	}
 }
