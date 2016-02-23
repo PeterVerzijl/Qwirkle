@@ -37,14 +37,16 @@ public class Client implements Runnable {
 	
 	private ChatView mViewer;
 	
-	// Game stuff
-	//private Board mBoard;
 	private HumanTUIPlayer mPlayer;
 	
-	private boolean mRunning = false;
+	private boolean mRunning = false;	// Used for exiting the message fetch loop
 
 	/**
-	 * Constructs a Client-object and tries to make a socket connection
+	 * Constructs a Client-object and tries to make a socket connection.
+	 * @param host The Internet address where the client is connecting to.
+	 * @param port The port of the server to connect to.
+	 * @param viewer The UI viewer of the chat.
+	 * @throws IOException When either the in or out streams of the socket can't be opened.
 	 */
 	public Client(InetAddress host, int port, ChatView viewer) throws IOException {
 		sock = new Socket(host, port);
@@ -86,8 +88,8 @@ public class Client implements Runnable {
 	 */
 	private void recieveMessage() {
 		try {
-			while(mRunning) {
-				while(in.ready()) {
+			while (mRunning) {
+				while (in.ready()) {
 					handleMessage(in.readLine());
 				}
 			}
@@ -103,17 +105,19 @@ public class Client implements Runnable {
 	}
 	
 	/**
-	 * Handles the messages
+	 * Handles the messages.
 	 * @param message
 	 */
 	private void handleMessage(String message) {
-		if (message.length() < 1) { return; }
+		if (message.length() < 1) { 
+			return; 
+		}
 		
 		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
 		String command = parameters[0];
 		// Remove command from parameters
 		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
-		switch(command) {
+		switch (command) {
 			case Protocol.Server.ADDTOHAND:
 				// Gets the hand from the server
 				for (String blockString : parameters) {
@@ -122,7 +126,7 @@ public class Client implements Runnable {
 				}
 				break;
 			case Protocol.Server.CHAT:
-				if(mViewer != null) {
+				if (mViewer != null) {
 					// Remove the header thing
 					mViewer.displayMessage(parameters[0]);
 				}
@@ -187,8 +191,10 @@ public class Client implements Runnable {
 						try {
 							mPlayer.removeBlock(n.getBlock());
 						} catch (NotYourBlockException e) {
-							System.err.println("It seems that we have gotten out of sync with the server.\n" + 
-												"It tries to delete blocks in our hand that we didn't poses.");
+							System.err.println("It seems that we have gotten out " + 
+												"of sync with the server.\n" + 
+												"It tries to delete blocks in " + 
+												"our hand that we didn't poses.");
 						}
 					}
 				}
@@ -246,7 +252,8 @@ public class Client implements Runnable {
 		}
 		// TODO (peter) : Contact PlayerTUI
 		while (MainTUI.lock.isLocked() && !MainTUI.lock.isHeldByCurrentThread()) {
-			// Do nothing.
+			// Do nothing
+			MainTUI.lock.isLocked();
 		}
 		MainTUI.lock.lock();
 		try {
@@ -312,8 +319,7 @@ public class Client implements Runnable {
 	 * @param error The error code.
 	 */
 	private void handleError(int error) {
-		// TODO Auto-generated method stub
-		switch(error) {
+		switch (error) {
 			case 1:			// Not your turn
 				if (mViewer != null) {
 					mViewer.displayMessage("Nope.");
@@ -374,8 +380,8 @@ public class Client implements Runnable {
 	 */
 	public void sendChatMessage(String message) {
 		sendMessage(Protocol.Client.CHAT + 
-					Protocol.Server.Settings.DELIMITER + 
-					message);
+						Protocol.Server.Settings.DELIMITER + 
+						message);
 	}
 	
 	/** 
@@ -390,12 +396,15 @@ public class Client implements Runnable {
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			if(mViewer != null) mViewer.displayMessage("Left chat.");
+			if (mViewer != null) {
+				mViewer.displayMessage("Left chat.");
+			}
 		}
 	}
 	
 	/** 
-	 * returns the client name 
+	 * Returns the client name. This name is given to the client 
+	 * @return The name of the client.
 	 */
 	public String getName() {
 		return username;
@@ -416,8 +425,8 @@ public class Client implements Runnable {
 	public void setPlayerName(String name) {
 		username = name;
 		sendMessage(Protocol.Client.HALLO + 
-					Protocol.Server.Settings.DELIMITER + 
-					username);
+						Protocol.Server.Settings.DELIMITER + 
+						username);
 	}
 
 	/**
@@ -426,14 +435,14 @@ public class Client implements Runnable {
 	 */
 	public void joinGame(int numPlayers) {
 		sendMessage(Protocol.Client.REQUESTGAME + 
-				Protocol.Server.Settings.DELIMITER + 
-				numPlayers);
+						Protocol.Server.Settings.DELIMITER + 
+						numPlayers);
 		// Init game variables here in case we get blocks before a game start.
 		mPlayer = new HumanTUIPlayer();
 	}
 
 	/**
-	 * Asks the server to push the amount of stones in the bag.
+	 * Asks the server to push the amount of stones in the bag, back to us.
 	 */
 	public void getNumStones() {
 		sendMessage(Protocol.Client.GETSTONESINBAG);

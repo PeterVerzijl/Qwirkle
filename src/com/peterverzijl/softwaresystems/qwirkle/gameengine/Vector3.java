@@ -23,6 +23,7 @@ public class Vector3 {
 	 * The constructor for a floating point two dimensional vector.
 	 * @param x The x coordinate.
 	 * @param y The y coordinate.
+	 * @param z The z coordinate.
 	 */
 	public Vector3(float x, float y, float z) {
 		this.setX(x);
@@ -54,9 +55,9 @@ public class Vector3 {
 	
 	/**
 	 * Sets the position of the vector.
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x The new value for the new x component of the vector.
+	 * @param y The new value for the new y component of the vector.
+	 * @param z The new value for the new z component of the vector.
 	 */
 	public void set(float x, float y, float z) {
 		this.x = x;
@@ -131,7 +132,7 @@ public class Vector3 {
 
 	/**
 	 * Sets the x coordinate of the vector.
-	 * @param x
+	 * @param x The new value for the new x component of the vector.
 	 */
 	public void setX(float x) {
 		this.x = x;
@@ -147,23 +148,23 @@ public class Vector3 {
 	
 	/**
 	 * Sets the y coordinate of the vector.
-	 * @param y
+	 * @param y The new value for the new y component of the vector.
 	 */
 	public void setY(float y) {
 		this.y = y;
 	}
 	
 	/**
-	 * Returns the y coordinate of the vector.
-	 * @return The y coordinate
+	 * Returns the z coordinate of the vector.
+	 * @return The z coordinate
 	 */
 	public float getZ() {
 		return z;
 	}
 	
 	/**
-	 * Sets the y coordinate of the vector.
-	 * @param y
+	 * Sets the z coordinate of the vector.
+	 * @param z The new value for the new z component of the vector.
 	 */
 	public void setZ(float z) {
 		this.z = z;
@@ -193,6 +194,7 @@ public class Vector3 {
 	 * Adds the two given components to the vector.
 	 * @param x Amount of x to add.
 	 * @param y Amount of y to add.
+	 * @param z Amount of z to add.
 	 * @return this.
 	 */
 	public Vector3 add(float x, float y, float z) {
@@ -231,8 +233,7 @@ public class Vector3 {
 	/**
 	 * Multiplies the vector by a scalar.
 	 * @param scalar The scalar to multiply the vector by.
-	 * @param Returns the resulting vector.
-	 * @return this.
+	 * @return The resulting vector.
 	 */
 	public Vector3 multiply(float scalar) {
 		this.x *= scalar;

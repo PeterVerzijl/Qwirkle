@@ -6,18 +6,26 @@ import java.util.Scanner;
 
 /**
  * Player class for the Qwirkle game, contains all the player information.
- * 
  * @author Peter Verzijl
- *
  */
 public class HumanTUIPlayer extends Player {
+	
 	private Board mBoard;
-
+	private Scanner scanner;
+	
+	/**
+	 * Constructor.
+	 * Creates a player and initiates a game board on the client side.
+	 */
 	public HumanTUIPlayer() {
 		super();
 		mBoard = new Board();
 	}
-
+	
+	/**
+	 * Does a move on the board with a list of nodes.
+	 * @param aNode The node that contains the move.
+	 */
 	public void setMove(List<Node> aNode) { 
 		if (aNode.size() < 1) {
 			return;
@@ -28,16 +36,19 @@ public class HumanTUIPlayer extends Player {
 			System.err.println("The Server send an INVALID MOVE");
 		}
 	}
-
+	
+	/**
+	 * Returns a string representation of the board.
+	 * @return The string representation of the board.
+	 */
 	public String boardToString() {
 		return Board.toString(mBoard.getPlacedBlocks(), mBoard.getEmptySpaces());
 	}
 
 	/**
-	 * Let a HumanPlayer do a move based on an input and output
-	 * 
-	 * @param aListOfEmptySpaces
-	 * @return
+	 * Provides the user of the program with an input loop to play the game.
+	 * This loop does all the related TUI actions.
+	 * @return A list of the placed moves. This is to be send to the server.
 	 */
 	public List<Node> determineMove() {
 		List<Node> set = new ArrayList<Node>();
@@ -48,7 +59,7 @@ public class HumanTUIPlayer extends Player {
 		List<Node> copyBoard = new ArrayList<Node>();
 		copyBoard.addAll(mBoard.getPlacedBlocks());
 
-		Scanner scanner = new Scanner(System.in);
+		scanner = new Scanner(System.in);
 		int hand;
 		int move;
 		boolean success = false;
@@ -60,39 +71,49 @@ public class HumanTUIPlayer extends Player {
 				System.out.println(Board.toString(copyBoard, possiblePositions));
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
+				System.out.println("[Stone index] [Space index]");
 				
-				//gets input to choose stone from a players hand and shows at which positions is can be placed
-				hand = scanner.nextInt();
-				for (Node n : mBoard.GiveHint(possiblePositions, set, possibleMoves.get(hand))) {
-					System.out.println(n.getPosition());
-				}
+				// Gets input to choose stone from a players hand,
+				// and shows at which positions is can be placed
+				hand = scanner.nextInt();				
 				move = scanner.nextInt();
 				//empties rest of the input
 				scanner.nextLine();
 
-				//TODO: Make the player use the internal board instead of keeping the stones in player like it is done now
-				//if hand is not a negative number and smaller or equal to the amount of stones in hand
-				if (hand>-1 && hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
+				// TODO: Make the player use the internal board instead of keeping 
+				// the stones in player like it is done now.
+				// If hand is not a negative number and smaller or equal to 
+				// the amount of stones in hand.
+				if (hand > -1 && hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
 					if (move < possiblePositions.size()) {
-						System.out.printf("Input: \n\tHand: %d Move:%d is blockje %c %c op positie %s \n", hand, move,
-								possibleMoves.get(hand).getColor().toString().charAt(0),
-								BlockPrinter.getChar(possibleMoves.get(hand)),
-								possiblePositions.get(move).getPosition());
+						for (Node n : mBoard.giveHint(possiblePositions, 
+										set, possibleMoves.get(hand))) {
+							System.out.println(n.getPosition());
+						}
+						System.out.printf("Input: \n\tHand: %d Move:%d is " + 
+											"blockje %c %c op positie %s \n", 
+											hand, move, 
+											possibleMoves.get(hand).getColor().toString().charAt(0),
+											BlockPrinter.getChar(possibleMoves.get(hand)),
+											possiblePositions.get(move).getPosition());
 						
-						//Grabs a Node out of the possible moves list and block out of the input of the player 
-						//and adds the move to a list containing all the to place nodes
+						// Grabs a Node out of the possible moves list 
+						// and block out of the input of the player 
+						// and adds the move to a list containing all the to place nodes.
 						Block newMove = possibleMoves.get(hand);
 						Node currentNode = possiblePositions.get(move);
 
 						Node[] neighbors = currentNode.getNeighborNodes();
 						currentNode.setBlock(newMove);
 						
-						System.out.println("De positie van de huidige move " + currentNode.getPosition());
+						System.out.println("De positie van de huidige move " + 
+											currentNode.getPosition());
 						
 						set.add(currentNode);
-						//checks if the added node makes a valid node
-						//if not, remove the last node from the list
-						//else remove the block and node out the copied list and set the neighbor nodes of the Node and it's neighbors
+						// Checks if the added node makes a valid node
+						// if not, remove the last node from the list
+						// else remove the block and node out the copied list 
+						// and set the neighbor nodes of the Node and it's neighbors.
 						if (!mBoard.isValid(set)) {
 							System.err.print("\t Deze zet mag niet!");
 							currentNode.setBlock(null);
@@ -103,22 +124,28 @@ public class HumanTUIPlayer extends Player {
 							for (int i = 0; i < neighbors.length; i++) {
 								if (neighbors[i] == null) {
 									Node newEmpty = mBoard.findDuplicateNode(
-											currentNode.getPosition(), Direction.values()[i]);
+														currentNode.getPosition(), 
+														Direction.values()[i]);
 									if (newEmpty == null) {
-										possiblePositions
-												.add(mBoard.createEmptyNode(Direction.values()[i], currentNode));
+										possiblePositions.add(mBoard.createEmptyNode(
+														Direction.values()[i], currentNode));
 									} else {
-										newEmpty.setNeighborNode(currentNode, Direction
-												.getDirection(currentNode.getPosition(), newEmpty.getPosition()));
+										newEmpty.setNeighborNode(currentNode, 
+																Direction.getDirection(
+																		currentNode.getPosition(), 
+																		newEmpty.getPosition()));
 									}
 								}
 							}
 						}
+					} else {
+						System.out.println("Position " + move + " is not valid.");
 					}
 				} else {
-					System.out.println("This was not a valid move");
+					System.out.println("Stone " + hand + " does not exist. Not a valid move");
 				}
-				//if a letter or word was given as an input see if it matches with one of the predefined commands
+				// If a letter or word was given as an input,
+				// see if it matches with one of the predefined commands.
 			} catch (java.util.InputMismatchException e) {
 				String input = scanner.next();
 				
@@ -148,11 +175,14 @@ public class HumanTUIPlayer extends Player {
 					System.out.println("Select stones to trade");
 					List<Block> blocksToTrade = new ArrayList<Block>();
 					
-					//trading works by setting a node with a block, and add it to a set without giving the node a position
+					// Trading works by setting a node with a block, 
+					// and add it to a set without giving the node a position
 					while (trading) {
 						try {
-							System.out.println("Blocks in hand: " + Player.handToString(possibleMoves));
-							System.out.println("Blocks pending for trade: " + Player.handToString(blocksToTrade));
+							System.out.println("Blocks in hand: " + 
+											Player.handToString(possibleMoves));
+							System.out.println("Blocks pending for trade: " + 
+											Player.handToString(blocksToTrade));
 							hand = scanner.nextInt();
 							if (hand > possibleMoves.size() - 1) {
 								System.err.println("Deze steen zit niet in je hand");
@@ -164,7 +194,8 @@ public class HumanTUIPlayer extends Player {
 							possibleMoves.remove(possibleMoves.get(hand));
 						} catch (java.util.InputMismatchException e1) {
 							String input2 = scanner.next();
-							//trade will not be exicuted here, but this command will break the trade loop and make a move loop
+							// Trade will not be executed here, 
+							// but this command will break the trade loop and make a move loop.
 							if (input2.toLowerCase().equals("end")) {
 								System.out.println("Now trading");
 								trading = false;
@@ -204,20 +235,21 @@ public class HumanTUIPlayer extends Player {
 	}
 	
 	/**
-	 * 
-	 * @param aHand
-	 * @return
+	 * Translates the hand of the player to a string.
+	 * @param aHand The hand to convert to string.
+	 * @return The resulting string representation of the hand.
 	 */
 	public static String handToString(List<Block> aHand) {
 		String hand = "";
 		for (int i = 0; i < aHand.size(); i++) {
-			hand += aHand.get(i).getColor().toString().charAt(0) + BlockPrinter.getChar(aHand.get(i));
+			hand += aHand.get(i).getColor().toString().charAt(0) + 
+					BlockPrinter.getChar(aHand.get(i));
 		}
 		return hand;
 	}
 
 	/**
-	 * 
+	 * Creates a new board.
 	 */
 	public void resetBoard() {
 		mBoard = new Board();

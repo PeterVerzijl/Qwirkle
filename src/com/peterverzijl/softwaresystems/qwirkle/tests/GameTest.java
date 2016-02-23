@@ -5,14 +5,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import com.peterverzijl.softwaresystems.qwirkle.Block;
-import com.peterverzijl.softwaresystems.qwirkle.Board;
-import com.peterverzijl.softwaresystems.qwirkle.Direction;
 import com.peterverzijl.softwaresystems.qwirkle.Game;
 import com.peterverzijl.softwaresystems.qwirkle.HumanTUIPlayer;
-import com.peterverzijl.softwaresystems.qwirkle.IllegalMoveException;
 import com.peterverzijl.softwaresystems.qwirkle.Node;
 import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
@@ -107,23 +103,15 @@ public class GameTest {
 		startingplayer = game.startingPlayer(firstMoves);
 		System.out.println(startingplayer.size());
 
-		for (Entry<Player, List<Node>> entry : firstMoves.entrySet()) {
-			System.out.println(entry.getKey());
-			System.out.println(entry.getValue());
-			System.out.println("");
-		}
+
 
 		/*
 		 * Player pl = startingplayer.keySet().iterator().next(); for (Player
 		 * player : playerList) { System.out.println(player); }
 		 */
 
-		for (Player player : startingplayer.keySet()) {
-			System.out.println("De starting player " + "" + player);
-		}
 		assertTrue(startingplayer.containsKey(playerList.get(3)));
 		assertEquals(startingplayer.get(playerList.get(3)), aSetP4);
-
 	}
 
 	@Test

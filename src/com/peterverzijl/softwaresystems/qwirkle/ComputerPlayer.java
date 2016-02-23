@@ -40,7 +40,7 @@ public class ComputerPlayer extends Player {
 			List<Node> aSet) {
 		Map<Integer, List<Node>> map = new HashMap<Integer, List<Node>>();
 		for (Block block : aPossibleMoves) {
-			List<Node> possiblePositions = new ArrayList<Node>(mBoard.GiveHint(aPossiblePositions, aSet, block));
+			List<Node> possiblePositions = new ArrayList<Node>(mBoard.giveHint(aPossiblePositions, aSet, block));
 			List<Block> possibleMoves = new ArrayList<Block>(aPossibleMoves);
 			List<Node> set = new ArrayList<Node>(aSet);
 			if (possiblePositions.size() > 0) {

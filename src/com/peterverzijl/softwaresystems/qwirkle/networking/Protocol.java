@@ -16,8 +16,8 @@ public class Protocol {
 		
 		/**
 		 * Opening statement to connect with the server
-		 * [syntax] <features> : <feature>*<feature>*...
-		 * [syntax] HALLO_<playerName>_<features>\n\n
+		 * [syntax] [features] : [feature]*[feature]*...
+		 * [syntax] HALLO_[playerName]_[features]\n\n
 		 * features: chat, challenge, security, leader board
 		 */
 		public static final String HALLO = "HALLO";
@@ -29,7 +29,7 @@ public class Protocol {
 
 		/**
 		 * To invite a player to play the game.
-		 * [syntax] INVITE_<playerName>\n\n<
+		 * [syntax] INVITE_[playerName]\n\n
 		 */
 		public static final String INVITE = "INVITE";
 		
@@ -59,43 +59,43 @@ public class Protocol {
 		 * 
 		 * 				  ColorShape*X*Y
 		 * [Syntax] move: charchar*int*int\n\n
-		 * [syntax] MAKEMOVE_<command>_BF*11*7\n\n
+		 * [syntax] MAKEMOVE_[command]_BF*11*7\n\n
 		 */
 		public static final String MAKEMOVE = "MAKEMOVE";
 		
 		/**
-		 * Send a chat message to the server
-		 * [Syntax] CHAT_<string>\n\n
+		 * Send a chat message to the server.
+		 * [Syntax] CHAT_[string]\n\n
 		 */
 		public static final String CHAT = "CHAT";
 		
 		/**
-		 * Request a game from the server with a number of players <int>.
-		 * [Syntax] REQUESTGAME_<numPlayers>\n\n
+		 * Request a game from the server with a number of players [int].
+		 * [Syntax] REQUESTGAME_[numPlayers]\n\n
 		 */
 		public static final String REQUESTGAME = "REQUESTGAME";
 		
 		/**
-		 * Call the server to get new stones 
-		 * [Syntax] CHANGESTONE_<steen>_<steen>\n\n
+		 * Call the server to get new stones.
+		 * [Syntax] CHANGESTONE_[steen]_[steen]\n\n
 		 */
 		public static final String CHANGESTONE = "CHANGESTONE";
 		
 		/**
-		 * Request the leader board
+		 * Request the leader board.
 		 * [Syntax] GETLEADERBOARD\n\n
 		 */
 		public static final String GETLEADERBOARD = "GETLEADERBOARD";
 		
 		/**
-		 * Returns the number of stones in the bag
+		 * Returns the number of stones in the bag.
 		 * [Syntax] GETSTONESINBAG\n\n
 		 */
 		public static final String GETSTONESINBAG = "GETSTONESINBAG";
 		
 		/**
-		 * Sends an error to the server, no errors have been defined yet
-		 * [Syntax] ERROR_<errorNo>\n\n
+		 * Sends an error to the server, no errors have been defined yet.
+		 * [Syntax] ERROR_[errorNo]\n\n
 		 */
 		public static final String ERROR = "ERROR";
 	}
@@ -108,13 +108,13 @@ public class Protocol {
 	public static class Server {
 		
 		/**
-		 * Responds to a hallo from the server to a client
-		 * [Syntax] HALLO_<serverName>_<feature>_<feature>_..\n\n
+		 * Responds to a hallo from the server to a client.
+		 * [Syntax] HALLO_[serverName]_[feature]_[feature]_..\n\n
 		 */
 		public static final String HALLO = "HALLO";
 		
 		/**
-		 * All error messages that are send to the client
+		 * All error messages that are send to the client.
 		 * Code | Definition
 		 * ---- | -----------------
 		 *   1  | notYourTurn
@@ -125,25 +125,25 @@ public class Protocol {
 		 *   6  | ChallengerRefused
 		 *   7  | invalidMove
 		 * 
-		 * [Syntax] ERROR_<errorNo>\n\n 
+		 * [Syntax] ERROR_[errorNo]\n\n 
 		 */
 		public static final String ERROR = "ERROR";
 		
 		/**
-		 * Sends the amount of players we are waiting for
-		 * [Syntax] OKWAITFOR_<numPlayers>\n\n
+		 * Sends the amount of players we are waiting for.
+		 * [Syntax] OKWAITFOR_[numPlayers]\n\n
 		 */
 		public static final String OKWAITFOR = "OKWAITFOR";
 		
 		/**
 		 * Message the clients that the game is starting 
 		 * and who they are playing with.
-		 * [Syntax] STARTGAME_<playerName>_<playerName>_..\n\n
+		 * [Syntax] STARTGAME_[playerName]_[playerName]_..\n\n
 		 */
 		public static final String STARTGAME = "STARTGAME";
 		
 		/**
-		 * Message the clients that the game has finished
+		 * Message the clients that the game has finished.
 		 * [Syntax] END\n\n
 		 */
 		public static final String GAME_END = "END";
@@ -151,35 +151,35 @@ public class Protocol {
 		/**
 		 * Message that a move has been made and who is the next message.
 		 * 					ColorShape*X*Y
-		 * [Syntax] <move> CharChar*int*int
-		 * [Syntax] MOVE_<playerName>_<nextPlayerName>_<move>_<move>_..\n\n
+		 * [Syntax] [move] CharChar*int*int
+		 * [Syntax] MOVE_[playerName]_[nextPlayerName]_[move]_[move]_..\n\n
 		 */
 		public static final String MOVE = "MOVE";
 		
 		/**
 		 * Send a chat message to the clients.
 		 * Server appends user name to the message
-		 * [Syntax] CHAT_<message>\n\n
+		 * [Syntax] CHAT_[message]\n\n
 		 */
 		public static final String CHAT = "CHAT";
 		
 		/**
 		 * Server sends stones to the player hand.
 		 * 					ColorShape
-		 * [Syntax] <stone> CharChar
-		 * [Syntax] ADDTOHAND_<stone>_<stone>_..\n\n
+		 * [Syntax] [stone] CharChar
+		 * [Syntax] ADDTOHAND_[stone]_[stone]_..\n\n
 		 */
 		public static final String ADDTOHAND = "ADDTOHAND";
 		
 		/**
 		 * Server sends the amount of stones in the bag.
-		 * [Syntax] STONESINBAG_<numStones>\n\n
+		 * [Syntax] STONESINBAG_[numStones]\n\n
 		 */
 		public static final String STONESINBAG = "STONESINBAG";
 
 		/**
 		 * Server sends the leader board to the clients.
-		 * [Syntax] LEADERBOARD_<playerName>*<rank>_<playerName>*<rank>_..\n\n
+		 * [Syntax] LEADERBOARD_[playerName]*[rank]_[playerName]*[rank]_..\n\n
 		 */
 		public static final String LEADERBOARD = "LEADERBOARD";
 		
@@ -192,11 +192,12 @@ public class Protocol {
 			public static final String CHAT = "CHAT";
 			public static final String LEADERBOARD = "LEADERBOARD";
 			public static final String SECURITY = "SECURITY";
-			public static final String CHALLENGE = "CHALLENGE"; // Deze functie wordt nog niet verwacht wordt dat SSLsocket gebruikt gaat worden
+			// Deze functie wordt nog niet verwacht wordt dat SSLsocket gebruikt gaat worden
+			public static final String CHALLENGE = "CHALLENGE"; 
 		}
 		
 		/**
-		 * Command to invite a player
+		 * Command to invite a player.
 		 */
 		public static final String INVITE = "INVITE";
 		

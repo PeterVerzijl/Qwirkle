@@ -9,12 +9,12 @@ public interface ChatView {
 	
 	/**
 	 * Adds a message to the chat client.
-	 * @param message
+	 * @param message The message to display in the viewer.
 	 */
 	public void displayMessage(String message);
 
 	/**
-	 * Ask the 
+	 * Ask the name of the user.
 	 */
 	public void askName();
 }

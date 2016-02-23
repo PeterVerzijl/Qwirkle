@@ -34,13 +34,11 @@ public class ServerTest {
 					PORT, null);
 			(new Thread(server)).start();
 			
-			// Create a client thread
+			// Create 2 client threads
 			client1 = new Client(
 					InetAddress.getByName(ADDRESS), 
 					PORT, null);
 			(new Thread(client1)).start();
-			
-			// Create a client thread
 			client2 = new Client(
 					InetAddress.getByName(ADDRESS), 
 					PORT, null);
@@ -53,9 +51,6 @@ public class ServerTest {
 			// Ask for a game
 			client1.joinGame(2);
 			client2.joinGame(2);
-			
-			
-			//server.shutdown();
 			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

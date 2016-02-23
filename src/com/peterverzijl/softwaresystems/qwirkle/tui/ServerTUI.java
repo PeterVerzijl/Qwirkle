@@ -18,9 +18,11 @@ public class ServerTUI implements ServerView {
 	private String messageBuffer;
 	
 	/**
-	 * 
-	 * @param address
-	 * @param port
+	 * Constructor creates a server at the given address and port.
+	 * It creates a lobby server in the process.
+	 * @param address The IP address of the server.
+	 * @param port The port on the server where clients can connect to.
+	 * @throws IOException when the lobby server could not be created.
 	 */
 	public ServerTUI(InetAddress address, int port) throws IOException {
 		mAddress = address;
@@ -33,11 +35,11 @@ public class ServerTUI implements ServerView {
 
 	@Override
 	public void sendMessage(String message) {
-		messageBuffer += ("Server: " + message + "\n");		
+		messageBuffer += "Server: " + message + "\n";		
 	}
 	
 	/**
-	 * Displays all server messages
+	 * Displays all server messages.
 	 */
 	public void displayMessages() {
 		System.out.println(messageBuffer);

@@ -73,17 +73,17 @@ public class Block {
 	}
 	
 	/**
-	 * Sets the Block.Shape and Block.Color of a block
-	 * @param shape
-	 * @param color
+	 * Sets the Block.Shape and Block.Color of a block.
+	 * @param shape The new shape of the block.
+	 * @param color The new color of the block.
 	 */
-	public void setBlock(Block.Shape shape, Block.Color color){
+	public void setBlock(Block.Shape shape, Block.Color color) {
 		mShape = shape;
 		mColor = color;
 	}
 	
 	/**
-	 * Gets a new block by a two character string AA - FF
+	 * Gets a new block by a two character string AA - FF.
 	 * @param stone The string representing the stone.
 	 * @return A new stone if the string is valid.
 	 */
@@ -154,7 +154,7 @@ public class Block {
 	 */
 	public static String toChars(Block b) {
 		String result = "";
-		switch(b.mColor) {
+		switch (b.mColor) {
 			case RED:
 				result += 'A';
 				break;
@@ -174,7 +174,7 @@ public class Block {
 				result += 'F';
 				break;
 		}
-		switch(b.mShape) {
+		switch (b.mShape) {
 			case CIRCLE:
 				result += 'A';
 				break;
