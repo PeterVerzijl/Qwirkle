@@ -22,7 +22,7 @@ public class BlockPrinter {
 		shapeCharMap.put(Block.Shape.STAR, '✸');
 	}
 	
-/**
+	/**
 	 * Gets a char from a block shape
 	 * @param block The block to get the shape from
 	 * @return A character representing the block shape

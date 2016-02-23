@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.IllegalMoveException;
 import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourBlockException;
 import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 
@@ -99,7 +100,8 @@ public class Game {
 			mBoard = new Board(); // Clear the board for the next try or for
 									// setting the move.
 
-			System.out.println(mPlayers.indexOf(playerHelper) + " " + aMapWithFirstMoves.get(playerHelper).size());
+			System.out.println(mPlayers.indexOf(playerHelper) + " " + 
+								aMapWithFirstMoves.get(playerHelper).size());
 			firstPlayerSet.put(playerHelper, aMapWithFirstMoves.get(playerHelper));
 			setFirstPlayer(firstPlayerSet);
 		}

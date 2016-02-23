@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.IllegalMoveException;
+
 /**
  * Player class for the Qwirkle game, contains all the player information.
  * @author Peter Verzijl

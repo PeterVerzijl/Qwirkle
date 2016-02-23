@@ -9,7 +9,7 @@ import java.util.Map;
 import com.peterverzijl.softwaresystems.qwirkle.Block;
 import com.peterverzijl.softwaresystems.qwirkle.Board;
 import com.peterverzijl.softwaresystems.qwirkle.Game;
-import com.peterverzijl.softwaresystems.qwirkle.IllegalMoveException;
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.IllegalMoveException;
 import com.peterverzijl.softwaresystems.qwirkle.Node;
 import com.peterverzijl.softwaresystems.qwirkle.Player;
 import com.peterverzijl.softwaresystems.qwirkle.networking.exceptions.AddPlayerToGameException;

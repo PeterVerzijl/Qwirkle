@@ -3,6 +3,7 @@ package com.peterverzijl.softwaresystems.qwirkle;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.peterverzijl.softwaresystems.qwirkle.exceptions.IllegalMoveException;
 import com.peterverzijl.softwaresystems.qwirkle.gameengine.Vector2;
 import com.peterverzijl.softwaresystems.qwirkle.networking.Protocol;
 
@@ -110,9 +111,10 @@ public class Board {
 	 * @param aBlock The node relative to the direction. 
 	 * @return A new node placed at the direction of a node which both are defined as parameters. 
 	 */
-	// @require aDirection != null && aBlock != null
-	// @ensure /result.getNeigborNode(aDirection) == aBlock &&
-	//  /result.getPosition = aDirection.getPosition().add(aBlock.getPosition());
+	/* @require aDirection != null && aBlock != null
+	   @ensure /result.getNeigborNode(aDirection) == aBlock &&
+	    /result.getPosition = aDirection.getPosition().add(aBlock.getPosition());
+	*/
 	public Node createEmptyNode(Direction aDirection, Node aBlock) {
 		Node empty = new Node();
 		empty.setPosition(aDirection.getX() + (int) (aBlock.getPosition().getX()),
@@ -133,8 +135,9 @@ public class Board {
 	 * @param aDirection	The direction to look from the given x, y coordinate.
 	 * @return The duplicate node if it exists else it will return null
 	 */
-	// @require aPosition != null && aDirection != null
-	// @ensure /result == null || duplicate.getPosition.equals(aPosition)
+	/* @ require aPosition != null && aDirection != null
+	   @ ensure /result == null || duplicate.getPosition.equals(aPosition) 
+	*/
 	public Node findDuplicateNode(Vector2 aPosition, Direction aDirection) {
 		Node duplicate = null;
 		Vector2 newNodePosition = new Vector2(aPosition.getX() + aDirection.getX(),
@@ -152,7 +155,7 @@ public class Board {
 	 * Prints the list of empty nodes to the console.
 	 * @param aNodeList The list of nodes to print.
 	 */
-	 // @pure 
+	 /* @ pure */
 	public static void printNodeList(List<Node> aNodeList) {
 		System.out.println("Frontierlist:");
 		for (Node p : aNodeList) {
@@ -168,13 +171,14 @@ public class Board {
 	 * @return true if all the neighbors in aDirection are the same and no
 	 *         duplicate char exists in row.
 	 */
-	 // @ensure lastMove != null && aDirection != null
-	 // @ensure \result == true -> \forall int i=0; i<Direction.values.length && i >= 0; 
-	 // 			block.getNeighborNode(Direction.values()[i]; 
-	 // 				lastMove.getBlock().getColor() == 
-	 // 					block.getNeighborNode(Direction.values()[i]).getBlock().getColor()
-	 //				&& lastMove.getBlock().getShape() != 
-	 //					block.getNeighborNode(Direction.values()[i]).getBlock().getShape();	
+	 /* @ ensure lastMove != null && aDirection != null
+	    @ ensure \result == true -> \forall int i=0; i<Direction.values.length && i >= 0; 
+	    			block.getNeighborNode(Direction.values()[i]; 
+	    				lastMove.getBlock().getColor() == 
+	    					block.getNeighborNode(Direction.values()[i]).getBlock().getColor()
+	   				&& lastMove.getBlock().getShape() != 
+	   					block.getNeighborNode(Direction.values()[i]).getBlock().getShape();
+	*/
 	public boolean isValidColor(Node lastMove, Direction aDirection) {
 		boolean isLegal = true;
 		Node block = lastMove;
@@ -202,13 +206,14 @@ public class Board {
 	 * @return true if all the neighbors in aDirection are the same and no
 	 *         duplicate char exists in row
 	 */
-	// @ensure lastMove != null && aDirection != null
-	// @ensure \result == true -> \forall int i=0; i<Direction.values.length && i >= 0; 
-	// 			block.getNeighborNode(Direction.values()[i]; 
-	// 					lastMove.getBlock().getColor() != 
-	// 					block.getNeighborNode(Direction.values()[i]).getBlock().getColor()
-	//					&& lastMove.getBlock().getShape() == 
-	//					block.getNeighborNode(Direction.values()[i]).getBlock().getShape();
+	/* @ ensure lastMove != null && aDirection != null
+	   @ ensure \result == true -> \forall int i=0; i<Direction.values.length && i >= 0; 
+	   			block.getNeighborNode(Direction.values()[i]; 
+	   					lastMove.getBlock().getColor() != 
+	   					block.getNeighborNode(Direction.values()[i]).getBlock().getColor()
+	  					&& lastMove.getBlock().getShape() == 
+	  					block.getNeighborNode(Direction.values()[i]).getBlock().getShape();
+	*/
 	public boolean isValidShape(Node aMove, Direction aDirection) {
 		boolean isLegal = true;
 		Node block = aMove;
@@ -216,9 +221,9 @@ public class Board {
 		while (block.getNeighborNode(aDirection) != null && 
 				block.getNeighborNode(aDirection).getBlock() != null) {
 			if (aMove.getBlock().getShape() != 
-					block.getNeighborNode(aDirection).getBlock().getShape()
-					|| aMove.getBlock().getColor() == 
-					block.getNeighborNode(aDirection).getBlock().getColor()) {
+								block.getNeighborNode(aDirection).getBlock().getShape()
+							|| aMove.getBlock().getColor() == 
+								block.getNeighborNode(aDirection).getBlock().getColor()) {
 				isLegal = false;
 				break;
 			} else {
@@ -252,7 +257,7 @@ public class Board {
 	 * @return a copy of the empty nodes
 	 * TODO(Dennis): Plz fx yo!
 	 */
-	// @ensure \result 
+	/* @ ensure \result */
 	public List<Node> getEmptySpaces() {
 		List<Node> copyList = new ArrayList<Node>();
 		//for every Node in mFrontier make a new Node and set the values to the node from mFrontier
@@ -271,7 +276,7 @@ public class Board {
 	 * Searches for the node in the list with possible moves and removes it.
 	 * @param aBlock Removes a block with the same position from the frontier.
 	 */
-	// @ensure \result mFrontier.getIndex(aBlock) == -1
+	/* @ ensure \result mFrontier.getIndex(aBlock) == -1 */
 	public void removeFrontier(Node aBlock) {
 		for (Node n : mFrontier) {
 			if (n.getPosition().equals(aBlock.getPosition())) {
@@ -365,9 +370,10 @@ public class Board {
 	 * @param node The node containing the block and the position to place the block at.
 	 * @return False if the position of node does not exists in the empty nodes list
 	 */
-	// @ensure \result Node m, x; 
-	// 					m = node && m -> emptyList.get(x).getPosition().equals(m.getPosition()); 
-	// 					mFrontier.indexOf(x)==-1;
+	/* @ ensure \result Node m, x; 
+	   			m = node && m -> emptyList.get(x).getPosition().equals(m.getPosition()); 
+	   			mFrontier.indexOf(x)==-1;
+	 */
 	public boolean setPlacedBlock(Node node) {
 		for (Node n : mFrontier) {
 			if (n.getPosition().equals(node.getPosition())) {
@@ -402,7 +408,7 @@ public class Board {
 	 * @throws IllegalMoveException Thrown when an invalid move is done.
 	 */
 	// TODO(Dennis): Fix this sh*t yo!
-	// @ensure \result 
+	/* @ ensure \result */
 	public void setStones(List<Node> aNodeList) throws IllegalMoveException {
 		List<Node> copySetBlocks = new ArrayList<Node>();
 		List<Node> copyFrontiers = new ArrayList<Node>();
