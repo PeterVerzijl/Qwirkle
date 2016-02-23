@@ -1,0 +1,16 @@
+# 10 Maart inleveren. -> Mailen naar 
+
+JML Syntax laten checken door de JML plugin.
+Javadoc, java api styling -> Voor alles
+Tests fixen, de tests draaien niet.
+Documentatie van de utf-8
+
+Board to string function: error en init van de game werkt niet.
+
+Uitleg hoe het spel werkt.
+
+Verslag -> Schrijf over de tests en waarom welke tests gedaan zijn.
+		-> Per onderdeel van het programma een lijst van responsibilities en features
+			-> Schrijf het op als specificatie
+		-> Tekst gebruik kan beter, lees het vooral na.
+		-> 
