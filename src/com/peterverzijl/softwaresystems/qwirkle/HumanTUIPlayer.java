@@ -71,13 +71,11 @@ public class HumanTUIPlayer extends Player {
 				System.out.println(Board.toString(copyBoard, possiblePositions));
 				System.out.println(Player.handToString(possibleMoves));
 				System.out.println("Amount of free spaces: " + possiblePositions.size());
+				System.out.println("[Stone index] [Space index]");
 				
 				// Gets input to choose stone from a players hand,
 				// and shows at which positions is can be placed
-				hand = scanner.nextInt();
-				for (Node n : mBoard.giveHint(possiblePositions, set, possibleMoves.get(hand))) {
-					System.out.println(n.getPosition());
-				}
+				hand = scanner.nextInt();				
 				move = scanner.nextInt();
 				//empties rest of the input
 				scanner.nextLine();
@@ -88,6 +86,10 @@ public class HumanTUIPlayer extends Player {
 				// the amount of stones in hand.
 				if (hand > -1 && hand < possibleMoves.size() && !possibleMoves.isEmpty()) {
 					if (move < possiblePositions.size()) {
+						for (Node n : mBoard.giveHint(possiblePositions, 
+										set, possibleMoves.get(hand))) {
+							System.out.println(n.getPosition());
+						}
 						System.out.printf("Input: \n\tHand: %d Move:%d is " + 
 											"blockje %c %c op positie %s \n", 
 											hand, move, 
@@ -136,9 +138,11 @@ public class HumanTUIPlayer extends Player {
 								}
 							}
 						}
+					} else {
+						System.out.println("Position " + move + " is not valid.");
 					}
 				} else {
-					System.out.println("This was not a valid move");
+					System.out.println("Stone " + hand + " does not exist. Not a valid move");
 				}
 				// If a letter or word was given as an input,
 				// see if it matches with one of the predefined commands.
