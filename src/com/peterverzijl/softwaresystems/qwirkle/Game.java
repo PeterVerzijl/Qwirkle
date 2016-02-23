@@ -28,9 +28,8 @@ public class Game {
 	private Board mBoard;
 
 	/**
-	 * constructor that creates a game based on the amount of players
-	 * 
-	 * @param aPlayerList
+	 * constructor that creates a game based on the amount of players.
+	 * @param aPlayerList The players who play the game.
 	 */
 	public Game(List<Player> aPlayerList) {
 		mBag = new BlockBag();
@@ -46,9 +45,8 @@ public class Game {
 	}
 
 	/**
-	 * Sets the first player and does the move that was worth the most points
-	 * 
-	 * @param firstSet
+	 * Sets the first player and does the move that was worth the most points.
+	 * @param firstSet The map of players, and their respective first moves.
 	 */
 	public void setFirstPlayer(Map<Player, List<Node>> firstSet) {
 		HashMap.Entry<Player, List<Node>> entry = firstSet.entrySet().iterator().next();
@@ -67,9 +65,8 @@ public class Game {
 	/**
 	 * Receives the first move of all the players and determine which player
 	 * should start by calculation the scores of each move. The player with the
-	 * highest scoring moves wins
-	 * 
-	 * @param aMapWithFirstMoves
+	 * highest scoring moves wins.
+	 * @param aMapWithFirstMoves The map of players, and their respective first moves.
 	 * @return map with the best move and the player that did the move
 	 */
 	public Map<Player, List<Node>> startingPlayer(Map<Player, List<Node>> aMapWithFirstMoves) {
@@ -112,21 +109,20 @@ public class Game {
 	}
 
 	/**
-	 * sets the next player
-	 * 
-	 * @return
+	 * sets the next player.
+	 * @return The next player.
 	 */
 	public Player nextPlayer() {
-		mCurrentPlayer = mPlayers.get(((mPlayers.indexOf(mCurrentPlayer) + 1) % mPlayers.size()));
+		mCurrentPlayer = mPlayers.get((mPlayers.indexOf(mCurrentPlayer) + 
+										1) % mPlayers.size());
 		return mCurrentPlayer;
 	}
 
 	/**
 	 * If there are no more stones in the bag Loop through all players and their
-	 * hand till it finds a vallid move
-	 * 
-	 * @return true if a valid move is found or if there are stones in the bag
-	 *         of stones
+	 * hand till it finds a valid move.
+	 * @return True if a valid move is found or if there are stones in the bag
+	 *         of stones.
 	 */
 	public boolean hasEnded() {
 		if (!(getNumStonesInBag() > 0)) {
@@ -135,7 +131,6 @@ public class Game {
 					if ((mBoard.giveHint(mBoard.getEmptySpaces(), null, s)).size() > 0) {
 						return false;
 					}
-
 				}
 			}
 			return true;
@@ -145,12 +140,9 @@ public class Game {
 
 	/**
 	 * Checks if a similar block, exists in the hand of the player.
-	 * 
-	 * @param player
-	 *            The player to check for.
-	 * @param block
-	 *            The block to check.
-	 * @return
+	 * @param player The player to check for.
+	 * @param block The block to check.
+	 * @return Weighter the given block also exists in the player's hand.
 	 */
 	public boolean checkHand(Player player, Block block) {
 		boolean result = false;
@@ -166,9 +158,7 @@ public class Game {
 
 	/**
 	 * Checks if all the given blocks are in the hand of the player.
-	 * 
-	 * @param set
-	 *            The set of blocks to check.
+	 * @param set The set of blocks to check.
 	 * @return Weighter all the blocks are in the hand of the player.
 	 */
 	public boolean checkHand(List<Node> set) {
@@ -182,13 +172,13 @@ public class Game {
 	}
 
 	/**
-	 * Checks if the list of blocks received are in the hand of the player
-	 * checks if the player wants to trade checks with the board if the move is
-	 * valid removes the blocks from the hand if the move is valid
-	 * 
-	 * @param aPlayerMove
-	 * @throws IllegalMoveException
-	 * @throws NotYourBlockException
+	 * Checks if the list of blocks received are in the hand of the player.
+	 * Checks if the player wants to trade checks with the board if the move is
+	 * valid removes the blocks from the hand if the move is valid.
+	 * @param aPlayerMove The move that the player wants to make.
+	 * @throws IllegalMoveException If the move given does not comply with the game rules.
+	 * @throws NotYourBlockException If the player tries to do a move with stones he/she
+	 * 				Does not have in her/his hand.
 	 */
 	public void doMove(List<Node> aPlayerMove) throws IllegalMoveException, NotYourBlockException {
 		List<Node> playersMove = aPlayerMove;
@@ -225,10 +215,9 @@ public class Game {
 	}
 
 	/**
-	 * Debugin method to see if board is updating at player side Do not use when
-	 * there are no human players
-	 * 
-	 * @param aValidMove
+	 * Debugging method to see if board is updating at player side. Do not use when
+	 * there are no human players.
+	 * @param aValidMove The valid move to debug.
 	 */
 	void notifyPlayer(List<Node> aValidMove) {
 		for (Player players : mPlayers) {
@@ -239,9 +228,9 @@ public class Game {
 	}
 
 	/**
-	 * returns a copy of the board
-	 * 
-	 * @return
+	 * Returns the board frontier, aka all possible empty spaces where the player can 
+	 * place his/her blocks.
+	 * @return A list of empty nodes where blocks can be place.
 	 */
 	public List<Node> getFrontier() {
 		List<Node> copy = new ArrayList<Node>();
@@ -253,9 +242,8 @@ public class Game {
 	}
 
 	/**
-	 * Returns the players that are currently in the game
-	 * 
-	 * @return
+	 * Returns the players that are currently in the game.
+	 * @return A list of players in this game.
 	 */
 	public List<Player> getPlayers() {
 		return mPlayers;
@@ -263,14 +251,14 @@ public class Game {
 
 	/**
 	 * Method that makes sure that the player gets enough stones from the
-	 * gameBag
-	 * 
-	 * @param aPlayer
-	 * @return
+	 * gameBag.
+	 * @param aPlayer The player to fill the hand for.
+	 * @return A list of blocks given by the game to the player.
 	 */
 	public List<Block> addBlocks(Player aPlayer) {
 		List<Block> newBlocks = new ArrayList<Block>();
-		while (aPlayer.getHand().size() != 6 && mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
+		while (aPlayer.getHand().size() != 6 && 
+				mBag.blocks.size() - (6 - aPlayer.getHand().size()) > -1) {
 			Block blockFromBag = mBag.drawBlock();
 			newBlocks.add(blockFromBag);
 			aPlayer.addBlock(blockFromBag);
@@ -279,19 +267,17 @@ public class Game {
 	}
 
 	/**
-	 * gets the placed nodes of the unit
-	 * 
-	 * @return
+	 * Gets the placed nodes of the unit.
+	 * @return A list of placed blocks.
 	 */
 	public List<Node> getCopyBoard() {
 		return mBoard.getPlacedBlocks();
 	}
 
 	/**
-	 * adds stones to the hand of the player
-	 * 
-	 * @param aAmount
-	 * @return
+	 * Adds stones to the hand of the player.
+	 * @param aAmount The amount of stones to add.
+	 * @return A list of blocks added to the player hand.
 	 */
 	public List<Block> addStone(int aAmount) {
 		List<Block> newBlocks = new ArrayList<Block>();
@@ -302,9 +288,8 @@ public class Game {
 	}
 
 	/**
-	 * adds the blocks back to the bag
-	 * 
-	 * @param aBlock
+	 * Returns the blocks back to the bag.
+	 * @param aBlock The block to return to the bag.
 	 */
 	public void tradeBlocks(Block aBlock) {
 		mBag.blocks.add(aBlock);
@@ -313,17 +298,16 @@ public class Game {
 	/**
 	 * Trades a block with the bag.
 	 * 
-	 * @param player
-	 *            The player who does the trade.
-	 * @param block
-	 *            The block type the player wants to trade.
-	 * @throws NotYourTurnException
-	 *             Thrown if this function is called when the player is not the
-	 *             current player.
-	 * @throws NotYourBlockException
-	 *             Thrown if you try to trade a block that is not yours.
+	 * @param player The player who does the trade.
+	 * @param block The block type the player wants to trade.
+	 * @return The block that is the result of the trade.
+	 * @throws NotYourTurnException Thrown if this function is called 
+	 * 				when the player is not the current player.
+	 * @throws NotYourBlockException Thrown if you try to trade a block 
+	 * 				that is not yours.
 	 */
-	public Block tradeBlock(Player player, Block block) throws NotYourTurnException, NotYourBlockException {
+	public Block tradeBlock(Player player, Block block) 
+			throws NotYourTurnException, NotYourBlockException {
 		// Look if we are the current player
 		if (player == mCurrentPlayer) {
 			if (checkHand(player, block)) {
@@ -340,15 +324,18 @@ public class Game {
 			throw new NotYourTurnException();
 		}
 	}
-
+	
+	/**
+	 * Gets the current player from the game.
+	 * @return The current player.
+	 */
 	public Player getCurrentPlayer() {
 		return mCurrentPlayer;
 	}
 
 	/**
 	 * Removes a player from the game.
-	 * 
-	 * @param player
+	 * @param player The player to remove.
 	 */
 	public void removePlayer(Player player) {
 		mPlayers.remove(player);
@@ -356,7 +343,6 @@ public class Game {
 
 	/**
 	 * Returns the current amount of stones in the stone bag.
-	 * 
 	 * @return The amount of stones left in the bag.
 	 */
 	public int getNumStonesInBag() {
