@@ -63,7 +63,7 @@ public class HumanTUIPlayer extends Player {
 				
 				//gets input to choose stone from a players hand and shows at which positions is can be placed
 				hand = scanner.nextInt();
-				for (Node n : mBoard.GiveHint(possiblePositions, set, possibleMoves.get(hand))) {
+				for (Node n : mBoard.giveHint(possiblePositions, set, possibleMoves.get(hand))) {
 					System.out.println(n.getPosition());
 				}
 				move = scanner.nextInt();

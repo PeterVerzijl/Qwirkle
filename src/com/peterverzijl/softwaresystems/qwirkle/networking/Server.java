@@ -25,7 +25,7 @@ public interface Server {
 	
 	/**
 	 * Removes a client from the server.
-	 * @param clientHandler
+	 * @param client The client handler to remove from the server.
 	 */
 	void removeHanlder(ClientHandler client);
 }

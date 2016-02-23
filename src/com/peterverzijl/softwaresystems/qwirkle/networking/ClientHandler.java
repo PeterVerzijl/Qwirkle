@@ -73,7 +73,7 @@ public class ClientHandler implements Runnable {
 
 	/**
 	 * Sends a message to the client.
-	 * @param string The message to send to the client.
+	 * @param message The message to send to the client.
 	 */
 	public void sendMessage(String message) {
 		try {
@@ -129,7 +129,7 @@ public class ClientHandler implements Runnable {
 	
 	/**
 	 * Sets the features of this client.
-	 * @param features
+	 * @param features A list of features that this client supports.
 	 */
 	public void setFeatures(String[] features) {
 		this.mFeatures = features;

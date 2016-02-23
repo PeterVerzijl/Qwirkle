@@ -46,8 +46,8 @@ public class Vector2 {
 	
 	/**
 	 * Sets the position of the vector.
-	 * @param x
-	 * @param y
+	 * @param x The new value for the new x component of the vector.
+	 * @param y The new value for the new y component of the vector.
 	 */
 	public void set(float x, float y) {
 		this.x = x;
@@ -119,7 +119,7 @@ public class Vector2 {
 
 	/**
 	 * Sets the x coordinate of the vector.
-	 * @param x
+	 * @param x The new value for the new x component of the vector.
 	 */
 	public void setX(float x) {
 		this.x = x;
@@ -135,7 +135,7 @@ public class Vector2 {
 	
 	/**
 	 * Sets the y coordinate of the vector.
-	 * @param y
+	 * @param y The new value for the new x component of the vector.
 	 */
 	public void setY(float y) {
 		this.y = y;
@@ -198,8 +198,7 @@ public class Vector2 {
 	/**
 	 * Multiplies the vector by a scalar.
 	 * @param scalar The scalar to multiply the vector by.
-	 * @param Returns the resulting vector.
-	 * @return this.
+	 * @return The resulting vector.
 	 */
 	public Vector2 multiply(float scalar) {
 		this.x *= scalar;

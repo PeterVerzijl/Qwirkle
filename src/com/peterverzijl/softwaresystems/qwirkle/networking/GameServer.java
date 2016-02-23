@@ -19,7 +19,6 @@ import com.peterverzijl.softwaresystems.qwirkle.exceptions.NotYourTurnException;
 
 /**
  * Handles a single game on the server, with a certain amount of players.
- * 
  * @author Peter Verzijl
  * @version 1.0a
  */
@@ -28,37 +27,34 @@ public class GameServer implements Server {
 	private boolean hasGameStarted = false; // If the game has started
 	private boolean isFirstMove = true;		// Check first move
 
-	private int mTargetPlayerCount; // The amount of players wanted in this
-									// game.
+	private int mTargetPlayerCount; 		// The amount of players wanted in this game.
 	
 	private LobbyServer mMasterServer;
 	
-	private Game mGame; // The game played
-	private List<ClientHandler> mClients; // The client handlers
+	private Game mGame; 					// The game played
+	private List<ClientHandler> mClients; 	// The client handlers
 
-	private Map<ClientHandler, Player> playerClientMap;
-	
-	private Map<Player, List<Node>> firstMoveMap = new HashMap<Player, List<Node>>();
+	private Map<ClientHandler, Player> mPlayerClientMap;
+	private Map<Player, List<Node>> mFirstMoveMap = 
+					new HashMap<Player, List<Node>>();
 
 	/**
-	 * Constructor
-	 * 
-	 * @param targetPlayerCount
-	 *            The amount of wanted players on this server.
+	 * Constructor.
+	 * @param targetPlayerCount The amount of wanted players on this server.
+	 * @param lobbyServer The lobby server that this game server belongs to.
+	 * 			This value is used to return clients to the lobby upon exit.
 	 */
 	public GameServer(int targetPlayerCount, LobbyServer lobbyServer) {
 		mTargetPlayerCount = targetPlayerCount;
 		mMasterServer = lobbyServer;
 
 		mClients = new ArrayList<ClientHandler>();
-		playerClientMap = new HashMap<ClientHandler, Player>();
+		mPlayerClientMap = new HashMap<ClientHandler, Player>();
 	}
 
 	/**
-	 * Adds a client to the client list of the GameServer
-	 * 
-	 * @param client
-	 *            The client to add.
+	 * Adds a client to the client list of the GameServer.
+	 * @param client The client to add.
 	 */
 	public void addClient(ClientHandler client) {
 		if (!mClients.contains(client)) {
@@ -98,7 +94,7 @@ public class GameServer implements Server {
 			case Protocol.Client.CHANGESTONE:
 				if (!hasGameStarted) {
 					client.sendMessage(Protocol.Server.ERROR + 
-							Protocol.Server.Settings.DELIMITER + 1);
+										Protocol.Server.Settings.DELIMITER + 1);
 					return;
 				}
 				// Get stones from command
@@ -108,7 +104,7 @@ public class GameServer implements Server {
 						// TODO (Peter) : Change the way we get a stone from the player hand.
 						Block b = Block.getBlockFromCharPair(stone);
 						
-						for (Block handBlock : playerClientMap.get(client).getHand()) {
+						for (Block handBlock : mPlayerClientMap.get(client).getHand()) {
 							if (b.equals(handBlock)) {
 								b = handBlock;
 							}
@@ -116,11 +112,13 @@ public class GameServer implements Server {
 						
 						if (b != null) {
 							// Check if the current player has this block.
-							Block newBlock = mGame.tradeBlock(playerClientMap.get(client), b);
+							Block newBlock = mGame.tradeBlock(mPlayerClientMap.get(client), b);
 							tradedBlocks.add(newBlock);
 							// Pass on the turn
 							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
-							nextPlayer.sendMessage(getMoveMessage(client.getName(), nextPlayer.getName(), null));
+							nextPlayer.sendMessage(getMoveMessage(client.getName(), 
+																	nextPlayer.getName(), 
+																	null));
 						} else {
 							client.sendMessage(Protocol.Server.ERROR + 
 												Protocol.Server.Settings.DELIMITER + 2);
@@ -137,9 +135,9 @@ public class GameServer implements Server {
 				break;
 			case Protocol.Client.CHAT:
 				broadcast(Protocol.Server.CHAT + 
-							Protocol.Server.Settings.DELIMITER + 
-							client.getName() + ": "
-							+ parameters[0]); // The first parameter is the text.
+								Protocol.Server.Settings.DELIMITER + 
+								client.getName() + ": " + 
+								parameters[0]); // The first parameter is the text.
 				break;
 			case Protocol.Client.GETSTONESINBAG:
 				if (hasGameStarted) {
@@ -154,20 +152,22 @@ public class GameServer implements Server {
 			case Protocol.Client.MAKEMOVE:
 				// Do we have all the player's initial moves?
 				if (hasGameStarted && isFirstMove) {
-					Player player = playerClientMap.get(client);
-					if (!firstMoveMap.containsKey(player)) {
+					Player player = mPlayerClientMap.get(client);
+					if (!mFirstMoveMap.containsKey(player)) {
 						List<Node> moves = new ArrayList<Node>();
 						for (String move : parameters) {
 							moves.add(Board.moveStringToNode(move));
 						}
 						// Add this move to the moves list
-						firstMoveMap.put(player, moves);
+						mFirstMoveMap.put(player, moves);
 						
 						// Check if everyone has done the first move
-						if (firstMoveMap.keySet().size() == mClients.size()) {
+						if (mFirstMoveMap.keySet().size() == mClients.size()) {
 							// Do the stuff!
-							Map<Player, List<Node>> startingMove = mGame.startingPlayer(firstMoveMap);
-							Map.Entry<Player, List<Node>> entry = startingMove.entrySet().iterator().next();
+							Map<Player, List<Node>> startingMove = 
+											mGame.startingPlayer(mFirstMoveMap);
+							Map.Entry<Player, List<Node>> entry = 
+											startingMove.entrySet().iterator().next();
 							ClientHandler curPlayer = getClientFromPlayer(entry.getKey());
 							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
 							
@@ -198,11 +198,11 @@ public class GameServer implements Server {
 						// ignore move
 						// NOTE: Not your turn!
 						client.sendMessage(Protocol.Server.ERROR + 
-								Protocol.Server.Settings.DELIMITER + 1);
+											Protocol.Server.Settings.DELIMITER + 1);
 					}					
 				} else if (hasGameStarted) {
 					// Is it our turn?
-					Player clientPlayer = playerClientMap.get(client);
+					Player clientPlayer = mPlayerClientMap.get(client);
 					if (clientPlayer == mGame.getCurrentPlayer()) {
 						if (parameters.length > 0) {
 							// Get moves
@@ -225,39 +225,44 @@ public class GameServer implements Server {
 									Player p = mGame.nextPlayer();
 									ClientHandler ch = getClientFromPlayer(p);
 									// Now broadcast to next player a do move thing...
-									broadcast(getMoveMessage(client.getName(), ch.getName(), parameters));
+									broadcast(getMoveMessage(client.getName(), 
+															ch.getName(), 
+															parameters));
 								} else {
 									stopGame();
 								}
 							} catch (IllegalMoveException e) {
 								// NOTE: Invalid move
 								client.sendMessage(Protocol.Server.ERROR + 
-										Protocol.Server.Settings.DELIMITER + 7);
+													Protocol.Server.Settings.DELIMITER + 7);
 							} catch (NotYourBlockException e) {
 								e.printStackTrace();
 							}
 						} else {
-							// NOTE: This is not an invalid move, this means the player wants to skip a turn.
+							// NOTE: This is not an invalid move, 
+							// this means the player wants to skip a turn.
 							// Which is fine by the server :P
 							// Pass on the turn
 							ClientHandler nextPlayer = getClientFromPlayer(mGame.nextPlayer());
-							nextPlayer.sendMessage(getMoveMessage(client.getName(), nextPlayer.getName(), null));
+							nextPlayer.sendMessage(getMoveMessage(client.getName(), 
+																	nextPlayer.getName(), 
+																	null));
 						}
 					} else {
 						// NOTE: Not your turn!
 						client.sendMessage(Protocol.Server.ERROR + 
-								Protocol.Server.Settings.DELIMITER + 1);
+												Protocol.Server.Settings.DELIMITER + 1);
 					}
 				} else {
 					client.sendMessage(Protocol.Server.ERROR + 
-							Protocol.Server.Settings.DELIMITER + 1);
+											Protocol.Server.Settings.DELIMITER + 1);
 				}
 				break;
 			case Protocol.Client.QUIT:
 				// Ok doei lol
 				mClients.remove(client);
-				mGame.removePlayer(playerClientMap.get(client));
-				playerClientMap.remove(client);
+				mGame.removePlayer(mPlayerClientMap.get(client));
+				mPlayerClientMap.remove(client);
 				client.shutdown();
 				// TODO (peter) : Check if this player had the turn, if so, pass on.
 				break;
@@ -275,8 +280,8 @@ public class GameServer implements Server {
 	 */
 	private ClientHandler getClientFromPlayer(Player player) {
 		ClientHandler result = null;
-		for (ClientHandler ch : playerClientMap.keySet()) {
-			if (playerClientMap.get(ch) == player) {
+		for (ClientHandler ch : mPlayerClientMap.keySet()) {
+			if (mPlayerClientMap.get(ch) == player) {
 				result = ch;
 			}
 		}
@@ -322,10 +327,8 @@ public class GameServer implements Server {
 
 	/**
 	 * Adds a client to the game.
-	 * 
-	 * @param client
-	 *            The client to add to the game.
-	 * @throws AddPlayerToGameException
+	 * @param client The client to add to the game.
+	 * @throws GameFullException Thrown when the game is full.
 	 */
 	public void addPlayer(ClientHandler client) throws GameFullException {
 		if (!hasGameStarted && mClients.size() <= mTargetPlayerCount) {
@@ -335,8 +338,9 @@ public class GameServer implements Server {
 			if (mClients.size() == mTargetPlayerCount) {
 				startGame();
 			} else {
-				broadcast(Protocol.Server.OKWAITFOR + Protocol.Server.Settings.DELIMITER
-						+ (mTargetPlayerCount - mClients.size()));
+				broadcast(Protocol.Server.OKWAITFOR + 
+								Protocol.Server.Settings.DELIMITER + 
+								(mTargetPlayerCount - mClients.size()));
 			}
 		} else {
 			throw new GameFullException();
@@ -352,13 +356,13 @@ public class GameServer implements Server {
 		for (ClientHandler client : mClients) {
 			Player p = new Player();
 			players.add(p);
-			playerClientMap.put(client, p);
+			mPlayerClientMap.put(client, p);
 		}
 		mGame = new Game(players);
 		
 		// Send blocks to the clients
 		for (ClientHandler client : mClients) {
-			sendBlocksClient(playerClientMap.get(client).getHand(), client);
+			sendBlocksClient(mPlayerClientMap.get(client).getHand(), client);
 		}
 		
 		// Send start game message
@@ -393,7 +397,7 @@ public class GameServer implements Server {
 		
 		// Set everyting to null
 		this.mClients = null;
-		this.playerClientMap = null;
+		this.mPlayerClientMap = null;
 		this.mGame = null;
 		this.hasGameStarted = false;
 		// Remove reference to object.

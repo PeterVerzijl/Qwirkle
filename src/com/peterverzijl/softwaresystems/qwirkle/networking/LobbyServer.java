@@ -37,11 +37,12 @@ public class LobbyServer implements Server, Runnable {
 	private List<GameServer> mGameServers;
 	
 	/**
-	 * Constructor
-	 * @param serverAddress
-	 * @param port
-	 * @param viewer
-	 * @throws IOException
+	 * Creates a new lobby server at the given address, port and with a UI viewer.
+	 * @param serverAddress	The address that the server resides at.
+	 * @param port			The port of the server where clients connect to.
+	 * @param viewer		The UI viewer of the lobby server.
+	 * @throws IOException	Thrown when the server socket could not be
+	 * 						created at the given address and port.
 	 */
 	public LobbyServer(InetAddress serverAddress, int port, ServerView viewer) throws IOException {
 		mViewer = viewer;
@@ -60,7 +61,7 @@ public class LobbyServer implements Server, Runnable {
 	 */
 	public void run() {
 		mRunning = true;
-		while(mRunning) {
+		while (mRunning) {
 			try {
 				ClientHandler client;
 				client = new ClientHandler(this, mServerSocket.accept());
@@ -71,7 +72,8 @@ public class LobbyServer implements Server, Runnable {
 				}
 			} catch (IOException e) {
 				if (mViewer != null) {
-					mViewer.sendMessage("Error, could not connect to client due to: " + e.getMessage());
+					mViewer.sendMessage("Error, could not connect to client due to: " + 
+										e.getMessage());
 				}
 			}
 		}
@@ -83,26 +85,29 @@ public class LobbyServer implements Server, Runnable {
 	 * @param client The client handler that send the message.
 	 */
 	public synchronized void sendMessage(String message, ClientHandler client) {
-		if (message.length() < 1) { return; }
+		if (message.length() < 1) {
+			return;
+		}
 		
 		String[] parameters = message.split("" + Protocol.Server.Settings.DELIMITER);
 		String command = parameters[0];
 		// Remove command from parameters
 		parameters = Arrays.copyOfRange(parameters, 1, parameters.length);
 		
-		switch(command) {
+		switch (command) {
 			case Protocol.Client.ACCEPTINVITE:
 				// TODO (peter) : Implement challenging
 				break;
 			case Protocol.Client.CHAT:
 				if (client.getName() != null) {
 					broadcast(Protocol.Server.CHAT + 
-							Protocol.Server.Settings.DELIMITER + 
-							client.getName() + ": " + parameters[0]);	// The first parameter is the text.
+									Protocol.Server.Settings.DELIMITER + 
+									client.getName() + ": " + 
+									parameters[0]);	// The first parameter is the text.
 				} else {
 					// Send a general error.
 					client.sendMessage(Protocol.Server.ERROR + 
-							Protocol.Server.Settings.DELIMITER + 8);
+										Protocol.Server.Settings.DELIMITER + 8);
 				}
 				break;
 			case Protocol.Client.DECLINEINVITE:
@@ -136,12 +141,12 @@ public class LobbyServer implements Server, Runnable {
 					} catch (NumberFormatException e) {
 						// Errors! this is not a number
 						client.sendMessage(Protocol.Server.ERROR + 
-								Protocol.Server.Settings.DELIMITER + 8);
+											Protocol.Server.Settings.DELIMITER + 8);
 					}
 				} else {
 					// Send a general error.
 					client.sendMessage(Protocol.Server.ERROR + 
-							Protocol.Server.Settings.DELIMITER + 8);
+											Protocol.Server.Settings.DELIMITER + 8);
 				}
 				break;
 			default:
@@ -169,7 +174,7 @@ public class LobbyServer implements Server, Runnable {
 			}
 		}
 		// Make new game with same target players
-		GameServer newGame = new GameServer((numPlayers == 0)?2:numPlayers, this);
+		GameServer newGame = new GameServer((numPlayers == 0) ? 2 : numPlayers, this);
 		try {
 			newGame.addPlayer(client);
 			mGameServers.add(newGame);
@@ -196,6 +201,7 @@ public class LobbyServer implements Server, Runnable {
 	/**
 	 * Loops the client handlers to see if this name is used yet.
 	 * @param name The name to check.
+	 * @return Weighter the given name is already taken by another client.
 	 */
 	public boolean isNameUsed(String name) {
 		boolean result = false;

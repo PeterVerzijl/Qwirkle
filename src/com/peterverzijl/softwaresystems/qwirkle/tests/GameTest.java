@@ -7,8 +7,6 @@ import static org.junit.Assert.*;
 import java.util.*;
 
 import com.peterverzijl.softwaresystems.qwirkle.Block;
-import com.peterverzijl.softwaresystems.qwirkle.Board;
-import com.peterverzijl.softwaresystems.qwirkle.Direction;
 import com.peterverzijl.softwaresystems.qwirkle.Game;
 import com.peterverzijl.softwaresystems.qwirkle.HumanTUIPlayer;
 import com.peterverzijl.softwaresystems.qwirkle.Node;
@@ -85,7 +83,6 @@ public class GameTest {
 		
 		assertEquals(game.startingPlayer(firstMoves).get(playerList.get(2)), aSet);
 		assertEquals(game.startingPlayer(firstMoves).keySet().iterator(), playerList.get(2));
-
 	}
 
 	@Test

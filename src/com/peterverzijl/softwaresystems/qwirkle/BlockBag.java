@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * The bag that contains the blocks we can draw from
+ * The bag that contains the blocks we can draw from.
  * 
  * @author Dennis en Peter
  *
@@ -14,35 +14,35 @@ import java.util.Random;
 public class BlockBag {
 
 	/**
-	 * How many same blocks do we have of each type (default 3)
+	 * How many same blocks do we have of each type (default 3).
 	 */
-	private static final int blocksPerType = 3;
+	private static final int BLOCKS_PER_TYPE = 3;
 
 	/**
-	 * All the blocks in the bag
+	 * All the blocks in the bag.
 	 */
 	public List<Block> blocks = new ArrayList<Block>();
 
 	/**
-	 * Creates and initializes the bag with blocks
+	 * Creates and initializes the bag with blocks.
 	 */
 	public BlockBag() {
-		InitBag();
+		initBag();
 	}
 
 	/**
-	 * Initializes the bag with the time as seed
+	 * Initializes the bag with the time as seed.
 	 */
-	public void InitBag() {
+	public void initBag() {
 		// Clear the bag
 		blocks.clear();
 		// Get the shapes and colors from the block
 		Block.Shape[] blockShapes = Block.Shape.values();
 		Block.Color[] blockColors = Block.Color.values();
-		// Generate blocksPerType amount of each block combination
+		// Generate BLOCKS_PER_TYPE amount of each block combination
 		for (int i = 0; i < blockShapes.length; i++) {
 			for (int j = 0; j < blockColors.length; j++) {
-				for (int k = 0; k < blocksPerType; k++) {
+				for (int k = 0; k < BLOCKS_PER_TYPE; k++) {
 					Block b = new Block(blockShapes[i], blockColors[j]);
 					blocks.add(b);
 				}
@@ -51,8 +51,7 @@ public class BlockBag {
 	}
 
 	/**
-	 * Draws a random block from the bag of blocks
-	 * 
+	 * Draws a random block from the bag of blocks.
 	 * @return A random drawn block
 	 */
 	public Block drawBlock() {
@@ -60,8 +59,8 @@ public class BlockBag {
 	}
 
 	/**
-	 * Draws a seeded random block from the bag of blocks
-	 * 
+	 * Draws a seeded random block from the bag of blocks.
+	 * @param seed The seed that is usded in the random generation.
 	 * @return A seeded random drawn block
 	 */
 	public Block drawBlock(long seed) {

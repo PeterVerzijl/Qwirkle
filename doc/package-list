@@ -1,0 +1,9 @@
+com.peterverzijl.softwaresystems.qwirkle
+com.peterverzijl.softwaresystems.qwirkle.exceptions
+com.peterverzijl.softwaresystems.qwirkle.gameengine
+com.peterverzijl.softwaresystems.qwirkle.math
+com.peterverzijl.softwaresystems.qwirkle.networking
+com.peterverzijl.softwaresystems.qwirkle.networking.exceptions
+com.peterverzijl.softwaresystems.qwirkle.tests
+com.peterverzijl.softwaresystems.qwirkle.tui
+com.peterverzijl.softwaresystems.qwirkle.ui

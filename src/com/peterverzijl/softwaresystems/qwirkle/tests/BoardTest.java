@@ -165,7 +165,7 @@ public class BoardTest {
 
 		// adding a stone out of order
 		move.remove(board.getPlacedBlocks().size() - 1);
-		System.out.println(board.toString(board.getPlacedBlocks(), board.getEmptySpaces()));
+		System.out.println(Board.toString(board.getPlacedBlocks(), board.getEmptySpaces()));
 		board.setStone(node15);
 
 		// add a new valid stone in a new set to the left of a stone already
