@@ -22,7 +22,12 @@ public class Board {
 	/**
 	 * A list to track the extreme positions of the board.
 	 */
-	public static int[] borders = {-1, 1, -1, 1};
+	public static int[] borders = {
+		-GameConstants.STARTING_SCALE, 
+		GameConstants.STARTING_SCALE, 
+		-GameConstants.STARTING_SCALE, 
+		GameConstants.STARTING_SCALE 
+	};
 
 	/**
 	 * A list to keep track of all the empty neigbor spaces.
@@ -173,12 +178,13 @@ public class Board {
 	public boolean isValidColor(Node lastMove, Direction aDirection) {
 		boolean isLegal = true;
 		Node block = lastMove;
+		//as long as block has a neighbor that has a placed block
 		while (block.getNeighborNode(aDirection) != null && 
 				block.getNeighborNode(aDirection).getBlock() != null) {
 			if (lastMove.getBlock().getColor() != 
-							block.getNeighborNode(aDirection).getBlock().getColor() || 
+								block.getNeighborNode(aDirection).getBlock().getColor() || 
 							lastMove.getBlock().getShape() == 
-							block.getNeighborNode(aDirection).getBlock().getShape()) {
+								block.getNeighborNode(aDirection).getBlock().getShape()) {
 				isLegal = false;
 				break;
 			} else {
@@ -205,14 +211,14 @@ public class Board {
 	//					block.getNeighborNode(Direction.values()[i]).getBlock().getShape();
 	public boolean isValidShape(Node aMove, Direction aDirection) {
 		boolean isLegal = true;
-
 		Node block = aMove;
+		//as long as block has a neighbor that has a placed block
 		while (block.getNeighborNode(aDirection) != null && 
 				block.getNeighborNode(aDirection).getBlock() != null) {
 			if (aMove.getBlock().getShape() != 
-							block.getNeighborNode(aDirection).getBlock().getShape() || 
-							aMove.getBlock().getColor() == 
-							block.getNeighborNode(aDirection).getBlock().getColor()) {
+					block.getNeighborNode(aDirection).getBlock().getShape()
+					|| aMove.getBlock().getColor() == 
+					block.getNeighborNode(aDirection).getBlock().getColor()) {
 				isLegal = false;
 				break;
 			} else {
@@ -249,6 +255,7 @@ public class Board {
 	// @ensure \result 
 	public List<Node> getEmptySpaces() {
 		List<Node> copyList = new ArrayList<Node>();
+		//for every Node in mFrontier make a new Node and set the values to the node from mFrontier
 		for (Node n : mFrontier) {
 			Node copyNode = new Node();
 			copyNode.setPosition((int) n.getPosition().getX(), (int) n.getPosition().getY());
@@ -290,7 +297,8 @@ public class Board {
 		int midY = (y / 2) + 1;	// (Math.abs(borders[2])+borders[3])/2;
 
 		String[][] boardToString = new String[x + 1][y + 1];
-
+		
+		//fills the array with all the placed stones
 		for (int i = 0; i < aListOfPlacedBlocks.size(); i++) {
 			boardToString[(int) aListOfPlacedBlocks.get(i).getPosition().getX() + midX]
 						[-(int) aListOfPlacedBlocks.get(i).getPosition().getY() + midY] = 
@@ -298,6 +306,7 @@ public class Board {
 							"" + BlockPrinter.getChar(aListOfPlacedBlocks.get(i).getBlock());
 		}
 
+		//fills the array with all the possible moves
 		if (aListOfPossibleMoves != null) {
 			for (int i = 0; i < aListOfPossibleMoves.size(); i++) {
 				boardToString[(int) aListOfPossibleMoves.get(i).getPosition().getX() + midX]
@@ -305,7 +314,7 @@ public class Board {
 							" " + i + ((i > 9) ? "" : " ");
 			}
 		}
-
+		//makes a string representation out of the array
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
 				if (boardToString[j][i] == null) {
@@ -399,11 +408,14 @@ public class Board {
 		List<Node> copyFrontiers = new ArrayList<Node>();
 		copySetBlocks.addAll(mSetBlocks);
 		copyFrontiers = getEmptySpaces();
+		//check if all the stones can get placed
 		for (Node aNode : aNodeList) {
 			if (!setStone(aNode)) {
 				throw new IllegalMoveException();
 			}
 		}
+		//add all the newly created nodes of the array in the order,
+		// of the list they were create from.
 		List<Node> lastSet = new ArrayList<Node>();
 		for (int i = aNodeList.size() - 1; i > -1; i--) {
 			lastSet.add(mSetBlocks.get(mSetBlocks.size() - (i + 1)));
@@ -458,6 +470,7 @@ public class Board {
 			while (block.getNeighborNode(aDirection) != null && 
 					block.getNeighborNode(aDirection).getBlock() != null) {
 				if (i % 2 == 0) {
+					//if Qwirkle then add 6
 					scoreY = ((scoreY += 1) == 6) ? scoreY = 12 : scoreY + 1;
 				} else {
 					scoreX = (scoreX + 1 == 6) ? scoreX = 12 : scoreX + 1;
@@ -467,11 +480,11 @@ public class Board {
 		}
 		return scoreX + scoreY;
 	}
-	
 	/**
-	 * Checks if all stones placed are on the same row or column.
+	 * Looks if the all the blocks in aListOfBlocks can be reached
+	 * by accasing the neighbors going strictly left and right or up and down.
 	 * @param aListOfBlock All stones placed in this turn.
-	 * @return Weighter the connection is valid.
+	 * @return true if copylist is empty and no blocks found in x or y direction
 	 */
 	public boolean isValidConnected(List<Node> aListOfBlock) {
 		int blocksFoundX = 0; // found the starting block
@@ -479,12 +492,15 @@ public class Board {
 		List<Node> copy = new ArrayList<Node>();
 		copy.addAll(aListOfBlock);
 		copy.remove(0);
+		//look in all directions
 		for (int i = 0; i < Direction.values().length; i++) {
 			Node block = aListOfBlock.get(0);	// aListOfBlock.get(0);
 			Direction aDirection = Direction.values()[i];
 			while (block.getNeighborNode(aDirection) != null && 
 					block.getNeighborNode(aDirection).getBlock() != null) {
+				//while block still has a filled neighbor
 				for (Node n : copy) {
+					//see if the node corsresponce with one in the copylist
 					if (n.getBlock() != null && 
 									n.getBlock().equals(
 											block.getNeighborNode(aDirection).getBlock()
@@ -511,16 +527,16 @@ public class Board {
 	 */
 	public void boardScale(Vector2 aPosition) {
 		if (Board.borders[0] > aPosition.getX()) {
-			Board.borders[0] = (int) aPosition.getX() - 7;
+			Board.borders[0] = (int) aPosition.getX() - GameConstants.STARTING_SCALE;
 		}
 		if (Board.borders[1] < aPosition.getX()) {
-			Board.borders[1] = (int) aPosition.getX() + 7;
+			Board.borders[1] = (int) aPosition.getX() + GameConstants.STARTING_SCALE;
 		}
 		if (Board.borders[2] > aPosition.getY()) {
-			Board.borders[2] = (int) aPosition.getY() - 7;
+			Board.borders[2] = (int) aPosition.getY() - GameConstants.STARTING_SCALE;
 		}
 		if (Board.borders[3] < aPosition.getY()) {
-			Board.borders[3] = (int) aPosition.getY() + 7;
+			Board.borders[3] = (int) aPosition.getY() + GameConstants.STARTING_SCALE;
 		}
 	}
 }
