@@ -12,9 +12,9 @@ public class BlockPrinter {
 	 * The mapping between block shapes and unicode characters
 	 */
 	private static HashMap<Block.Shape, Character> shapeCharMap;
-	static {
+	static { 
 		shapeCharMap = new HashMap<Block.Shape, Character>();
-		shapeCharMap.put(Block.Shape.CIRCLE, 'ഠ');
+		shapeCharMap.put(Block.Shape.CIRCLE, 'ഠ' );
 		shapeCharMap.put(Block.Shape.CROSS, '✖');
 		shapeCharMap.put(Block.Shape.DIAMOND, '◆');
 		shapeCharMap.put(Block.Shape.PLUS, '➕');
@@ -22,7 +22,7 @@ public class BlockPrinter {
 		shapeCharMap.put(Block.Shape.STAR, '✸');
 	}
 	
-	/**
+/**
 	 * Gets a char from a block shape
 	 * @param block The block to get the shape from
 	 * @return A character representing the block shape
