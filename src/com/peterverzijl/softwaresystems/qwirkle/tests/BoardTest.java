@@ -177,7 +177,7 @@ public class BoardTest {
 
 		// add duplicate type in same row as the one above.
 		board.setStone(node16);
-		move.add(board.getPlacedBlocks().get(board.getPlacedBlocks().size() - 1));
+		move.add(board.getPlacedBlocks().get(board.getPlacedBlocks().size() - 1)); 
 		assertFalse(board.isValid(move));
 	}
 
